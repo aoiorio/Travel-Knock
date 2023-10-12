@@ -40,6 +40,7 @@ dependencies:
   flutter_appauth: ^6.0.2
   supabase_flutter: ^1.10.21
   crypto: ^3.0.3
+  flutter_riverpod: ^2.4.3
 
 dev_dependencies:
   flutter_test:
