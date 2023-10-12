@@ -19,11 +19,12 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final supabase = Supabase.instance.client;
-  bool _isLogin = false;
-  int authcount = 0;
 
   @override
   void initState() {
+    if (supabase.auth.currentUser != null) {
+      return;
+    }
     _setupAuthListener();
     super.initState();
   }
@@ -32,9 +33,6 @@ class _LoginScreenState extends State<LoginScreen> {
     supabase.auth.onAuthStateChange.listen((data) {
       final event = data.event;
       if (event == AuthChangeEvent.signedIn) {
-        authcount++;
-        print(authcount);
-        _isLogin = true;
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => const SettingProfileScreen(),
@@ -120,9 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return _isLogin
-        ? const SettingProfileScreen()
-        : Scaffold(
+    return Scaffold(
             backgroundColor: const Color(0xffC7C7C7),
             body: Column(
               children: [
