@@ -41,6 +41,7 @@ dependencies:
   supabase_flutter: ^1.10.21
   crypto: ^3.0.3
   flutter_riverpod: ^2.4.3
+  image_picker: ^1.0.4
 
 dev_dependencies:
   flutter_test:
