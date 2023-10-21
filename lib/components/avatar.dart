@@ -53,7 +53,7 @@ class Avatar extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                       image: NetworkImage(imageUrl!),
                       // fit: BoxFit.cover
                     ),
@@ -78,10 +78,6 @@ class Avatar extends StatelessWidget {
                 )
               : Column(
                   children: [
-                    // const Text('No image'),
-                    // const SizedBox(
-                    //   height: 10,
-                    // ),
                     IconButton(
                       // DONE create the database with supabase and connect to storage
                       onPressed: pickImage,
