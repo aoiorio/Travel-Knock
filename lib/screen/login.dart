@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:travelknock/screen/setting_profile.dart';
+import 'package:travelknock/screen/tabs.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -42,7 +43,6 @@ class _LoginScreenState extends State<LoginScreen> {
   // }
 
   void _setupAuthListener() async {
-
     // final getUserInfo = await supabase
     //     .from('profiles')
     //     .select()
@@ -66,8 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (event == AuthChangeEvent.signedIn) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) =>
-                const SettingProfileScreen(),
+            builder: (context) => const SettingProfileScreen(),
           ),
         );
       }
@@ -271,7 +270,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               // TODO Add feature that transition to PlansScreen.
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return const TabsScreen();
+                    },
+                  ),
+                );
+              },
               child: const Text(
                 'Join As A Guest',
                 style: TextStyle(

@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/avatar.dart';
 import 'package:travelknock/screen/add_places.dart';
 import 'package:travelknock/screen/login.dart';
+import 'package:travelknock/screen/tabs.dart';
 
 class SettingProfileScreen extends StatefulWidget {
   const SettingProfileScreen({super.key});
@@ -16,7 +17,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
 
   final _nameController = TextEditingController();
   final _placeNameController = TextEditingController();
-  List<String> userPlacesList = [];
+  List<dynamic> userPlacesList = [];
   String? _imageUrl;
 
   @override
@@ -24,6 +25,12 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
     _placeNameController.dispose();
     _nameController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    getUserInfo();
+    super.initState();
   }
 
   void signOut() async {
@@ -34,6 +41,17 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
         MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
     }
+  }
+
+  Future<void> getUserInfo() async {
+    final userId = supabase.auth.currentUser!.id;
+    final data =
+        await supabase.from('profiles').select().eq('id', userId).single();
+    setState(() {
+      _nameController.text = data['username'];
+      userPlacesList = data['places'];
+      _imageUrl = data['avatar_url'];
+    });
   }
 
   void showAddPlacesScreen() {
@@ -62,19 +80,19 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
     print(userPlacesList);
   }
 
-  void photoButtonClick() {
-    print(supabase.auth.currentUser!.id);
-  }
-
   void updateProfile() async {
     final userId = supabase.auth.currentUser!.id;
     final username = _nameController.text.trim();
 
     // confirm username, userPlacesList and username's length
-    if (username.isEmpty || userPlacesList.isEmpty || username.length <= 2) {
+    if (username.isEmpty ||
+        userPlacesList.isEmpty ||
+        username.length <= 2 ||
+        _imageUrl == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Write your name at least 3 letters and add place'),
+          content: Text(
+              'Write your name at least 3 letters and add place and fill your icon.'),
           backgroundColor: Color.fromARGB(255, 94, 94, 109),
         ),
       );
@@ -90,7 +108,14 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
         'is_setting_profile': true,
       });
       print('Entered submit button!');
-      // TODO use Navigator.of(context).pushReplacement and transition to PlansScreen
+      // DONE use Navigator.of(context).pushReplacement and transition to PlansScreen
+      await Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) {
+            return const TabsScreen();
+          },
+        ),
+      );
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

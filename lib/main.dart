@@ -1,10 +1,8 @@
-// import 'dart:js_interop';
-
 import 'package:flutter/material.dart';
 
 import 'package:travelknock/screen/login.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travelknock/screen/setting_profile.dart';
+import 'package:travelknock/screen/tabs.dart';
 
 void main() async {
   await Supabase.initialize(
@@ -35,14 +33,16 @@ class MyApp extends StatelessWidget {
     }
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: StreamBuilder(
         stream: Supabase.instance.client.auth.onAuthStateChange,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             print('PlansScreen');
-            // TODO replace the screen to PlansScreen
-            return const SettingProfileScreen();
+            // DONE replace the screen to PlansScreen
+            return const TabsScreen();
           }
+          // If user was login as a guest, I want the user can see the PlansScreen. How do I implement it?
           print('LoginScreen');
           return const LoginScreen();
         },
