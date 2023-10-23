@@ -22,20 +22,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final supabase = Supabase.instance.client;
 
-    Future<dynamic> isSetProfile() async {
-      final userIsSettingProfile = await supabase
-          .from('profiles')
-          .select()
-          .eq('id', supabase.auth.currentUser!.id)
-          .single();
-      final isSet = userIsSettingProfile['is_setting_profile'] == false;
-      return isSet;
-    }
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: StreamBuilder(
-        stream: Supabase.instance.client.auth.onAuthStateChange,
+        stream: supabase.auth.onAuthStateChange,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             print('PlansScreen');

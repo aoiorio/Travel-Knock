@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/avatar.dart';
 import 'package:travelknock/screen/add_places.dart';
