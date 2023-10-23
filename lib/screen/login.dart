@@ -1,10 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:crypto/crypto.dart';
+
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:io';
 import 'dart:convert';
 import 'dart:math';
 
@@ -31,36 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
   }
 
-  // Future<bool> _isSettingProfile() async {
-  //   final getUserInfo = await supabase
-  //       .from('profiles')
-  //       .select()
-  //       .eq('id', supabase.auth.currentUser!.id)
-  //       .single();
-  //   final isSet = getUserInfo['is_setting_profile'];
-  //   print(getUserInfo['is_setting_profile']);
-  //   return isSet;
-  // }
-
   void _setupAuthListener() async {
-    // final getUserInfo = await supabase
-    //     .from('profiles')
-    //     .select()
-    //     .eq('id', supabase.auth.currentUser!.id)
-    //     .single();
-    // print(getUserInfo['is_setting_profile']);
-    // final isSet = getUserInfo['is_setting_profile'];
-
-    // if (getUserInfo['is_setting_profile']) {}
-
-    // getUserInfo.then(
-    //   (value) {
-    //     print(value);
-    //     if (value['is_setting_profile']) {
-    //       isSet = true;
-    //     }
-    //   },
-    // );
     supabase.auth.onAuthStateChange.listen((data) {
       final event = data.event;
       if (event == AuthChangeEvent.signedIn) {
@@ -269,7 +240,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              // TODO Add feature that transition to PlansScreen.
+              // DONE Add feature that transition to PlansScreen.
               onPressed: () {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(

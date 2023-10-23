@@ -37,8 +37,8 @@ class Avatar extends StatelessWidget {
           );
       String imageUrl =
           supabase.storage.from('profiles').getPublicUrl(imagePath);
-      imageUrl = Uri.parse(imageUrl)
-          .replace(queryParameters: {'t': DateTime.now().toIso8601String()}).toString();
+      imageUrl = Uri.parse(imageUrl).replace(
+          queryParameters: {'t': DateTime.now().toIso8601String()}).toString();
       onUpload(imageUrl);
     }
 

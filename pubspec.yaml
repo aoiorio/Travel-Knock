@@ -42,6 +42,7 @@ dependencies:
   crypto: ^3.0.3
   flutter_riverpod: ^2.4.3
   image_picker: ^1.0.4
+  carousel_slider: ^4.2.1
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +71,7 @@ flutter:
     - assets/
     - assets/images/Travel-Knock-Logo.png
     - assets/images/google-logo.png
+    - assets/images/post-shape.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

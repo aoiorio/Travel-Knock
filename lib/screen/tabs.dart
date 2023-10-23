@@ -36,6 +36,8 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // transparent margin background.
+      extendBody: true,
       bottomNavigationBar: Container(
         margin: const EdgeInsets.only(right: 120, bottom: 90),
         height: 80,
