@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travelknock/screen/create_plan/new_plan.dart';
 
 import 'dart:math';
 import 'dart:ui';
@@ -68,7 +69,6 @@ class PlansScreen extends StatelessWidget {
             'https://i.pinimg.com/564x/fd/04/26/fd042617f53ca721e449d651d84474b9.jpg',
       },
     ];
-    // print(hotPlacesList[0]['imageUrl']);
     var size = MediaQuery.of(context).size;
 
     /*24 is for notification bar on Android*/
@@ -88,7 +88,15 @@ class PlansScreen extends StatelessWidget {
             width: 90,
             height: 90,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return const NewPlanScreen();
+                    },
+                  ),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xff4B4B5A),
                 foregroundColor: Colors.white,
@@ -113,16 +121,9 @@ class PlansScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Stack(
+            const Stack(
               children: [
-                IconButton(
-                  onPressed: signOut,
-                  icon: const Icon(
-                    Icons.exit_to_app,
-                    size: 40,
-                  ),
-                ),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(left: 25, top: 130),
                   child: Text(
                     "Let's Knock🚪",
@@ -169,7 +170,6 @@ class PlansScreen extends StatelessWidget {
                 ),
                 itemBuilder: (context, index) {
                   // TODO add InkWell to transition to detail_page
-
                   return Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -204,7 +204,6 @@ class PlansScreen extends StatelessWidget {
                 },
               ),
             ),
-            // const SizedBox(height: 10,),
             // todo plans
             ListView.builder(
               shrinkWrap: true, //追加
@@ -215,7 +214,8 @@ class PlansScreen extends StatelessWidget {
                   alignment: Alignment.topRight,
                   children: [
                     Card(
-                      margin: const EdgeInsets.only(bottom: 70, top: 20, right: 50, left: 50),
+                      margin: const EdgeInsets.only(
+                          bottom: 70, top: 20, right: 50, left: 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(70),
                       ),
@@ -230,7 +230,9 @@ class PlansScreen extends StatelessWidget {
                     Container(
                       width: 100,
                       height: 50,
-                      margin: const EdgeInsets.only(right: 30,),
+                      margin: const EdgeInsets.only(
+                        right: 30,
+                      ),
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
@@ -293,11 +295,9 @@ class PlansScreen extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    // const SizedBox(
-                                    //   width: 20,
-                                    // ),
                                     Container(
-                                      margin: const EdgeInsets.only(top: 5, left: 10),
+                                      margin: const EdgeInsets.only(
+                                          top: 5, left: 10),
                                       width: 120,
                                       height: 45,
                                       child: ElevatedButton(
