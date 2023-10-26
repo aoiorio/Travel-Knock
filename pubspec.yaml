@@ -43,6 +43,7 @@ dependencies:
   flutter_riverpod: ^2.4.3
   image_picker: ^1.0.4
   carousel_slider: ^4.2.1
+  calendar_date_picker2: ^0.5.3
 
 dev_dependencies:
   flutter_test:

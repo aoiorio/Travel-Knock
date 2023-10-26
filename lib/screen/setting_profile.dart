@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/avatar.dart';
+import 'package:travelknock/components/custom_text_field.dart';
 import 'package:travelknock/screen/add_places.dart';
 import 'package:travelknock/screen/login.dart';
 import 'package:travelknock/screen/tabs.dart';
@@ -140,7 +141,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
               child: const Column(
                 children: [
                   Text(
-                    'About you 🦄',
+                    'About You 🦄',
                     style: TextStyle(
                       fontSize: 35,
                       fontWeight: FontWeight.bold,
@@ -165,35 +166,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Name',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
-                    width: 300,
-                    child: TextField(
-                      decoration: InputDecoration(
-                          labelText: 'Your name',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(
-                              width: 0,
-                              style: BorderStyle.none,
-                            ),
-                          ),
-                          fillColor: const Color(0xffEEEEEE),
-                          filled: true,
-                          floatingLabelBehavior: FloatingLabelBehavior.never),
-                      controller: _nameController,
-                    ),
-                  ),
+                  CustomTextField(title: 'Name', labelText: 'Your name', controller: _nameController, ),
                   const SizedBox(
                     height: 40,
                   ),
