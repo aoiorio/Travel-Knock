@@ -281,7 +281,7 @@ class PlansScreen extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Flexible(
-                                      child: Container(
+                                      child: SizedBox(
                                         width: 120,
                                         height: 50,
                                         child: Text(
