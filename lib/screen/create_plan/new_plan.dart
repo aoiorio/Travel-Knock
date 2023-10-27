@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/custom_text_field.dart';
+import 'package:travelknock/screen/create_plan/develop_plan.dart';
 import '../login.dart';
 import 'dart:math';
 
@@ -13,9 +13,9 @@ class NewPlanScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final supabase = Supabase.instance.client;
-    final _planTitleController = TextEditingController();
-    final _placeNameController = TextEditingController();
-    final _periodController = TextEditingController();
+    final planTitleController = TextEditingController();
+    final placeNameController = TextEditingController();
+    final periodController = TextEditingController();
 
     void signOut() async {
       await supabase.auth.signOut();
@@ -71,14 +71,6 @@ class NewPlanScreen extends StatelessWidget {
               const SizedBox(
                 height: 110,
               ),
-              // logout button
-              // IconButton(
-              //   onPressed: signOut,
-              //   icon: const Icon(
-              //     Icons.exit_to_app,
-              //     size: 40,
-              //   ),
-              // ),
               const Text(
                 'New Plan 💡',
                 style: TextStyle(
@@ -92,7 +84,7 @@ class NewPlanScreen extends StatelessWidget {
               CustomTextField(
                 title: 'Title',
                 labelText: 'e.g. Okinawa in 3 days',
-                controller: _planTitleController,
+                controller: planTitleController,
               ),
               const SizedBox(
                 height: 60,
@@ -100,7 +92,7 @@ class NewPlanScreen extends StatelessWidget {
               CustomTextField(
                 title: 'Place',
                 labelText: 'e.g. Okinawa',
-                controller: _placeNameController,
+                controller: placeNameController,
               ),
               const SizedBox(
                 height: 60,
@@ -131,7 +123,7 @@ class NewPlanScreen extends StatelessWidget {
                     filled: true,
                     floatingLabelBehavior: FloatingLabelBehavior.never,
                   ),
-                  controller: _periodController,
+                  controller: periodController,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
               ),
@@ -143,7 +135,30 @@ class NewPlanScreen extends StatelessWidget {
                   width: 200,
                   child: ElevatedButton(
                     // DONE create a transition to PlansScreen and add details to the database
-                    onPressed: () {},
+                    onPressed: () {
+                      if (planTitleController.text.isEmpty ||
+                          placeNameController.text.isEmpty ||
+                          periodController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Fill the title, place name and period',
+                            ),
+                            backgroundColor: Color.fromARGB(255, 94, 94, 109),
+                          ),
+                        );
+                        return;
+                      }
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return DevelopPlanScreen(
+                                title: planTitleController.text,
+                                dayNumber: periodController.text);
+                          },
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xff4B4B5A),
                         shape: RoundedRectangleBorder(
