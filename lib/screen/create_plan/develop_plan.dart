@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travelknock/screen/create_plan/add_plan.dart';
 
 class DevelopPlanScreen extends StatefulWidget {
   const DevelopPlanScreen(
@@ -12,7 +13,6 @@ class DevelopPlanScreen extends StatefulWidget {
 }
 
 class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
-
   List<bool> _isSelected = [true, false];
 
   @override
@@ -27,22 +27,27 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
     });
   }
 
+  var planList = [
+    [
+      {'title': 'Eat at Banta cafe', 'time': '7.a.m - 8.a.m'},
+      {'title': 'Go to the zoo', 'time': '9.a.m - 10.a.m'},
+    ],
+    [
+      {'title': 'watch at movie theater', 'time': '7.a.m - 8.a.m'},
+      {'title': 'Eat lunch at Komuginodorei', 'time': '9.a.m - 10.a.m'},
+    ],
+    [
+      {'title': 'watch at movie Chatan theater', 'time': '7.a.m - 8.a.m'},
+      {'title': 'Eat lunch at Komuginodorei', 'time': '9.a.m - 10.a.m'},
+    ],
+  ];
+
   @override
   Widget build(BuildContext context) {
-
-    final planList = [
-      [
-        {'title': 'Eat at Banta cafe', 'time': '7.a.m - 8.a.m'},
-        {'title': 'Go to the zoo', 'time': '9.a.m - 10.a.m'},
-      ],
-      [
-        {'title': 'watch at movie theater', 'time': '7.a.m - 8.a.m'},
-        {'title': 'Eat lunch at Komuginodorei', 'time': '9.a.m - 10.a.m'},
-      ],
-    ];
     print(planList[0][1]['title']);
 
     return Scaffold(
+      // todo Post button
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -74,12 +79,16 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
           ),
         ],
       ),
+      // Add plan button
       floatingActionButton: SizedBox(
         width: 230,
         height: 90,
-        // todo Add plan Button
+        // done Add plan Button
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => const AddPlan()));
+          },
           style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xff4B4B5A),
               shape: RoundedRectangleBorder(
@@ -152,6 +161,11 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                       }
                     });
                     // TODO implement the feature of List or Map!!!
+                    // これはStateNotifierを使わなければいけない事態が発生している気がする
+                    planList[index]
+                        .add({'title': 'See Yatimun', 'time': '0.p.m - 8.a.m'});
+
+                    print(planList);
                   },
                   borderRadius: const BorderRadius.all(Radius.circular(20)),
                   selectedBorderColor: const Color(0xff4B4B5A),
@@ -168,7 +182,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                   children: List.generate(
                     int.parse(widget.dayNumber),
                     (index) => Text(
-                      (index + 1).toString() + ' Day',
+                      '${index + 1} Day',
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -179,6 +193,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
               ],
             ),
           ),
+          // Image.file('/Users/atoatoatomu/Library/Developer/CoreSimulator/Devices/DDC1B145-82E1-49F2-8349-8F34BE239F28/data/Containers/Data/Application/E31C5C94-FCCE-4171-9B2D-A05B155EF37E/tmp/image_picker_D85EB4EB-2AA5-4B78-880B-E091F89AE65E-38277-000016AC8D517A40.jpg')
         ],
       ),
     );
