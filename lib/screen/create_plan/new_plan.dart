@@ -111,7 +111,12 @@ class NewPlanScreen extends StatelessWidget {
                   decoration: InputDecoration(
                     labelText: 'e.g. 3',
                     suffixIcon: const Padding(
-                        padding: EdgeInsets.all(20), child: Text('days')),
+                      padding: EdgeInsets.all(20),
+                      child: Text(
+                        'days',
+                        style: TextStyle(fontSize: 17),
+                      ),
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                       borderSide: const BorderSide(
@@ -129,7 +134,11 @@ class NewPlanScreen extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(
-                    top: 60, right: 50, left: 50, bottom: 50),
+                  top: 60,
+                  right: 50,
+                  left: 50,
+                  bottom: 50,
+                ),
                 child: SizedBox(
                   height: 70,
                   width: 200,
@@ -138,7 +147,8 @@ class NewPlanScreen extends StatelessWidget {
                     onPressed: () {
                       if (planTitleController.text.isEmpty ||
                           placeNameController.text.isEmpty ||
-                          periodController.text.isEmpty) {
+                          periodController.text.isEmpty ||
+                          periodController.text[0] == '0') {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
@@ -153,17 +163,19 @@ class NewPlanScreen extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) {
                             return DevelopPlanScreen(
-                                title: planTitleController.text,
-                                dayNumber: periodController.text);
+                              title: planTitleController.text,
+                              dayNumber: periodController.text,
+                            );
                           },
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff4B4B5A),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        )),
+                      backgroundColor: const Color(0xff4B4B5A),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
                     child: const Text(
                       'Create a plan',
                       style: TextStyle(fontSize: 20),
