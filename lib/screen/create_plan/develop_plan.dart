@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:travelknock/screen/create_plan/add_plan.dart';
 
@@ -161,7 +159,6 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                         _isSelected[i] = i == index;
                       }
                       _selectedDayIndex = index;
-                      print(_selectedDayIndex);
                     });
                     // DONE implement the feature of List or Map!!! on line 93
                     // これはStateNotifierを使わなければいけない事態が発生している気がする
@@ -205,16 +202,29 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                         children: [
                           Text(planList[_selectedDayIndex][index]['startTime']
                               .toString()),
-                          const SizedBox(width: 10,),
+                          const SizedBox(
+                            width: 10,
+                          ),
                           const Text('-'),
                           const SizedBox(
                             width: 10,
                           ),
                           Text(planList[_selectedDayIndex][index]['endTime']
                               .toString()),
-                          const SizedBox(width: 20,),
+                          const SizedBox(
+                            width: 20,
+                          ),
                           Text(planList[_selectedDayIndex][index]['title']
                               .toString()),
+                          Container(
+                            width: 100,
+                            height: 100,
+                            child: Image.network(
+                              planList[_selectedDayIndex][index]['imageUrl']
+                                  .toString(),
+                              fit: BoxFit.cover,
+                            ),
+                          )
                         ],
                       );
                     },
