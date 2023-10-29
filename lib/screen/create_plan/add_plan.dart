@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/custom_text_field.dart';
+import 'package:supabase/supabase.dart';
 
 class AddPlanScreen extends StatefulWidget {
   const AddPlanScreen({
@@ -15,21 +17,40 @@ class AddPlanScreen extends StatefulWidget {
 }
 
 class _AddPlanScreenState extends State<AddPlanScreen> {
+  final supabase = Supabase.instance.client;
+  // time variable
   var stringStartTime = '${DateTime.now().hour}:${DateTime.now().minute}';
   var stringEndTime = '${DateTime.now().hour}:${DateTime.now().minute}';
   var endTime = DateTime.now();
   var startTime = DateTime.now();
+
+  final planDetailTitleController = TextEditingController();
   Map<String, String> planList = {};
 
   File? image;
-  final planDetailTitleController = TextEditingController();
+  // String? _imageUrl;
+
+  var isLoading = false;
+
+  Future<void> setValues(String imageUrl) async {
+    planList = {
+      'title': planDetailTitleController.text,
+      'startTime': stringStartTime,
+      'endTime': stringEndTime,
+      'imageUrl': imageUrl,
+    };
+    Navigator.of(context).pop(planList);
+  }
 
   // asyncの同期を終わるまで待ってしまうから？ここにpickImageをおかないとTimeが動作しない
   Future<void> pickImage() async {
     try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      // 画像がnullの場合戻る
-      if (image == null) return;
+      final ImagePicker picker = ImagePicker();
+      // Pick an image.
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image == null) {
+        return;
+      }
       final imagePath = File(image.path);
 
       setState(() {
@@ -39,6 +60,37 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     } on Exception {
       print('something went wrong with picking image');
     }
+  }
+
+  void savePhotoToSupabase(Function onUpload) async {
+    if (image == null) {
+      return;
+    }
+    setState(() {
+      isLoading = true;
+    });
+    final imageExtension = image!.path.split('.').last.toLowerCase();
+    final imageBytes = await image!.readAsBytes();
+    final userId = supabase.auth.currentUser!.id;
+    final pathName = planDetailTitleController.text;
+    final imagePath = '/$userId/$pathName';
+    await supabase.storage.from('posts').uploadBinary(
+          imagePath,
+          imageBytes,
+          fileOptions: FileOptions(
+            upsert: true,
+            contentType: 'image/$imageExtension',
+          ),
+        );
+    setState(() {
+      isLoading = false;
+    });
+    String imageUrl = supabase.storage.from('posts').getPublicUrl(imagePath);
+    setState(() {
+      imageUrl = Uri.parse(imageUrl).replace(
+          queryParameters: {'t': DateTime.now().toIso8601String()}).toString();
+    });
+    setValues(imageUrl);
   }
 
   void _showModalPicker(BuildContext context, String time) {
@@ -252,32 +304,30 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 child: SizedBox(
                   width: 170,
                   height: 70,
-                  child: ElevatedButton(
-                    // TODO add feature of add to the list button
-                    onPressed: () {
-                      if (planDetailTitleController.text.isEmpty ||
-                          image == null) {
-                        return;
-                      }
-                      planList = {
-                        'title': planDetailTitleController.text,
-                        'startTime': stringStartTime,
-                        'endTime': stringEndTime,
-                      };
-                      Navigator.of(context).pop(planList);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xff4B4B5A),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    child: const Text(
-                      'Add',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                    ),
-                  ),
+                  child: isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : ElevatedButton(
+                          // DONE add feature of add to the list button
+                          onPressed: () async {
+                            if (planDetailTitleController.text.isEmpty) {
+                              return;
+                            }
+                            savePhotoToSupabase(setValues);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xff4B4B5A),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: const Text(
+                            'Add',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w600),
+                          ),
+                        ),
                 ),
               ),
             ),
