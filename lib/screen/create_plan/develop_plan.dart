@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:travelknock/screen/create_plan/add_plan.dart';
 
@@ -14,6 +16,8 @@ class DevelopPlanScreen extends StatefulWidget {
 
 class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
   List<bool> _isSelected = [true, false];
+  var _selectedDayIndex = 0;
+  List<List<Map<String, String>>> planList = [];
 
   @override
   void initState() {
@@ -25,27 +29,13 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
       }
       return false;
     });
+    // 要素が全て一体化？してしまうためgenerateを使って要素を別々にする
+    // planList = List.filled(int.parse(widget.dayNumber), []);
+    planList = List.generate(int.parse(widget.dayNumber), (index) => []);
   }
-
-  var planList = [
-    [
-      {'title': 'Eat at Banta cafe', 'time': '7.a.m - 8.a.m'},
-      {'title': 'Go to the zoo', 'time': '9.a.m - 10.a.m'},
-    ],
-    [
-      {'title': 'watch at movie theater', 'time': '7.a.m - 8.a.m'},
-      {'title': 'Eat lunch at Komuginodorei', 'time': '9.a.m - 10.a.m'},
-    ],
-    [
-      {'title': 'watch at movie Chatan theater', 'time': '7.a.m - 8.a.m'},
-      {'title': 'Eat lunch at Komuginodorei', 'time': '9.a.m - 10.a.m'},
-    ],
-  ];
 
   @override
   Widget build(BuildContext context) {
-    print(planList[0][1]['title']);
-
     return Scaffold(
       // todo Post button
       appBar: AppBar(
@@ -60,7 +50,9 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
               height: 40,
               // todo Post Button
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  // print(zeros);
+                },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xff4B4B5A),
                     shape: RoundedRectangleBorder(
@@ -85,9 +77,18 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
         height: 90,
         // done Add plan Button
         child: ElevatedButton(
-          onPressed: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => const AddPlan()));
+          onPressed: () async {
+            // newPlanListは辞書型
+            final newPlanMap = await Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const AddPlanScreen()));
+            // print(newPlanList);
+            if (newPlanMap != null) {
+              setState(() {
+                // planListにAddPlanScreenから渡されたMapを追加
+                // List.filledでは全ての要素を埋めて、一つになってしまう（値を追加したらインデックスを指定しても全てのリストに追加されてしまう）ので、List.generateで対応
+                planList[_selectedDayIndex].add(newPlanMap);
+              });
+            }
           },
           style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xff4B4B5A),
@@ -123,7 +124,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
               height: 40,
               child: ElevatedButton(
                 onPressed: () {
-                  print('object');
+                  print('Pressed Edit Button!');
                 },
                 style: ElevatedButton.styleFrom(
                   shadowColor: Colors.transparent,
@@ -159,13 +160,12 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                       for (int i = 0; i < _isSelected.length; i++) {
                         _isSelected[i] = i == index;
                       }
+                      _selectedDayIndex = index;
+                      print(_selectedDayIndex);
                     });
-                    // TODO implement the feature of List or Map!!!
+                    // DONE implement the feature of List or Map!!! on line 93
                     // これはStateNotifierを使わなければいけない事態が発生している気がする
-                    planList[index]
-                        .add({'title': 'See Yatimun', 'time': '0.p.m - 8.a.m'});
-
-                    print(planList);
+                    // 発生してなかったよ
                   },
                   borderRadius: const BorderRadius.all(Radius.circular(20)),
                   selectedBorderColor: const Color(0xff4B4B5A),
@@ -193,7 +193,33 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
               ],
             ),
           ),
-          // Image.file('/Users/atoatoatomu/Library/Developer/CoreSimulator/Devices/DDC1B145-82E1-49F2-8349-8F34BE239F28/data/Containers/Data/Application/E31C5C94-FCCE-4171-9B2D-A05B155EF37E/tmp/image_picker_D85EB4EB-2AA5-4B78-880B-E091F89AE65E-38277-000016AC8D517A40.jpg')
+
+          planList[_selectedDayIndex].isEmpty
+              ? const Text('you can add some')
+              : SizedBox(
+                  height: 500,
+                  child: ListView.builder(
+                    itemCount: planList[_selectedDayIndex].length,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: [
+                          Text(planList[_selectedDayIndex][index]['startTime']
+                              .toString()),
+                          const SizedBox(width: 10,),
+                          const Text('-'),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(planList[_selectedDayIndex][index]['endTime']
+                              .toString()),
+                          const SizedBox(width: 20,),
+                          Text(planList[_selectedDayIndex][index]['title']
+                              .toString()),
+                        ],
+                      );
+                    },
+                  ),
+                ),
         ],
       ),
     );
