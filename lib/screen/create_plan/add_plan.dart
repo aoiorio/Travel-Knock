@@ -5,18 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:travelknock/components/custom_text_field.dart';
 
-class AddPlan extends StatefulWidget {
-  const AddPlan({super.key});
+class AddPlanScreen extends StatefulWidget {
+  const AddPlanScreen({
+    super.key,
+  });
 
   @override
-  State<AddPlan> createState() => _AddPlanState();
+  State<AddPlanScreen> createState() => _AddPlanScreenState();
 }
 
-class _AddPlanState extends State<AddPlan> {
+class _AddPlanScreenState extends State<AddPlanScreen> {
   var stringStartTime = '${DateTime.now().hour}:${DateTime.now().minute}';
   var stringEndTime = '${DateTime.now().hour}:${DateTime.now().minute}';
   var endTime = DateTime.now();
   var startTime = DateTime.now();
+  Map<String, String> planList = {};
 
   File? image;
   final planDetailTitleController = TextEditingController();
@@ -34,7 +37,7 @@ class _AddPlanState extends State<AddPlan> {
       });
       print(imagePath);
     } on Exception {
-      print('something went wrong with picking images');
+      print('something went wrong with picking image');
     }
   }
 
@@ -70,6 +73,7 @@ class _AddPlanState extends State<AddPlan> {
                   }
                   // 最終的にこの値がstartTimeになる
                   stringStartTime = '${startTime.hour}:$stringStartTimeMinute';
+                  print(stringStartTime);
                 } else {
                   endTime = value;
                   stringEndTimeMinute = endTime.minute.toString();
@@ -87,7 +91,6 @@ class _AddPlanState extends State<AddPlan> {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -251,7 +254,18 @@ class _AddPlanState extends State<AddPlan> {
                   height: 70,
                   child: ElevatedButton(
                     // TODO add feature of add to the list button
-                    onPressed: () {},
+                    onPressed: () {
+                      if (planDetailTitleController.text.isEmpty ||
+                          image == null) {
+                        return;
+                      }
+                      planList = {
+                        'title': planDetailTitleController.text,
+                        'startTime': stringStartTime,
+                        'endTime': stringEndTime,
+                      };
+                      Navigator.of(context).pop(planList);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff4B4B5A),
                       shape: RoundedRectangleBorder(
