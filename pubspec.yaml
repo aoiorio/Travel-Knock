@@ -73,6 +73,7 @@ flutter:
     - assets/images/Travel-Knock-Logo.png
     - assets/images/google-logo.png
     - assets/images/post-shape.png
+    - assets/images/nothing-plan.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

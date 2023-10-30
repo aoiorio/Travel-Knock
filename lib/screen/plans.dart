@@ -8,12 +8,34 @@ import 'login.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/custom_carousel_slider.dart';
 
-class PlansScreen extends StatelessWidget {
+class PlansScreen extends StatefulWidget {
   const PlansScreen({super.key});
 
   @override
+  State<PlansScreen> createState() => _PlansScreenState();
+}
+
+class _PlansScreenState extends State<PlansScreen> {
+  final supabase = Supabase.instance.client;
+  var posts;
+
+  void getPosts() async {
+    posts = await supabase.from('posts').select('*');
+    setState(() {
+      posts = posts;
+    });
+    print(posts);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getPosts();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final supabase = Supabase.instance.client;
     void signOut() async {
       await supabase.auth.signOut();
 
@@ -69,6 +91,7 @@ class PlansScreen extends StatelessWidget {
             'https://i.pinimg.com/564x/fd/04/26/fd042617f53ca721e449d651d84474b9.jpg',
       },
     ];
+
     var size = MediaQuery.of(context).size;
 
     /*24 is for notification bar on Android*/
@@ -204,132 +227,136 @@ class PlansScreen extends StatelessWidget {
                 },
               ),
             ),
-            // todo plans
-            ListView.builder(
-              shrinkWrap: true, //追加
-              physics: const NeverScrollableScrollPhysics(), //追加ƒ
-              itemCount: testPosts.length,
-              itemBuilder: (context, index) {
-                return Stack(
-                  alignment: Alignment.topRight,
-                  children: [
-                    Card(
-                      margin: const EdgeInsets.only(
-                          bottom: 70, top: 20, right: 50, left: 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(70),
-                      ),
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      child: Image.network(
-                        testPosts[index]['imageUrl']!,
-                        width: 400,
-                        height: 200,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Container(
-                      width: 100,
-                      height: 50,
-                      margin: const EdgeInsets.only(
-                        right: 30,
-                      ),
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: const Color(0xffF2F2F2),
-                        ),
-                        position: DecorationPosition.background,
-                        child: Center(
-                          child: Row(
-                            children: [
-                              IconButton(
-                                // TODO implement like features
-                                onPressed: () {
-                                  print('Liked!!');
-                                },
-                                splashColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
-                                icon: const Icon(
-                                  Icons.local_fire_department,
-                                  size: 30,
-                                ),
-                              ),
-                              const Text(
-                                '103',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
+            posts == null
+                ? const SizedBox()
+                :
+                // todo plans
+                ListView.builder(
+                    shrinkWrap: true, //追加
+                    physics: const NeverScrollableScrollPhysics(), //追加ƒ
+                    itemCount: posts!.length,
+                    itemBuilder: (context, index) {
+                      return Stack(
+                        alignment: Alignment.topRight,
+                        children: [
+                          Card(
+                            margin: const EdgeInsets.only(
+                                bottom: 70, top: 20, right: 50, left: 50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(70),
+                            ),
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            child: Image.network(
+                              posts[index]['thumbnail']!,
+                              width: 400,
+                              height: 200,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 130),
-                      child: Center(
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset('assets/images/post-shape.png'),
-                            Wrap(
-                              spacing: 40,
-                              alignment: WrapAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                          Container(
+                            width: 100,
+                            height: 50,
+                            margin: const EdgeInsets.only(
+                              right: 30,
+                            ),
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: const Color(0xffF2F2F2),
+                              ),
+                              position: DecorationPosition.background,
+                              child: Center(
+                                child: Row(
                                   children: [
-                                    Flexible(
-                                      child: SizedBox(
-                                        width: 120,
-                                        height: 50,
-                                        child: Text(
-                                          testPosts[index]['title']!,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
+                                    IconButton(
+                                      // TODO implement like features
+                                      onPressed: () {
+                                        print('Liked!!');
+                                      },
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      icon: const Icon(
+                                        Icons.local_fire_department,
+                                        size: 30,
                                       ),
                                     ),
-                                    Container(
-                                      margin: const EdgeInsets.only(
-                                          top: 5, left: 10),
-                                      width: 120,
-                                      height: 45,
-                                      child: ElevatedButton(
-                                        onPressed: () {},
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.black,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(30),
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          'Knock plan',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
+                                    const Text(
+                                      '103',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 130),
+                            child: Center(
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Image.asset('assets/images/post-shape.png'),
+                                  Wrap(
+                                    spacing: 40,
+                                    alignment: WrapAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Flexible(
+                                            child: SizedBox(
+                                              width: 120,
+                                              height: 50, // ここをいじったらtextが切り取られてしまうが、一行だけのtextはいい感じになる
+                                              child: Text(
+                                                posts[index]['title']!,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                                top: 5, left: 10),
+                                            width: 120,
+                                            height: 45,
+                                            child: ElevatedButton(
+                                              onPressed: () {},
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.black,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                ),
+                                              ),
+                                              child: const Text(
+                                                'Knock plan',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
           ],
         ),
       ),

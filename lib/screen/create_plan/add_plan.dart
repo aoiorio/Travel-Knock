@@ -1,11 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/custom_text_field.dart';
-import 'package:supabase/supabase.dart';
 
 class AddPlanScreen extends StatefulWidget {
   const AddPlanScreen({
@@ -56,10 +57,15 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
       setState(() {
         this.image = imagePath;
       });
-      print(imagePath);
+      // print(imagePath);
     } on Exception {
       print('something went wrong with picking image');
     }
+  }
+
+  String _generateRandomString() {
+    final random = Random.secure();
+    return base64Url.encode(List<int>.generate(16, (_) => random.nextInt(256)));
   }
 
   void savePhotoToSupabase(Function onUpload) async {
@@ -72,7 +78,10 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     final imageExtension = image!.path.split('.').last.toLowerCase();
     final imageBytes = await image!.readAsBytes();
     final userId = supabase.auth.currentUser!.id;
-    final pathName = planDetailTitleController.text;
+    String pathName = _generateRandomString();
+    // final pathName = planDetailTitleController.text;
+
+    // TODO imageの名前が被らないようにしたい
     final imagePath = '/$userId/$pathName';
     await supabase.storage.from('posts').uploadBinary(
           imagePath,
@@ -125,7 +134,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                   }
                   // 最終的にこの値がstartTimeになる
                   stringStartTime = '${startTime.hour}:$stringStartTimeMinute';
-                  print(stringStartTime);
+                  // print(stringStartTime);
                 } else {
                   endTime = value;
                   stringEndTimeMinute = endTime.minute.toString();
