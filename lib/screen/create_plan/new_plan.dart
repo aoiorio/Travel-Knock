@@ -165,6 +165,7 @@ class NewPlanScreen extends StatelessWidget {
                             return DevelopPlanScreen(
                               title: planTitleController.text,
                               dayNumber: periodController.text,
+                              placeName: placeNameController.text,
                             );
                           },
                         ),
