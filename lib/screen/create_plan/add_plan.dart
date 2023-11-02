@@ -315,7 +315,9 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                   height: 70,
                   child: isLoading
                       ? const Center(
-                          child: CircularProgressIndicator(),
+                          child: CircularProgressIndicator(
+                            color: Color(0xff4B4B5A),
+                          ),
                         )
                       : ElevatedButton(
                           // DONE add feature of add to the list button
