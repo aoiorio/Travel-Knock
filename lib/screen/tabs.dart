@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:travelknock/screen/plans.dart';
+import 'package:travelknock/screen/plans/plans.dart';
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});

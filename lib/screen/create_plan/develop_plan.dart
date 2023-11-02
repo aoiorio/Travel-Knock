@@ -7,6 +7,7 @@ import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:travelknock/components/plan_detail_card.dart';
 import 'package:travelknock/screen/create_plan/add_plan.dart';
 import 'package:travelknock/screen/tabs.dart';
 
@@ -62,6 +63,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
     }
     setState(() {
       isLoading = true;
+      print(isLoading);
     });
     final imageExtension = image!.path.split('.').last.toLowerCase();
     final imageBytes = await image!.readAsBytes();
@@ -79,9 +81,6 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
             contentType: 'image/$imageExtension',
           ),
         );
-    setState(() {
-      isLoading = false;
-    });
     String imageUrl = supabase.storage.from('posts').getPublicUrl(imagePath);
     setState(() {
       imageUrl = Uri.parse(imageUrl).replace(
@@ -98,9 +97,20 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
         'plans': planList,
         'place_name': widget.placeName,
       });
+      print('プランリスト：$planList');
     } catch (e) {
       print(e);
     }
+    setState(() {
+      isLoading = false;
+    });
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) {
+          return const TabsScreen();
+        },
+      ),
+    );
   }
 
   @override
@@ -121,7 +131,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
               // todo Post Button
               child: ElevatedButton(
                 onPressed: () {
-                  // print('Pressed Post Button!');
+                  // After pressed post button
                   showDialog(
                     context: context,
                     builder: (context) {
@@ -220,15 +230,27 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                           top: 30, left: 0), // left: 140
                                       width: 130,
                                       height: 60,
-                                      // decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: const Color(0xff4B4B5A)),
                                       child: isLoading
-                                          ? const CircularProgressIndicator()
+                                          ? const Center(
+                                              child: CircularProgressIndicator(
+                                                color: Color(0xff4B4B5A),
+                                              ),
+                                            )
                                           : ElevatedButton(
-                                              // TODO implement features of post, connect to database
+                                              // DONE implement features of post, connect to database
                                               onPressed: () async {
-                                                if (image == null ||
-                                                    planList.contains([]) ||
-                                                    planList.isEmpty) {
+                                                setState(() {
+                                                  // planListの中の要素が一つでも空だったらtrueを返す
+                                                  for (var plan in planList) {
+                                                    if (plan.isEmpty) {
+                                                      isEmpty = true;
+                                                    } else {
+                                                      isEmpty = false;
+                                                    }
+                                                  }
+                                                });
+                                                // 1 Dayだけを選択した人もinclude
+                                                if (image == null || isEmpty) {
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(
                                                     const SnackBar(
@@ -238,18 +260,10 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                                           Color(0xff4B4B5A),
                                                     ),
                                                   );
+                                                  Navigator.of(context).pop();
                                                   return;
                                                 }
-                                                // print(planList);
                                                 saveDataToSupabase();
-                                                Navigator.of(context)
-                                                    .pushReplacement(
-                                                  MaterialPageRoute(
-                                                    builder: (context) {
-                                                      return const TabsScreen();
-                                                    },
-                                                  ),
-                                                );
                                               },
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor:
@@ -312,6 +326,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
             // print(newPlanList);
             if (newPlanMap != null) {
               setState(() {
+                print(newPlanMap);
                 // planListにAddPlanScreenから渡されたMapを追加
                 // List.filledでは全ての要素を埋めて、一つになってしまう（値を追加したらインデックスを指定しても全てのリストに追加されてしまう）ので、List.generateで対応
                 planList[_selectedDayIndex].add(newPlanMap);
@@ -454,137 +469,8 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                       ],
                     ),
                   )
-                : ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.only(top: 50),
-                    itemCount: planList[_selectedDayIndex].length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 80),
-                        child: Center(
-                          child: Stack(
-                            alignment: Alignment.bottomCenter, // topRightでもいい
-                            clipBehavior: Clip.none,
-                            // fit: StackFit.loose,
-                            children: [
-                              Container(
-                                width: 290,
-                                height: 210,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                clipBehavior: Clip.antiAlias,
-                                child: Card(
-                                  child: Image.network(
-                                    planList[_selectedDayIndex][index]
-                                        ['imageUrl']!,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              // TODO if users inputted many letters of plan's title, the letters will be new line.
-                              Positioned(
-                                top: 150,
-                                child: Container(
-                                  width: 310,
-                                  height: 90,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xffEEEEEE),
-                                    borderRadius: BorderRadius.circular(30),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Colors.black26,
-                                        blurRadius: 20.0,
-                                        offset: Offset(10, 5),
-                                      )
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 20, left: 20, bottom: 7),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              planList[_selectedDayIndex][index]
-                                                  ['startTime']!,
-                                              style: const TextStyle(
-                                                color: Color(0xff797979),
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 5),
-                                            const Text(
-                                              '-',
-                                              style: TextStyle(
-                                                color: Color(0xff797979),
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 5),
-                                            Text(
-                                              planList[_selectedDayIndex][index]
-                                                  ['endTime']!,
-                                              style: const TextStyle(
-                                                color: Color(0xff797979),
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 20),
-                                        child: Text(
-                                          planList[_selectedDayIndex][index]
-                                              ['title']!,
-                                          style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                top: -10,
-                                right: -7,
-                                child: Container(
-                                  width: 50,
-                                  height: 50,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color(0xff4B4B5A),
-                                  ),
-                                  child: IconButton(
-                                    onPressed: () {
-                                      // print('Pressed delete button');
-                                      setState(() {
-                                        planList[_selectedDayIndex]
-                                            .removeAt(index);
-                                      });
-                                    },
-                                    icon: const Icon(
-                                      Icons.clear,
-                                      size: 30,
-                                    ),
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                : PlanDetailsCard(
+                    planList: planList[_selectedDayIndex], isDevelop: true),
             const SizedBox(height: 120),
           ],
         ),

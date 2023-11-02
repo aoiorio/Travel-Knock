@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:travelknock/screen/create_plan/new_plan.dart';
 
 import 'dart:math';
 import 'dart:ui';
-import 'login.dart';
+import '../login.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/custom_carousel_slider.dart';
+import 'package:travelknock/screen/create_plan/new_plan.dart';
+import 'package:travelknock/screen/plans/plan_details.dart';
 
 class PlansScreen extends StatefulWidget {
   const PlansScreen({super.key});
@@ -17,14 +18,15 @@ class PlansScreen extends StatefulWidget {
 
 class _PlansScreenState extends State<PlansScreen> {
   final supabase = Supabase.instance.client;
-  var posts;
+  List<List<Map<String, String>>> plans = [];
+  List posts = [];
 
   void getPosts() async {
     posts = await supabase.from('posts').select('*');
     setState(() {
       posts = posts;
     });
-    print(posts);
+    print('ポスト：${posts[0]}');
   }
 
   @override
@@ -67,29 +69,6 @@ class _PlansScreenState extends State<PlansScreen> {
         'imageUrl':
             'https://i.pinimg.com/564x/2a/19/ee/2a19ee26bd2f285c5e5f31da4840db11.jpg',
       }
-    ];
-
-    final testPosts = [
-      {
-        'title': 'Asakusa week',
-        'imageUrl':
-            'https://i.pinimg.com/736x/a3/8a/03/a38a03a66860fe023d31c5f0ab2d1ca2.jpg',
-      },
-      {
-        'title': 'Beautiful Hokkaido',
-        'imageUrl':
-            'https://i.pinimg.com/564x/1c/7e/0a/1c7e0a7f80f69b46b4be6fac697eb094.jpg',
-      },
-      {
-        'title': 'Resort Okinawa',
-        'imageUrl':
-            'https://i.pinimg.com/564x/fd/04/26/fd042617f53ca721e449d651d84474b9.jpg',
-      },
-      {
-        'title': 'Resort in 3 daysaaawahhhjhjhjh',
-        'imageUrl':
-            'https://i.pinimg.com/564x/fd/04/26/fd042617f53ca721e449d651d84474b9.jpg',
-      },
     ];
 
     var size = MediaQuery.of(context).size;
@@ -234,126 +213,144 @@ class _PlansScreenState extends State<PlansScreen> {
                 ListView.builder(
                     shrinkWrap: true, //追加
                     physics: const NeverScrollableScrollPhysics(), //追加ƒ
-                    itemCount: posts!.length,
+                    itemCount: posts.length,
                     itemBuilder: (context, index) {
-                      return Stack(
-                        alignment: Alignment.topRight,
-                        children: [
-                          Card(
-                            margin: const EdgeInsets.only(
-                                bottom: 70, top: 20, right: 50, left: 50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(70),
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return PlanDetailsScreen(
+                                  title: posts[index]['title'],
+                                  thumbnail: posts[index]['thumbnail'],
+                                  planDetailsList: posts[index]['plans'],
+                                );
+                              },
                             ),
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            child: Image.network(
-                              posts[index]['thumbnail']!,
-                              width: 400,
-                              height: 200,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Container(
-                            width: 100,
-                            height: 50,
-                            margin: const EdgeInsets.only(
-                              right: 30,
-                            ),
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                color: const Color(0xffF2F2F2),
+                          );
+                        },
+                        child: Stack(
+                          alignment: Alignment.topRight,
+                          children: [
+                            Card(
+                              margin: const EdgeInsets.only(
+                                  bottom: 70, top: 20, right: 50, left: 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(70),
                               ),
-                              position: DecorationPosition.background,
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              child: Image.network(
+                                posts[index]['thumbnail']!,
+                                width: 400,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Container(
+                              width: 100,
+                              height: 50,
+                              margin: const EdgeInsets.only(
+                                right: 30,
+                              ),
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: const Color(0xffF2F2F2),
+                                ),
+                                position: DecorationPosition.background,
+                                child: Center(
+                                  child: Row(
+                                    children: [
+                                      IconButton(
+                                        // TODO implement like features
+                                        onPressed: () {
+                                          print('Liked!!');
+                                        },
+                                        splashColor: Colors.transparent,
+                                        highlightColor: Colors.transparent,
+                                        icon: const Icon(
+                                          Icons.local_fire_department,
+                                          size: 30,
+                                        ),
+                                      ),
+                                      const Text(
+                                        '103',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 130),
                               child: Center(
-                                child: Row(
+                                child: Stack(
+                                  alignment: Alignment.center,
                                   children: [
-                                    IconButton(
-                                      // TODO implement like features
-                                      onPressed: () {
-                                        print('Liked!!');
-                                      },
-                                      splashColor: Colors.transparent,
-                                      highlightColor: Colors.transparent,
-                                      icon: const Icon(
-                                        Icons.local_fire_department,
-                                        size: 30,
-                                      ),
-                                    ),
-                                    const Text(
-                                      '103',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                    Image.asset('assets/images/post-shape.png'),
+                                    Wrap(
+                                      spacing: 40,
+                                      alignment: WrapAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Flexible(
+                                              child: SizedBox(
+                                                width: 120,
+                                                height:
+                                                    50, // ここをいじったらtextが切り取られてしまうが、一行だけのtextはいい感じになる
+                                                child: Text(
+                                                  posts[index]['title']!,
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              margin: const EdgeInsets.only(
+                                                  top: 5, left: 10),
+                                              width: 120,
+                                              height: 45,
+                                              child: ElevatedButton(
+                                                onPressed: () {},
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.black,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            30),
+                                                  ),
+                                                ),
+                                                child: const Text(
+                                                  'Knock plan',
+                                                  style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 130),
-                            child: Center(
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Image.asset('assets/images/post-shape.png'),
-                                  Wrap(
-                                    spacing: 40,
-                                    alignment: WrapAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Flexible(
-                                            child: SizedBox(
-                                              width: 120,
-                                              height: 50, // ここをいじったらtextが切り取られてしまうが、一行だけのtextはいい感じになる
-                                              child: Text(
-                                                posts[index]['title']!,
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: const EdgeInsets.only(
-                                                top: 5, left: 10),
-                                            width: 120,
-                                            height: 45,
-                                            child: ElevatedButton(
-                                              onPressed: () {},
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.black,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(30),
-                                                ),
-                                              ),
-                                              child: const Text(
-                                                'Knock plan',
-                                                style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       );
                     },
                   ),
