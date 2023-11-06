@@ -1,4 +1,7 @@
+import 'package:animations/animations.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
 import 'dart:math';
 import 'dart:ui';
@@ -20,18 +23,48 @@ class _PlansScreenState extends State<PlansScreen> {
   final supabase = Supabase.instance.client;
   List<List<Map<String, String>>> plans = [];
   List posts = [];
+  String _userAvatar = '';
+  String _userName = '';
 
   void getPosts() async {
-    posts = await supabase.from('posts').select('*');
+    posts =
+        await supabase.from('posts').select('*').order('id', ascending: false);
     setState(() {
       posts = posts;
     });
-    print('ポスト：${posts[0]}');
+  }
+
+  void signOut() async {
+    await supabase.auth.signOut();
+
+    if (context.mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    }
+  }
+
+  Future getUserInfo(int index) async {
+    final userAvatar = await supabase
+        .from('profiles')
+        .select('avatar_url')
+        .eq('id', posts[index]['user_id'])
+        .single();
+    setState(() {
+      _userAvatar = userAvatar['avatar_url'];
+    });
+    final userName = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', posts[index]['user_id'])
+        .single();
+    setState(() {
+      _userName = userName['username'];
+    });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getPosts();
   }
@@ -90,14 +123,25 @@ class _PlansScreenState extends State<PlansScreen> {
             width: 90,
             height: 90,
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
+              onPressed: () async {
+                if (supabase.auth.currentUser == null) {
+                  await Navigator.of(context).pushReplacement(MaterialPageRoute(
                     builder: (context) {
-                      return const NewPlanScreen();
+                      return const LoginScreen();
                     },
-                  ),
-                );
+                  ));
+                }
+                try {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const NewPlanScreen();
+                      },
+                    ),
+                  );
+                } on Exception {
+                  print('anonymous!');
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xff4B4B5A),
@@ -143,7 +187,7 @@ class _PlansScreenState extends State<PlansScreen> {
             // CarouselSlider
             const CustomCarouselSlider(),
             const SizedBox(
-              height: 30,
+              height: 5,
             ),
             const Padding(
               padding: EdgeInsets.only(left: 25),
@@ -171,7 +215,6 @@ class _PlansScreenState extends State<PlansScreen> {
                   childAspectRatio: (itemWidth / itemHeight),
                 ),
                 itemBuilder: (context, index) {
-                  // TODO add InkWell to transition to detail_page
                   return Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -206,151 +249,178 @@ class _PlansScreenState extends State<PlansScreen> {
                 },
               ),
             ),
-            posts == null
+            posts.isEmpty
                 ? const SizedBox()
                 :
                 // todo plans
+                // DONE add GestureDetector to transition to detail_page
                 ListView.builder(
                     shrinkWrap: true, //追加
                     physics: const NeverScrollableScrollPhysics(), //追加ƒ
                     itemCount: posts.length,
                     itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return PlanDetailsScreen(
-                                  title: posts[index]['title'],
-                                  thumbnail: posts[index]['thumbnail'],
-                                  planDetailsList: posts[index]['plans'],
-                                );
-                              },
-                            ),
-                          );
-                        },
-                        child: Stack(
-                          alignment: Alignment.topRight,
-                          children: [
-                            Card(
-                              margin: const EdgeInsets.only(
-                                  bottom: 70, top: 20, right: 50, left: 50),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(70),
-                              ),
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              child: Image.network(
-                                posts[index]['thumbnail']!,
-                                width: 400,
-                                height: 200,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Container(
-                              width: 100,
-                              height: 50,
-                              margin: const EdgeInsets.only(
-                                right: 30,
-                              ),
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: const Color(0xffF2F2F2),
-                                ),
-                                position: DecorationPosition.background,
-                                child: Center(
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                        // TODO implement like features
-                                        onPressed: () {
-                                          print('Liked!!');
-                                        },
-                                        splashColor: Colors.transparent,
-                                        highlightColor: Colors.transparent,
-                                        icon: const Icon(
-                                          Icons.local_fire_department,
-                                          size: 30,
-                                        ),
-                                      ),
-                                      const Text(
-                                        '103',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
+                      return OpenContainer(
+                        transitionType: ContainerTransitionType.fadeThrough,
+                        closedColor: Colors.transparent,
+                        openColor: Colors.transparent,
+                        openElevation: 0,
+                        closedElevation: 0,
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        transitionDuration: const Duration(milliseconds: 400),
+                        middleColor: Colors.transparent,
+                        closedBuilder:
+                            (BuildContext _, VoidCallback openContainer) {
+                          return GestureDetector(
+                            onTap: openContainer,
+                            child: Stack(
+                              alignment: Alignment.topRight,
+                              children: [
+                                Card(
+                                  margin: const EdgeInsets.only(
+                                      bottom: 70, top: 20, right: 50, left: 50),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(70),
+                                  ),
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  child: CachedNetworkImage(
+                                    key: UniqueKey(),
+                                    imageUrl: posts[index]['thumbnail'],
+                                    width: 400,
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) =>
+                                        Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[200]!,
+                                      child: const SizedBox(),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 130),
-                              child: Center(
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Image.asset('assets/images/post-shape.png'),
-                                    Wrap(
-                                      spacing: 40,
-                                      alignment: WrapAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Flexible(
-                                              child: SizedBox(
-                                                width: 120,
-                                                height:
-                                                    50, // ここをいじったらtextが切り取られてしまうが、一行だけのtextはいい感じになる
-                                                child: Text(
-                                                  posts[index]['title']!,
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              ),
+                                Container(
+                                  width: 100,
+                                  height: 50,
+                                  margin: const EdgeInsets.only(
+                                    right: 30,
+                                  ),
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      color: const Color(0xffF2F2F2),
+                                    ),
+                                    position: DecorationPosition.background,
+                                    child: Center(
+                                      child: Row(
+                                        children: [
+                                          IconButton(
+                                            // TODO implement like features
+                                            onPressed: () {
+                                              print('Liked!!');
+                                            },
+                                            splashColor: Colors.transparent,
+                                            highlightColor: Colors.transparent,
+                                            icon: const Icon(
+                                              Icons.local_fire_department,
+                                              size: 30,
                                             ),
-                                            Container(
-                                              margin: const EdgeInsets.only(
-                                                  top: 5, left: 10),
-                                              width: 120,
-                                              height: 45,
-                                              child: ElevatedButton(
-                                                onPressed: () {},
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Colors.black,
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            30),
+                                          ),
+                                          const Text(
+                                            '43',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 130),
+                                  child: Center(
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Image.asset(
+                                            'assets/images/post-shape.png'),
+                                        Wrap(
+                                          spacing: 40,
+                                          alignment: WrapAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Flexible(
+                                                  child: SizedBox(
+                                                    width: 120,
+                                                    height:
+                                                        50, // ここをいじったらtextが切り取られてしまうが、一行だけのtextはいい感じになる
+                                                    child: Text(
+                                                      posts[index]['title']!,
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
-                                                child: const Text(
-                                                  'Knock plan',
-                                                  style: TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.w600,
+                                                Container(
+                                                  margin: const EdgeInsets.only(
+                                                      top: 5, left: 10),
+                                                  width: 120,
+                                                  height: 45,
+                                                  child: ElevatedButton(
+                                                    onPressed: signOut,
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      backgroundColor:
+                                                          Colors.black,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(30),
+                                                      ),
+                                                    ),
+                                                    child: const Text(
+                                                      'Knock plan',
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
+                                              ],
                                             ),
                                           ],
                                         ),
                                       ],
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
+                          );
+                        },
+                        openBuilder: (BuildContext _, VoidCallback __) {
+                          // avatarを取得し終わってから遷移する
+                          getUserInfo(index);
+                          return PlanDetailsScreen(
+                            title: posts[index]['title'],
+                            thumbnail: posts[index]['thumbnail'],
+                            planDetailsList: posts[index]['plans'],
+                            userAvatar: _userAvatar,
+                            userName: _userName,
+                            ownerId: posts[index]['user_id'],
+                          );
+                        },
                       );
                     },
                   ),

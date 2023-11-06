@@ -1,6 +1,15 @@
+import 'package:flutter/material.dart';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:travelknock/components/custom_clipper.dart';
+
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:travelknock/components/plan_detail_card.dart';
+import 'package:travelknock/screen/knock_plan.dart';
+import 'package:travelknock/screen/login.dart';
 
 class PlanDetailsScreen extends StatefulWidget {
   const PlanDetailsScreen({
@@ -8,11 +17,17 @@ class PlanDetailsScreen extends StatefulWidget {
     required this.title,
     required this.thumbnail,
     required this.planDetailsList,
+    required this.userAvatar,
+    required this.userName,
+    required this.ownerId,
   });
 
   final String title;
   final String thumbnail;
   final List planDetailsList;
+  final String userAvatar;
+  final String userName;
+  final String ownerId;
 
   @override
   State<PlanDetailsScreen> createState() => _PlanDetailsScreenState();
@@ -22,6 +37,16 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
   var _selectedDayIndex = 0;
   var _isSelected = [true, false];
   List<List<Map<String, dynamic>>> plans = [];
+  var heroTag = '';
+  final supabase = Supabase.instance.client;
+
+  void goBackToLoginScreen() {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: (context) {
+        return const LoginScreen();
+      },
+    ));
+  }
 
   @override
   void initState() {
@@ -34,11 +59,15 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
       return false;
     });
     plans = convertStringToMap(widget.planDetailsList);
+    heroTag = widget.thumbnail;
   }
 
-  List<List<Map<String, dynamic>>> convertStringToMap(List<dynamic> planDetailsList) {
+  // 受け取ったリストの中のリストのマップが文字列になっていたからマップに変える関数
+  List<List<Map<String, dynamic>>> convertStringToMap(
+      List<dynamic> planDetailsList) {
     final index = planDetailsList.length;
-    List<List<Map<String, dynamic>>> dayPlans = List.generate(index, (index) => []);
+    List<List<Map<String, dynamic>>> dayPlans =
+        List.generate(index, (index) => []);
 
     for (var i = 0; index > i; i++) {
       List dayPlanList = planDetailsList[i];
@@ -52,45 +81,167 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
     return dayPlans;
   }
 
+  void showKnockPlan() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(70),
+      ),
+      backgroundColor: Colors.white,
+      context: context,
+      builder: (BuildContext context) {
+        return KnockPlanScreen(
+          ownerAvatar: widget.userAvatar,
+          ownerName: widget.userName,
+          requestUserId: supabase.auth.currentUser!.id,
+          ownerId: widget.ownerId,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Databaseからとるのが、string型になっている
     return Scaffold(
       appBar: AppBar(
+        title: Text(widget.title),
+        centerTitle: false,
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        foregroundColor: Colors.white,
       ),
+      extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                Hero(
+                  tag: heroTag,
+                  child: Transform.scale(
+                    scale: 1.03,
+                    child: ClipPath(
+                      clipper: DetailsClipper(),
+                      child: Center(
+                        child: Container(
+                          padding: const EdgeInsets.only(top: 0, left: 0),
+                          width: double.infinity,
+                          height: 366,
+                          child: CachedNetworkImage(
+                            key: UniqueKey(),
+                            imageUrl: widget.thumbnail,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              decoration:
+                                  const BoxDecoration(color: Colors.grey),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      width: 70,
+                      height: 70,
+                      decoration: const BoxDecoration(shape: BoxShape.circle),
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      margin: const EdgeInsets.only(left: 35),
+                      child: widget.userAvatar.isEmpty
+                          ? Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[200]!,
+                              child: const ColoredBox(color: Colors.grey),
+                            )
+                          : CachedNetworkImage(
+                              imageUrl: widget.userAvatar.toString(),
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    widget.userName.isEmpty
+                        ? Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[200]!,
+                            child: Container(
+                              width: 50,
+                              height: 30,
+                              decoration:
+                                  const BoxDecoration(color: Colors.white),
+                            ),
+                          )
+                        : widget.userName.length >= 9
+                            ? SizedBox(
+                                width: 60,
+                                child: Text(
+                                  widget.userName,
+                                  style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              )
+                            : SizedBox(
+                                width: 60,
+                                child: Text(
+                                  widget.userName,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                    const SizedBox(width: 20),
+                    // Knock button
+                    Container(
+                      margin: const EdgeInsets.only(top: 5, left: 10),
+                      width: 145,
+                      height: 60,
+                      child: ElevatedButton(
+                        onPressed: supabase.auth.currentUser == null
+                            ? goBackToLoginScreen
+                            : supabase.auth.currentUser!.id == widget.ownerId
+                                ? null
+                                : showKnockPlan,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: const Text(
+                          'Knock',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 40),
             Padding(
               padding: const EdgeInsets.only(
-                  top: 140, right: 25, left: 25, bottom: 25),
+                  top: 0, right: 25, left: 35, bottom: 10),
               child: Text(
                 widget.title,
                 style: const TextStyle(
-                  fontSize: 37,
+                  fontSize: 35,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            Container(
-              width: 360,
-              height: 300,
-              decoration:
-                  BoxDecoration(borderRadius: BorderRadius.circular(20)),
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: Image.network(
-                widget.thumbnail,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(height: 20),
             // Days
             Container(
-              padding: const EdgeInsets.only(top: 40, left: 15, right: 10),
+              padding: const EdgeInsets.only(top: 40, left: 20, right: 10),
               height: 100,
               child: ListView(
                 scrollDirection: Axis.horizontal,
@@ -133,109 +284,8 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                 ],
               ),
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.only(top: 50),
-              itemCount: plans[_selectedDayIndex].length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 80),
-                  child: Center(
-                    child: Stack(
-                      alignment: Alignment.bottomCenter, // topRightでもいい
-                      clipBehavior: Clip.none,
-                      children: [
-                        Container(
-                          width: 290,
-                          height: 210,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          clipBehavior: Clip.antiAlias,
-                          child: Card(
-                            child: Image.network(
-                              plans[_selectedDayIndex][index]['imageUrl']!,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 150,
-                          child: Container(
-                            constraints: const BoxConstraints(
-                              minHeight: 90,
-                            ),
-                            width: 310,
-                            decoration: BoxDecoration(
-                              color: const Color(0xffEEEEEE),
-                              borderRadius: BorderRadius.circular(30),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  blurRadius: 20.0,
-                                  offset: Offset(10, 5),
-                                )
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 20, left: 20, bottom: 7),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        plans[_selectedDayIndex][index]['startTime']!,
-                                        style: const TextStyle(
-                                          color: Color(0xff797979),
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      const Text(
-                                        '-',
-                                        style: TextStyle(
-                                          color: Color(0xff797979),
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        plans[_selectedDayIndex][index]['endTime']!,
-                                        style: const TextStyle(
-                                          color: Color(0xff797979),
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20, bottom: 20, right: 10),
-                                    child: Text(
-                                      plans[_selectedDayIndex][index]['title']!,
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+            PlanDetailsCard(
+                planList: plans[_selectedDayIndex], isDevelop: false),
             const SizedBox(height: 120),
           ],
         ),

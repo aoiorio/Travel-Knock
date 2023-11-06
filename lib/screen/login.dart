@@ -32,16 +32,20 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _setupAuthListener() async {
-    supabase.auth.onAuthStateChange.listen((data) {
-      final event = data.event;
-      if (event == AuthChangeEvent.signedIn) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => const SettingProfileScreen(),
-          ),
-        );
-      }
-    });
+    try {
+      supabase.auth.onAuthStateChange.listen((data) {
+        final event = data.event;
+        if (event == AuthChangeEvent.signedIn) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const SettingProfileScreen(),
+            ),
+          );
+        }
+      });
+    } on Exception {
+      print('mounted');
+    }
   }
 
   /// Function to generate a random 16 character string.
@@ -51,71 +55,76 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<AuthResponse> signInWithGoogle() async {
+    try {
+      final rawNonce = _generateRandomString();
+      final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
+
+      ///
+      /// Client ID that you registered with Google Cloud.
+      /// You will have two different values for iOS and Android.
+      final clientId = Platform.isIOS
+          ? '399247997641-5occm8fenmli33df9rknak6akf5d720q.apps.googleusercontent.com'
+          : '399247997641-qbscm6uru2ik82tbhe30ison3rmimdve.apps.googleusercontent.com';
+
+      /// reverse DNS form of the client ID + `:/` is set as the redirect URL
+      final redirectUrl = '${clientId.split('.').reversed.join('.')}:/';
+
+      /// Fixed value for google login
+      const discoveryUrl =
+          'https://accounts.google.com/.well-known/openid-configuration';
+
+      const appAuth = FlutterAppAuth();
+
+      // authorize the user by opening the concent page
+      final result = await appAuth.authorize(
+        AuthorizationRequest(
+          clientId,
+          redirectUrl,
+          discoveryUrl: discoveryUrl,
+          nonce: hashedNonce,
+          scopes: [
+            'openid',
+            'email',
+          ],
+        ),
+      );
+
+      if (result == null) {
+        throw 'No result';
+      }
+
+      // Request the access and id token to google
+      final tokenResult = await appAuth.token(
+        TokenRequest(
+          clientId,
+          redirectUrl,
+          authorizationCode: result.authorizationCode,
+          discoveryUrl: discoveryUrl,
+          codeVerifier: result.codeVerifier,
+          nonce: result.nonce,
+          scopes: [
+            'openid',
+            'email',
+          ],
+        ),
+      );
+
+      final idToken = tokenResult?.idToken;
+
+      if (idToken == null) {
+        throw 'No idToken';
+      }
+
+      return supabase.auth.signInWithIdToken(
+        provider: Provider.google,
+        idToken: idToken,
+        nonce: rawNonce,
+      );
+    } on Exception {
+      print('Cancel button');
+    }
     // Just a random string
-    final rawNonce = _generateRandomString();
-    final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
-
-    ///
-    /// Client ID that you registered with Google Cloud.
-    /// You will have two different values for iOS and Android.
-    final clientId = Platform.isIOS
-        ? '399247997641-5occm8fenmli33df9rknak6akf5d720q.apps.googleusercontent.com'
-        : '399247997641-qbscm6uru2ik82tbhe30ison3rmimdve.apps.googleusercontent.com';
-
-    /// reverse DNS form of the client ID + `:/` is set as the redirect URL
-    final redirectUrl = '${clientId.split('.').reversed.join('.')}:/';
-
-    /// Fixed value for google login
-    const discoveryUrl =
-        'https://accounts.google.com/.well-known/openid-configuration';
-
-    const appAuth = FlutterAppAuth();
-
-    // authorize the user by opening the concent page
-    final result = await appAuth.authorize(
-      AuthorizationRequest(
-        clientId,
-        redirectUrl,
-        discoveryUrl: discoveryUrl,
-        nonce: hashedNonce,
-        scopes: [
-          'openid',
-          'email',
-        ],
-      ),
-    );
-
-    if (result == null) {
-      throw 'No result';
-    }
-
-    // Request the access and id token to google
-    final tokenResult = await appAuth.token(
-      TokenRequest(
-        clientId,
-        redirectUrl,
-        authorizationCode: result.authorizationCode,
-        discoveryUrl: discoveryUrl,
-        codeVerifier: result.codeVerifier,
-        nonce: result.nonce,
-        scopes: [
-          'openid',
-          'email',
-        ],
-      ),
-    );
-
-    final idToken = tokenResult?.idToken;
-
-    if (idToken == null) {
-      throw 'No idToken';
-    }
-
-    return supabase.auth.signInWithIdToken(
-      provider: Provider.google,
-      idToken: idToken,
-      nonce: rawNonce,
-    );
+    return AuthResponse();
   }
 
   @override
