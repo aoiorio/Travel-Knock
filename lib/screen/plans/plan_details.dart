@@ -84,8 +84,11 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
   void showKnockPlan() {
     showModalBottomSheet(
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(70),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(70),
+          topLeft: Radius.circular(70),
+        ),
       ),
       backgroundColor: Colors.white,
       context: context,
