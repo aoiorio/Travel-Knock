@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:travelknock/components/custom_day_text_field.dart';
 import 'package:travelknock/components/custom_text_field.dart';
 import 'package:travelknock/screen/create_plan/develop_plan.dart';
 import '../login.dart';
@@ -104,34 +105,7 @@ class NewPlanScreen extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              SizedBox(
-                width: 200,
-                child: TextField(
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'e.g. 3',
-                    suffixIcon: const Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Text(
-                        'days',
-                        style: TextStyle(fontSize: 17),
-                      ),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: const BorderSide(
-                        width: 0,
-                        style: BorderStyle.none,
-                      ),
-                    ),
-                    fillColor: const Color(0xffEEEEEE),
-                    filled: true,
-                    floatingLabelBehavior: FloatingLabelBehavior.never,
-                  ),
-                  controller: periodController,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                ),
-              ),
+              CustomDayTextField(controller: periodController, labelText: 'e.g. 3'),
               Padding(
                 padding: const EdgeInsets.only(
                   top: 60,

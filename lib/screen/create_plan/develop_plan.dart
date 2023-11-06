@@ -203,7 +203,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                             final XFile? image =
                                                 await picker.pickImage(
                                                     source:
-                                                        ImageSource.gallery);
+                                                        ImageSource.gallery, imageQuality: 0);
                                             if (image == null) {
                                               return;
                                             }

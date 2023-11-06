@@ -35,25 +35,19 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
     super.initState();
   }
 
-  void signOut() async {
-    await supabase.auth.signOut();
-
-    if (context.mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-      );
-    }
-  }
-
   Future<void> getUserInfo() async {
-    final userId = supabase.auth.currentUser!.id;
-    final data =
-        await supabase.from('profiles').select().eq('id', userId).single();
-    setState(() {
-      _nameController.text = data['username'];
-      userPlacesList = data['places'];
-      _imageUrl = data['avatar_url'];
-    });
+    try {
+      final userId = supabase.auth.currentUser!.id;
+      final data =
+          await supabase.from('profiles').select().eq('id', userId).single();
+      setState(() {
+        _nameController.text = data['username'];
+        userPlacesList = data['places'];
+        _imageUrl = data['avatar_url'];
+      });
+    } on Exception {
+      print('This user is new!');
+    }
   }
 
   void showAddPlacesScreen() {
@@ -166,7 +160,11 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomTextField(title: 'Name', labelText: 'Your name', controller: _nameController, ),
+                  CustomTextField(
+                    title: 'Name',
+                    labelText: 'Your name',
+                    controller: _nameController,
+                  ),
                   const SizedBox(
                     height: 40,
                   ),
