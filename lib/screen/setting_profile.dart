@@ -107,7 +107,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
       await Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) {
-            return const TabsScreen();
+            return const TabsScreen(initialPageIndex: 0,);
           },
         ),
       );

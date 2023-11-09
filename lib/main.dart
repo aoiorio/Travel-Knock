@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
           if (snapshot.hasData) {
             print('PlansScreen');
             // DONE replace the screen to PlansScreen
-            return const TabsScreen();
+            return const TabsScreen(initialPageIndex: 0,);
           }
           // If user was login as a guest, I want the user can see the PlansScreen. How do I implement it?
           print('LoginScreen');

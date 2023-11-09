@@ -22,6 +22,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
   var isZero = true;
 
   Future getUserInfo(int index) async {
+    if (!mounted) return;
     final userAvatar = await supabase
         .from('profiles')
         .select('avatar_url')
@@ -41,6 +42,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
   }
 
   void getCarouselPosts() async {
+    if (!mounted) return;
     setState(() {
       isLoading = true;
     });
@@ -178,7 +180,8 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                                                       ['plans'],
                                                   userAvatar: _userAvatar,
                                                   userName: _userName,
-                                                  ownerId: _posts[index % _posts.length]['user_id'],
+                                                  ownerId: _posts[index %
+                                                      _posts.length]['user_id'],
                                                 );
                                               },
                                             ));

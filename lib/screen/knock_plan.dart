@@ -79,7 +79,7 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
     setState(() {
       _isLoading = false;
     });
-    print('knock!: $title');
+    // print('knock!: $title');
     Navigator.of(context).pop();
   }
 

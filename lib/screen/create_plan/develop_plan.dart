@@ -110,7 +110,9 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) {
-          return const TabsScreen();
+          return const TabsScreen(
+            initialPageIndex: 0,
+          );
         },
       ),
     );
@@ -365,36 +367,34 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
               ),
             ),
             // TODO edit button
-            widget.isKnock
-                ? const SizedBox()
-                : Padding(
-                    padding: const EdgeInsets.only(left: 25),
-                    child: SizedBox(
-                      width: 100,
-                      height: 40,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          print('Pressed Edit Button!');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shadowColor: Colors.transparent,
-                          backgroundColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            side: const BorderSide(
-                                color: Color(0xff4B4B5A), width: 3),
-                          ),
-                        ),
-                        child: const Text(
-                          'Edit',
-                          style: TextStyle(
-                            color: Color(0xff4B4B5A),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
+            Padding(
+              padding: const EdgeInsets.only(left: 25),
+              child: SizedBox(
+                width: 100,
+                height: 40,
+                child: ElevatedButton(
+                  onPressed: () {
+                    print('Pressed Edit Button!');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shadowColor: Colors.transparent,
+                    backgroundColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      side:
+                          const BorderSide(color: Color(0xff4B4B5A), width: 3),
                     ),
                   ),
+                  child: const Text(
+                    'Edit',
+                    style: TextStyle(
+                      color: Color(0xff4B4B5A),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
             // Days
             Container(
               padding: const EdgeInsets.only(top: 40, left: 15, right: 10),
@@ -449,7 +449,6 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                     padding: const EdgeInsets.only(top: 40),
                     child: Column(
                       children: [
-                        
                         Center(
                           child: SizedBox(
                             width: 250,
