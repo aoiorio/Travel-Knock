@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 // About pub
-import 'package:flutter/cupertino.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -37,7 +36,9 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
 
   // dropButton
   List places = [];
-  var _selectedValue;
+  var _selectedPlace;
+
+  bool _isLoading = false;
 
   final _periodController = TextEditingController();
 
@@ -62,6 +63,24 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
     setState(() {
       _ownerPlaces = ownerPlaces['places'];
     });
+  }
+
+  void doKnock(String title) async {
+    setState(() {
+      _isLoading = true;
+    });
+    await supabase.from('knock').insert({
+      'request_user_id': supabase.auth.currentUser!.id,
+      'owner_id': widget.ownerId,
+      'title': title,
+      'destination': _selectedPlace,
+      'period': _periodController.text,
+    });
+    setState(() {
+      _isLoading = false;
+    });
+    print('knock!: $title');
+    Navigator.of(context).pop();
   }
 
   @override
@@ -218,10 +237,14 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton(
-                          value: _selectedValue,
+                          value: _selectedPlace,
                           items: places
-                              .map((place) => DropdownMenuItem(
-                                  value: place, child: Text(place)))
+                              .map(
+                                (place) => DropdownMenuItem(
+                                  value: place,
+                                  child: Text(place),
+                                ),
+                              )
                               .toList(),
                           hint: const Text(
                             'Choose a destination',
@@ -229,7 +252,7 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                           ),
                           onChanged: (value) {
                             setState(() {
-                              _selectedValue = value;
+                              _selectedPlace = value;
                             });
                           },
                           borderRadius: BorderRadius.circular(20),
@@ -237,9 +260,10 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                           iconEnabledColor: Colors.black,
                           menuMaxHeight: 300,
                           style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black),
+                            fontSize: 17,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                     ),
@@ -265,22 +289,37 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                     child: SizedBox(
                       height: 70,
                       width: 200,
-                      child: ElevatedButton(
-                        // TODO implement knock feature
-                        onPressed: () {
-                          print('final knock');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        child: const Text(
-                          'Knock',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
+                      child: _isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: Color(0xff4B4B5A),
+                              ),
+                            )
+                          : ElevatedButton(
+                              // TODO implement knock feature!!
+                              onPressed: () {
+                                if (_selectedPlace == null ||
+                                    _periodController.text.isEmpty) {
+                                  return;
+                                }
+                                doKnock(_periodController.text == 1
+                                    ? '${'To ' + _selectedPlace} For a Day'
+                                    : '${'To ' + _selectedPlace} For ${_periodController.text} Days');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: const Text(
+                                'Knock',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
                     ),
                   ),
                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travelknock/screen/plans/plans.dart';
+import 'package:travelknock/screen/profile.dart';
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});
@@ -13,14 +14,7 @@ class _TabsScreenState extends State<TabsScreen> {
 
   final _pages = <Widget>[
     const PlansScreen(),
-    Container(
-      padding: const EdgeInsets.all(60),
-      child: const SizedBox(
-        height: 200,
-        width: 300,
-        child: Text("Profile Page"),
-      ),
-    ),
+    const ProfileScreen()
   ];
 
   List<IconData> listOfIcons = [

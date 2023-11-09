@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/custom_day_text_field.dart';
@@ -140,6 +139,7 @@ class NewPlanScreen extends StatelessWidget {
                               title: planTitleController.text,
                               dayNumber: periodController.text,
                               placeName: placeNameController.text,
+                              isKnock: false,
                             );
                           },
                         ),

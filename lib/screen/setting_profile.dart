@@ -4,7 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/avatar.dart';
 import 'package:travelknock/components/custom_text_field.dart';
 import 'package:travelknock/screen/add_places.dart';
-import 'package:travelknock/screen/login.dart';
 import 'package:travelknock/screen/tabs.dart';
 
 class SettingProfileScreen extends StatefulWidget {

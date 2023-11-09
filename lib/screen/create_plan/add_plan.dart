@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
+
+// about dart
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+// about files
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/custom_text_field.dart';
@@ -81,7 +84,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     String pathName = _generateRandomString();
     // final pathName = planDetailTitleController.text;
 
-    // TODO imageの名前が被らないようにしたい
+    // DONE imageの名前が被らないようにしたい
     final imagePath = '/$userId/$pathName';
     await supabase.storage.from('posts').uploadBinary(
           imagePath,

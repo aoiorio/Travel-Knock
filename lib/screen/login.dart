@@ -32,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _setupAuthListener() async {
+    if (!mounted) return;
     try {
       supabase.auth.onAuthStateChange.listen((data) {
         final event = data.event;

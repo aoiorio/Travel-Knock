@@ -480,6 +480,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.1"
+  pedantic_mono:
+    dependency: "direct dev"
+    description:
+      name: pedantic_mono
+      sha256: "1637a362bbc2eee00ee9314509463c0ec03e6495109583491a5f848448e6d12d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.23.0"
   platform:
     dependency: transitive
     description:

@@ -27,6 +27,7 @@ class _PlansScreenState extends State<PlansScreen> {
   String _userName = '';
 
   void getPosts() async {
+    if (!mounted) return;
     posts =
         await supabase.from('posts').select('*').order('id', ascending: false);
     setState(() {
@@ -35,6 +36,7 @@ class _PlansScreenState extends State<PlansScreen> {
   }
 
   void signOut() async {
+    if (!mounted) return;
     await supabase.auth.signOut();
 
     if (context.mounted) {
@@ -45,6 +47,7 @@ class _PlansScreenState extends State<PlansScreen> {
   }
 
   Future getUserInfo(int index) async {
+    if (!mounted) return;
     final userAvatar = await supabase
         .from('profiles')
         .select('avatar_url')
@@ -115,23 +118,31 @@ class _PlansScreenState extends State<PlansScreen> {
         // 回転しちゃうぞ
         angle: -1 * pi / 180,
         child: Container(
-          padding: const EdgeInsets.only(
-            left: 300,
-            // top: 60,
-          ),
+          // padding: EdgeInsets.only(
+          //   left: MediaQuery.of(context).size.width / 2, // 300
+          //   // top: 60,
+          // ),
+          margin: const EdgeInsets.only(right: 0),
           child: SizedBox(
             width: 90,
             height: 90,
             child: ElevatedButton(
               onPressed: () async {
-                if (supabase.auth.currentUser == null) {
-                  await Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) {
-                      return const LoginScreen();
-                    },
-                  ));
+                if (!mounted) return;
+                try {
+                  if (supabase.auth.currentUser == null) {
+                    await Navigator.of(context)
+                        .pushReplacement(MaterialPageRoute(
+                      builder: (context) {
+                        return const LoginScreen();
+                      },
+                    ));
+                  }
+                } on Exception {
+                  print('anonymous');
                 }
                 try {
+                  if (!mounted) return;
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
@@ -162,7 +173,11 @@ class _PlansScreenState extends State<PlansScreen> {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
+      floatingActionButtonLocation: CustomizeFloatingLocation(
+          FloatingActionButtonLocation.miniEndTop,
+          size.width / 15,
+          0), // FloatingActionButtonLocation.miniEndTop 20
+      floatingActionButtonAnimator: AnimationNoScaling(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,7 +265,7 @@ class _PlansScreenState extends State<PlansScreen> {
               ),
             ),
             posts.isEmpty
-                ? const SizedBox()
+                ? const Center(child: Text('No plans yet!!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),)
                 :
                 // todo plans
                 // DONE add GestureDetector to transition to detail_page
@@ -428,5 +443,40 @@ class _PlansScreenState extends State<PlansScreen> {
         ),
       ),
     );
+  }
+}
+
+// FABのLocationを自分で設定する
+class CustomizeFloatingLocation extends FloatingActionButtonLocation {
+  FloatingActionButtonLocation location;
+  double offsetX;
+  double offsetY;
+  CustomizeFloatingLocation(this.location, this.offsetX, this.offsetY);
+  @override
+  Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {
+    Offset offset = location.getOffset(scaffoldGeometry);
+    return Offset(offset.dx + offsetX, offset.dy + offsetY);
+  }
+}
+
+// FABのアニメーションを無に帰す
+class AnimationNoScaling extends FloatingActionButtonAnimator {
+  double? _x;
+  double? _y;
+  @override
+  Offset getOffset({Offset? begin, Offset? end, double? progress}) {
+    _x = begin!.dx + (end!.dx - begin.dx) * progress!;
+    _y = begin.dy + (end.dy - begin.dy) * progress;
+    return Offset(_x!, _y!);
+  }
+
+  @override
+  Animation<double> getRotationAnimation({Animation<double>? parent}) {
+    return Tween<double>(begin: 1.0, end: 1.0).animate(parent!);
+  }
+
+  @override
+  Animation<double> getScaleAnimation({Animation<double>? parent}) {
+    return Tween<double>(begin: 1.0, end: 1.0).animate(parent!);
   }
 }
