@@ -265,7 +265,7 @@ class _PlansScreenState extends State<PlansScreen> {
               ),
             ),
             posts.isEmpty
-                ? const Center(child: Text('No plans yet!!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),)
+                ? Center(child: Container(margin: const EdgeInsets.all(100), child: Text('No plans yet!!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),)
                 :
                 // todo plans
                 // DONE add GestureDetector to transition to detail_page

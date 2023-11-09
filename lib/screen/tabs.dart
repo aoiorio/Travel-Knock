@@ -3,7 +3,9 @@ import 'package:travelknock/screen/plans/plans.dart';
 import 'package:travelknock/screen/profile.dart';
 
 class TabsScreen extends StatefulWidget {
-  const TabsScreen({super.key});
+  const TabsScreen({super.key, required this.initialPageIndex});
+
+  final int initialPageIndex;
 
   @override
   State<TabsScreen> createState() => _TabsScreenState();
@@ -14,7 +16,7 @@ class _TabsScreenState extends State<TabsScreen> {
 
   final _pages = <Widget>[
     const PlansScreen(),
-    const ProfileScreen()
+    const ProfileScreen(),
   ];
 
   List<IconData> listOfIcons = [
@@ -26,6 +28,12 @@ class _TabsScreenState extends State<TabsScreen> {
     Icons.door_back_door_outlined,
     Icons.cloud_outlined
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _currentPageIndex = widget.initialPageIndex;
+  }
 
   @override
   Widget build(BuildContext context) {

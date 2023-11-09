@@ -255,7 +255,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) {
-                      return const TabsScreen();
+                      return const TabsScreen(initialPageIndex: 0,);
                     },
                   ),
                 );

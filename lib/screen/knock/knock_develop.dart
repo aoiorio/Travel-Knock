@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/plan_detail_card.dart';
 import 'package:travelknock/screen/create_plan/add_plan.dart';
+import 'package:travelknock/screen/profile.dart';
 import 'package:travelknock/screen/tabs.dart';
 
 class KnockDevelopScreen extends StatefulWidget {
@@ -64,7 +65,6 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
     return base64Url.encode(List<int>.generate(16, (_) => random.nextInt(256)));
   }
 
-// saveDataToSupabase(String databaseName)と定義して、Knockにも対応する
   void saveDataToSupabase() async {
     if (image == null) {
       return;
@@ -79,10 +79,8 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
     final imageBytes = await image!.readAsBytes();
     final userId = supabase.auth.currentUser!.id;
     String pathName = _generateRandomString();
-    // final pathName = planDetailTitleController.text;
-
-    // DONE imageの名前が被らないようにしたい
     final imagePath = '/$userId/$pathName';
+
     await supabase.storage.from('posts').uploadBinary(
           imagePath,
           imageBytes,
@@ -111,7 +109,7 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) {
-          return const TabsScreen();
+          return const TabsScreen(initialPageIndex: 1,);
         },
       ),
     );
@@ -378,6 +376,7 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                     ),
                   ),
                 ),
+                // it's the image of user
                 // Container(
                 //   width: 70,
                 //   height: 70,
@@ -419,9 +418,6 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                         }
                         _selectedDayIndex = index;
                       });
-                      // DONE implement the feature of List or Map!!! on line 93
-                      // これはStateNotifierを使わなければいけない事態が発生している気がする
-                      // 発生してなかったよ
                     },
                     borderRadius: const BorderRadius.all(Radius.circular(20)),
                     selectedBorderColor: const Color(0xff4B4B5A),
