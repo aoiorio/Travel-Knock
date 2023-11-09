@@ -50,6 +50,7 @@ dependencies:
   smooth_page_indicator: ^1.1.0
 
 dev_dependencies:
+  pedantic_mono: any
   flutter_test:
     sdk: flutter
 

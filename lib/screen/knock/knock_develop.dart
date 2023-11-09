@@ -11,25 +11,30 @@ import 'package:travelknock/components/plan_detail_card.dart';
 import 'package:travelknock/screen/create_plan/add_plan.dart';
 import 'package:travelknock/screen/tabs.dart';
 
-class DevelopPlanScreen extends StatefulWidget {
-  const DevelopPlanScreen({
+class KnockDevelopScreen extends StatefulWidget {
+  const KnockDevelopScreen({
     super.key,
     required this.title,
-    required this.dayNumber,
-    required this.placeName,
-    required this.isKnock,
+    required this.period,
+    required this.destination,
+    required this.requestUserAvatar,
+    required this.requestUserName,
+    required this.knockId,
   });
 
   final String title;
-  final String dayNumber;
-  final String placeName;
-  final bool isKnock;
+  final String period;
+  final String destination;
+  // final String ownerAvatar;
+  final String requestUserAvatar;
+  final String requestUserName;
+  final String knockId;
 
   @override
-  State<DevelopPlanScreen> createState() => _DevelopPlanScreenState();
+  State<KnockDevelopScreen> createState() => _KnockDevelopScreen();
 }
 
-class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
+class _KnockDevelopScreen extends State<KnockDevelopScreen> {
   final supabase = Supabase.instance.client;
   List<bool> _isSelected = [true, false];
   var _selectedDayIndex = 0;
@@ -43,7 +48,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
   void initState() {
     super.initState();
     // 最初に選択されているDayは1日目というのを設定している
-    _isSelected = List.generate(int.parse(widget.dayNumber), (index) {
+    _isSelected = List.generate(int.parse(widget.period), (index) {
       if (index == 0) {
         return true;
       }
@@ -51,7 +56,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
     });
     // 要素が全て一体化？してしまうためgenerateを使って要素を別々にする
     // planList = List.filled(int.parse(widget.dayNumber), []);
-    planList = List.generate(int.parse(widget.dayNumber), (index) => []);
+    planList = List.generate(int.parse(widget.period), (index) => []);
   }
 
   String _generateRandomString() {
@@ -64,6 +69,8 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
     if (image == null) {
       return;
     }
+    if (!mounted) return;
+
     setState(() {
       isLoading = true;
       print(isLoading);
@@ -92,18 +99,12 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
     setState(() {
       _imageUrl = imageUrl;
     });
-    try {
-      await supabase.from('posts').insert({
-        'user_id': supabase.auth.currentUser!.id,
-        'title': widget.title,
-        'thumbnail': _imageUrl,
-        'plans': planList,
-        'place_name': widget.placeName,
-      });
-      print('プランリスト：$planList');
-    } catch (e) {
-      print(e);
-    }
+    // DONE connect to database
+    await supabase.from('knock').update({
+      'plans': planList,
+      'is_completed': true,
+      'thumbnail': _imageUrl,
+    }).eq('id', widget.knockId);
     setState(() {
       isLoading = false;
     });
@@ -159,7 +160,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                     height: 10,
                                   ),
                                   const Text(
-                                    "This photo will be post's thumbnail",
+                                    "This photo will be a thumbnail",
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
@@ -277,9 +278,9 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                                 ),
                                               ),
                                               child: const Text(
-                                                'Post',
+                                                'Complete',
                                                 style: TextStyle(
-                                                    fontSize: 20,
+                                                    fontSize: 17,
                                                     fontWeight:
                                                         FontWeight.w600),
                                               ),
@@ -305,7 +306,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                     ),
                     shadowColor: Colors.transparent),
                 child: const Text(
-                  'Post',
+                  'Complete',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -337,11 +338,12 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
             }
           },
           style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xff4B4B5A),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              shadowColor: Colors.transparent),
+            backgroundColor: const Color(0xff4B4B5A),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            shadowColor: Colors.transparent,
+          ),
           child: const Icon(
             Icons.add,
             size: 50,
@@ -364,37 +366,41 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                 ),
               ),
             ),
-            // TODO edit button
-            widget.isKnock
-                ? const SizedBox()
-                : Padding(
-                    padding: const EdgeInsets.only(left: 25),
-                    child: SizedBox(
-                      width: 100,
-                      height: 40,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          print('Pressed Edit Button!');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shadowColor: Colors.transparent,
-                          backgroundColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            side: const BorderSide(
-                                color: Color(0xff4B4B5A), width: 3),
-                          ),
-                        ),
-                        child: const Text(
-                          'Edit',
-                          style: TextStyle(
-                            color: Color(0xff4B4B5A),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
+            Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(left: 25),
+                  child: const Text(
+                    'Knocked by ',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
+                ),
+                // Container(
+                //   width: 70,
+                //   height: 70,
+                //   margin: const EdgeInsets.only(top: 20, left: 25, right: 20),
+                //   decoration: const BoxDecoration(
+                //     shape: BoxShape.circle,
+                //     color: Colors.white,
+                //   ),
+                //   clipBehavior: Clip.antiAliasWithSaveLayer,
+                //   child: CachedNetworkImage(
+                //     imageUrl: widget.requestUserAvatar,
+                //     fit: BoxFit.cover,
+                //   ),
+                // ),
+                Text(
+                  widget.requestUserName,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
             // Days
             Container(
               padding: const EdgeInsets.only(top: 40, left: 15, right: 10),
@@ -430,7 +436,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                       minWidth: 120.0,
                     ),
                     children: List.generate(
-                      int.parse(widget.dayNumber),
+                      int.parse(widget.period),
                       (index) => Text(
                         '${index + 1} Day',
                         style: const TextStyle(
@@ -446,10 +452,9 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
             // if there aren't any plans, the cute walrus will appear on the screen
             planList[_selectedDayIndex].isEmpty
                 ? Padding(
-                    padding: const EdgeInsets.only(top: 40),
+                    padding: const EdgeInsets.only(top: 25),
                     child: Column(
                       children: [
-                        
                         Center(
                           child: SizedBox(
                             width: 250,

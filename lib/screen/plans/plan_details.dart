@@ -124,7 +124,7 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                 Hero(
                   tag: heroTag,
                   child: Transform.scale(
-                    scale: 1.03,
+                    scale: MediaQuery.of(context).size.width / 385, // 1.03
                     child: ClipPath(
                       clipper: DetailsClipper(),
                       child: Center(
