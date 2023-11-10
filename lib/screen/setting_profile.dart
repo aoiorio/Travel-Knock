@@ -107,7 +107,9 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
       await Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) {
-            return const TabsScreen(initialPageIndex: 0,);
+            return const TabsScreen(
+              initialPageIndex: 0,
+            );
           },
         ),
       );
@@ -207,11 +209,14 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: userPlacesList.length,
+                      padding: const EdgeInsets.only(top: 30),
                       itemBuilder: (context, index) {
                         return Card(
+                          margin: const EdgeInsets.only(bottom: 20),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          child: Padding(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Container(
                             padding: const EdgeInsets.only(
                                 top: 10, bottom: 10, left: 20, right: 20),
                             child: Row(
@@ -220,8 +225,9 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                                 Text(
                                   userPlacesList[index],
                                   style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                                 // delete icon button
                                 IconButton(

@@ -18,8 +18,9 @@ class KnockPlanDetailsScreen extends StatefulWidget {
     required this.planDetailsList,
     required this.requestedUserAvatar,
     required this.requestedUserName,
-    required this.ownerAvatar,
-    required this.ownerName,
+    required this.yourAvatar,
+    required this.yourName,
+    required this.isYourKnock,
   });
 
   final String title;
@@ -27,8 +28,9 @@ class KnockPlanDetailsScreen extends StatefulWidget {
   final List planDetailsList;
   final String requestedUserAvatar;
   final String requestedUserName;
-  final String ownerAvatar;
-  final String ownerName;
+  final String yourAvatar;
+  final String yourName;
+  final bool isYourKnock;
 
   @override
   State<KnockPlanDetailsScreen> createState() => _KnockPlanDetailsScreenState();
@@ -126,59 +128,109 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                   ),
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 70,
-                      height: 70,
-                      decoration: const BoxDecoration(shape: BoxShape.circle),
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      margin: const EdgeInsets.only(left: 35),
-                      child: widget.requestedUserAvatar.isEmpty
-                          ? Shimmer.fromColors(
-                              baseColor: Colors.grey[300]!,
-                              highlightColor: Colors.grey[200]!,
-                              child: const ColoredBox(color: Colors.grey),
-                            )
-                          : CachedNetworkImage(
-                              imageUrl: widget.requestedUserAvatar.toString(),
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    widget.requestedUserName.isEmpty
-                        ? Shimmer.fromColors(
-                            baseColor: Colors.grey[300]!,
-                            highlightColor: Colors.grey[200]!,
-                            child: Container(
-                              width: 50,
-                              height: 30,
-                              decoration:
-                                  const BoxDecoration(color: Colors.white),
-                            ),
-                          )
-                        : widget.requestedUserName.length >= 9
-                            ? SizedBox(
-                                width: 60,
-                                child: Text(
-                                  widget.requestedUserName,
-                                  style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              )
-                            : SizedBox(
-                                width: 60,
-                                child: Text(
-                                  widget.requestedUserName,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
+                    SizedBox(
+                      width: 150,
+                      child: Column(
+                        children: [
+                          Container(
+                            width: 70,
+                            height: 70,
+                            decoration:
+                                const BoxDecoration(shape: BoxShape.circle),
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            // margin: const EdgeInsets.only(left: 35),
+                            child: widget.requestedUserAvatar.isEmpty
+                                ? Shimmer.fromColors(
+                                    baseColor: Colors.grey[300]!,
+                                    highlightColor: Colors.grey[200]!,
+                                    child: const ColoredBox(color: Colors.grey),
+                                  )
+                                : CachedNetworkImage(
+                                    imageUrl: widget.isYourKnock
+                                        ? widget.yourAvatar
+                                        : widget.requestedUserAvatar.toString(),
+                                    fit: BoxFit.cover,
+                                  ),
+                          ),
+                          widget.requestedUserName.isEmpty
+                              ? Shimmer.fromColors(
+                                  baseColor: Colors.grey[300]!,
+                                  highlightColor: Colors.grey[200]!,
+                                  child: Container(
+                                    width: 50,
+                                    height: 30,
+                                    decoration: const BoxDecoration(
+                                        color: Colors.white),
+                                  ),
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: Text(
+                                    widget.isYourKnock
+                                        ? widget.yourName
+                                        : widget.requestedUserName,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
-                              ),
-                    // const SizedBox(width: 20),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.multiple_stop),
+                    SizedBox(
+                      width: 150,
+                      child: Column(
+                        children: [
+                          Container(
+                            width: 70,
+                            height: 70,
+                            decoration:
+                                const BoxDecoration(shape: BoxShape.circle),
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            child: widget.yourAvatar.isEmpty
+                                ? Shimmer.fromColors(
+                                    baseColor: Colors.grey[300]!,
+                                    highlightColor: Colors.grey[200]!,
+                                    child: const ColoredBox(color: Colors.grey),
+                                  )
+                                : CachedNetworkImage(
+                                    imageUrl: widget.isYourKnock
+                                        ? widget.requestedUserAvatar
+                                        : widget.yourAvatar,
+                                    fit: BoxFit.cover,
+                                  ),
+                          ),
+                          widget.yourName.isEmpty
+                              ? Shimmer.fromColors(
+                                  baseColor: Colors.grey[300]!,
+                                  highlightColor: Colors.grey[200]!,
+                                  child: Container(
+                                    width: 50,
+                                    height: 30,
+                                    decoration: const BoxDecoration(
+                                        color: Colors.white),
+                                  ),
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: Text(
+                                    widget.isYourKnock
+                                        ? widget.requestedUserName
+                                        : widget.yourName,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ],
