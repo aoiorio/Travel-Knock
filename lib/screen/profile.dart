@@ -131,7 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             : Column(
                 children: [
                   const SizedBox(
-                    height: 60,
+                    height: 70,
                   ),
                   // TODO create profile page here and users can update own profile!!
                   Padding(
