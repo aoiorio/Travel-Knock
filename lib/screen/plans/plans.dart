@@ -5,6 +5,7 @@ import 'package:shimmer/shimmer.dart';
 
 import 'dart:math';
 import 'dart:ui';
+import '../../components/custom_fab.dart';
 import '../login.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -265,7 +266,7 @@ class _PlansScreenState extends State<PlansScreen> {
               ),
             ),
             posts.isEmpty
-                ? Center(child: Container(margin: const EdgeInsets.all(100), child: Text('No plans yet!!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),)
+                ? Center(child: Container(margin: const EdgeInsets.all(100), child: const Text('No plans yet!!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),)
                 :
                 // todo plans
                 // DONE add GestureDetector to transition to detail_page
@@ -443,40 +444,5 @@ class _PlansScreenState extends State<PlansScreen> {
         ),
       ),
     );
-  }
-}
-
-// FABのLocationを自分で設定する
-class CustomizeFloatingLocation extends FloatingActionButtonLocation {
-  FloatingActionButtonLocation location;
-  double offsetX;
-  double offsetY;
-  CustomizeFloatingLocation(this.location, this.offsetX, this.offsetY);
-  @override
-  Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {
-    Offset offset = location.getOffset(scaffoldGeometry);
-    return Offset(offset.dx + offsetX, offset.dy + offsetY);
-  }
-}
-
-// FABのアニメーションを無に帰す
-class AnimationNoScaling extends FloatingActionButtonAnimator {
-  double? _x;
-  double? _y;
-  @override
-  Offset getOffset({Offset? begin, Offset? end, double? progress}) {
-    _x = begin!.dx + (end!.dx - begin.dx) * progress!;
-    _y = begin.dy + (end.dy - begin.dy) * progress;
-    return Offset(_x!, _y!);
-  }
-
-  @override
-  Animation<double> getRotationAnimation({Animation<double>? parent}) {
-    return Tween<double>(begin: 1.0, end: 1.0).animate(parent!);
-  }
-
-  @override
-  Animation<double> getScaleAnimation({Animation<double>? parent}) {
-    return Tween<double>(begin: 1.0, end: 1.0).animate(parent!);
   }
 }

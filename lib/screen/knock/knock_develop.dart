@@ -9,7 +9,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/plan_detail_card.dart';
 import 'package:travelknock/screen/create_plan/add_plan.dart';
-import 'package:travelknock/screen/profile.dart';
 import 'package:travelknock/screen/tabs.dart';
 
 class KnockDevelopScreen extends StatefulWidget {
@@ -26,7 +25,6 @@ class KnockDevelopScreen extends StatefulWidget {
   final String title;
   final String period;
   final String destination;
-  // final String ownerAvatar;
   final String requestUserAvatar;
   final String requestUserName;
   final String knockId;
@@ -376,21 +374,6 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                     ),
                   ),
                 ),
-                // it's the image of user
-                // Container(
-                //   width: 70,
-                //   height: 70,
-                //   margin: const EdgeInsets.only(top: 20, left: 25, right: 20),
-                //   decoration: const BoxDecoration(
-                //     shape: BoxShape.circle,
-                //     color: Colors.white,
-                //   ),
-                //   clipBehavior: Clip.antiAliasWithSaveLayer,
-                //   child: CachedNetworkImage(
-                //     imageUrl: widget.requestUserAvatar,
-                //     fit: BoxFit.cover,
-                //   ),
-                // ),
                 Text(
                   widget.requestUserName,
                   style: const TextStyle(
