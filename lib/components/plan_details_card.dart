@@ -102,16 +102,21 @@ class _PlanDetailsCardState extends State<PlanDetailsCard> {
                                 ),
                               ),
                               Flexible(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, bottom: 20, right: 10),
-                                  child: Text(
-                                    widget.planList[index]['title']!,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20, bottom: 20, right: 10),
+                                      child: Text(
+                                        widget.planList[index]['title']!,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ),
                             ],

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/screen/knock/knocked.dart';
 import 'package:travelknock/screen/knock/your_knock.dart';
+import 'package:travelknock/screen/setting_profile.dart';
 
 import '../components/custom_fab.dart';
 import 'create_plan/new_plan.dart';
@@ -27,6 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _yourName = '';
   List _yourPlaces = [];
   bool _isLoading = false;
+  String? _yourHeader;
 
   Future getYourInfo() async {
     setState(() {
@@ -41,8 +43,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _yourAvatar = yourData['avatar_url'];
       _yourName = yourData['username'];
       _yourPlaces = yourData['places'];
+      _yourHeader = yourData['header_url'];
       _isLoading = false;
     });
+  }
+
+  void signOut() async {
+    if (!mounted) return;
+    await supabase.auth.signOut();
+
+    if (context.mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    }
   }
 
   @override
@@ -127,7 +141,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       floatingActionButtonAnimator: AnimationNoScaling(),
       body: SingleChildScrollView(
         child: _isLoading
-            ? const SizedBox()
+            ? Center(
+                child: Container(
+                  margin: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height / 2),
+                  child: const CircularProgressIndicator(
+                    color: Color(0xff4B4B5A),
+                  ),
+                ),
+              )
             : Column(
                 children: [
                   const SizedBox(
@@ -142,6 +164,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           print('Pressed Profile Edit Button!');
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return const SettingProfileScreen(isEdit: true);
+                            },
+                          ));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
@@ -175,13 +202,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         height: 200,
                         margin: const EdgeInsets.only(bottom: 30),
                         decoration: BoxDecoration(
-                          color: Colors.grey,
                           borderRadius: BorderRadius.circular(30),
                         ),
                         clipBehavior: Clip.antiAliasWithSaveLayer,
                         child: CachedNetworkImage(
-                          imageUrl:
-                              'https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/6ab44cec-df53-4cc3-8c09-85907eb37815/IMG_8796.jpg',
+                          imageUrl: _yourHeader != null
+                              ? _yourHeader!
+                              : 'https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/6ab44cec-df53-4cc3-8c09-85907eb37815/IMG_8796.jpg',
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -238,6 +265,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 5),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 40, right: 200),
+                    child: Center(
+                      child: SizedBox(
+                        height: 40,
+                        width: 120,
+                        child: ElevatedButton(
+                          // DONE create a transition to PlansScreen and add details to the database
+                          onPressed: signOut,
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xffF2F2F2),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              )),
+                          child: const Text(
+                            'Sign Out',
+                            style: TextStyle(fontSize: 15, color: Color.fromARGB(255, 128, 76, 72)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   SizedBox(
                     height: 50,
                     child: ListView.builder(

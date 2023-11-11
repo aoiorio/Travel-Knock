@@ -126,30 +126,25 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                                   top: 180, right: 30, bottom: 30, left: 30),
                               child: Row(
                                 children: [
-                                  Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      SizedBox(
-                                        width: 210,
-                                        height: 60,
-                                        child: DecoratedBox(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(25),
-                                            color: const Color(0xff757585),
-                                          ),
-                                        ),
-                                      ),
-                                      Text(
+                                  Container(
+                                    width: 210,
+                                    height: 60,
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(25),
+                                      color: const Color(0xff757585),
+                                    ),
+                                    child: Center(
+                                      child: Text(
                                         _posts[index % _posts.length]['title']
                                             .toString(),
                                         style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600,
+                                            overflow: TextOverflow.ellipsis),
                                       ),
-                                    ],
+                                    ),
                                   ),
                                   const SizedBox(
                                     width: 30,
@@ -162,7 +157,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                                       color: const Color(0xff4B4B5A),
                                     ),
                                     child: IconButton(
-                                      // TODO replace transition to the page of details
+                                      // DONE replace transition to the page of details
                                       onPressed: () {
                                         getUserInfo(index % _posts.length).then(
                                           (value) {

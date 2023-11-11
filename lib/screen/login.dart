@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (event == AuthChangeEvent.signedIn) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => const SettingProfileScreen(),
+              builder: (context) => const SettingProfileScreen(isEdit: false,),
             ),
           );
         }

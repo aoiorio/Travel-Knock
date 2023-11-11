@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/avatar.dart';
 import 'package:travelknock/components/custom_text_field.dart';
+import 'package:travelknock/components/header.dart';
 import 'package:travelknock/screen/add_places.dart';
 import 'package:travelknock/screen/tabs.dart';
 
 class SettingProfileScreen extends StatefulWidget {
-  const SettingProfileScreen({super.key});
+  const SettingProfileScreen({super.key, required this.isEdit});
+
+  final bool isEdit;
 
   @override
   State<SettingProfileScreen> createState() => _SettingProfileScreenState();
@@ -20,6 +23,8 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
   final _placeNameController = TextEditingController();
   List<dynamic> userPlacesList = [];
   String? _imageUrl;
+  String? _headerUrl;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -43,6 +48,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
         _nameController.text = data['username'];
         userPlacesList = data['places'];
         _imageUrl = data['avatar_url'];
+        _headerUrl = data['header_url'];
       });
     } on Exception {
       print('This user is new!');
@@ -76,6 +82,9 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
   }
 
   void updateProfile() async {
+    setState(() {
+      _isLoading = true;
+    });
     final userId = supabase.auth.currentUser!.id;
     final username = _nameController.text.trim();
 
@@ -104,6 +113,16 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
       });
       print('Entered submit button!');
       // DONE use Navigator.of(context).pushReplacement and transition to PlansScreen
+      if (widget.isEdit) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) {
+              return const TabsScreen(initialPageIndex: 1);
+            },
+          ),
+        );
+        return;
+      }
       await Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) {
@@ -121,23 +140,34 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
         ),
       );
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     print(supabase.auth.currentUser!.id);
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+        toolbarHeight: 30,
+        automaticallyImplyLeading: widget.isEdit ? true : false,
+      ),
+      extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
               alignment: Alignment.centerLeft,
-              margin: const EdgeInsets.only(top: 90, left: 25),
-              child: const Column(
+              margin: const EdgeInsets.only(top: 110, left: 25),
+              child: Column(
                 children: [
                   Text(
-                    'About You 🦄',
-                    style: TextStyle(
+                    widget.isEdit ? 'Edit You 🐴' : 'About You 🦄',
+                    style: const TextStyle(
                       fontSize: 35,
                       fontWeight: FontWeight.bold,
                     ),
@@ -145,17 +175,57 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                 ],
               ),
             ),
-            Avatar(
-                imageUrl: _imageUrl,
-                onUpload: (imageUrl) async {
-                  setState(() {
-                    _imageUrl = imageUrl;
-                  });
-                  final userId = supabase.auth.currentUser!.id;
-                  await supabase
-                      .from('profiles')
-                      .update({'avatar_url': imageUrl}).eq('id', userId);
-                }),
+            widget.isEdit
+                ? Container(
+                    margin: const EdgeInsets.only(top: 30, bottom: 90),
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      clipBehavior: Clip.none,
+                      children: [
+                        Header(
+                          headerUrl: _headerUrl,
+                          onUpload: (imageUrl) async {
+                            setState(() {
+                              _headerUrl = imageUrl;
+                            });
+                            final userId = supabase.auth.currentUser!.id;
+                            await supabase.from('profiles').update(
+                                {'header_url': imageUrl}).eq('id', userId);
+                          },
+                        ),
+                        Positioned(
+                          bottom: -80,
+                          child: Avatar(
+                            imageUrl: _imageUrl,
+                            width: 140,
+                            height: 140,
+                            onUpload: (imageUrl) async {
+                              setState(() {
+                                _imageUrl = imageUrl;
+                              });
+                              final userId = supabase.auth.currentUser!.id;
+                              await supabase.from('profiles').update(
+                                  {'avatar_url': imageUrl}).eq('id', userId);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Avatar(
+                    imageUrl: _imageUrl,
+                    width: 250,
+                    height: 350,
+                    onUpload: (imageUrl) async {
+                      setState(() {
+                        _imageUrl = imageUrl;
+                      });
+                      final userId = supabase.auth.currentUser!.id;
+                      await supabase
+                          .from('profiles')
+                          .update({'avatar_url': imageUrl}).eq('id', userId);
+                    },
+                  ),
             Container(
               margin: const EdgeInsets.only(left: 50, right: 50),
               child: Column(
@@ -254,28 +324,35 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                       : const SizedBox(
                           height: 10,
                         ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 30),
-                    child: Center(
-                      child: SizedBox(
-                        height: 70,
-                        width: 200,
-                        child: ElevatedButton(
-                          // DONE create a transition to PlansScreen and add details to the database
-                          onPressed: updateProfile,
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xff4B4B5A),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              )),
-                          child: const Text(
-                            'Submit',
-                            style: TextStyle(fontSize: 20),
+                  _isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xff4B4B5A),
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.only(bottom: 30),
+                          child: Center(
+                            child: SizedBox(
+                              height: 70,
+                              width: 200,
+                              child: ElevatedButton(
+                                // DONE create a transition to PlansScreen and add details to the database
+                                onPressed: updateProfile,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xff4B4B5A),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Submit',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
