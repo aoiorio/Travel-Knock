@@ -35,8 +35,7 @@ class _KnockedScreenState extends State<KnockedScreen> {
     final requestKnock = await supabase
         .from('knock')
         .select('*')
-        .eq('owner_id', supabase.auth.currentUser!.id);
-    // print(_requestKnock);
+        .eq('owner_id', supabase.auth.currentUser!.id).order('is_completed', ascending: true);
     setState(() {
       _requestKnock = requestKnock;
     });
@@ -71,6 +70,7 @@ class _KnockedScreenState extends State<KnockedScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final knockedTime = _requestKnock.length.toString();
     return _isLoading
         ? Center(
             child: Container(
@@ -83,145 +83,175 @@ class _KnockedScreenState extends State<KnockedScreen> {
         : _requestKnock.isEmpty || _requestUserData.isEmpty
             ? Center(
                 child: Container(
-                  margin: const EdgeInsets.only(top: 100),
-                  child: const Text(
-                    'No knock yet!',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  margin: const EdgeInsets.only(top: 20, bottom: 200),
+                  child: Column(
+                    children: [
+                      Image.asset('assets/images/no-knocked.PNG'),
+                      const Text(
+                        'No knocked yet!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               )
-            : Container(
-                padding: const EdgeInsets.only(bottom: 160),
-                child: ListView.builder(
-                  shrinkWrap: true, //追加
-                  physics: const NeverScrollableScrollPhysics(), //追加ƒ
-                  itemCount: _requestKnock.length,
-                  padding: const EdgeInsets.only(top: 20),
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        if (_requestKnock[index]['is_completed']) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(left: 40, top: 20),
+                    child: Text(
+                      knockedTime == '1'
+                          ? 'Knocked to you $knockedTime time'
+                          : 'Knocked to you $knockedTime times',
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(bottom: 160),
+                    child: ListView.builder(
+                      shrinkWrap: true, //追加
+                      physics: const NeverScrollableScrollPhysics(), //追加ƒ
+                      itemCount: _requestKnock.length,
+                      padding: const EdgeInsets.only(top: 10),
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            if (_requestKnock[index]['is_completed']) {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return KnockPlanDetailsScreen(
+                                      title: _requestKnock[index]['title'],
+                                      thumbnail: _requestKnock[index]
+                                          ['thumbnail'],
+                                      planDetailsList: _requestKnock[index]
+                                          ['plans'],
+                                      requestedUserAvatar:
+                                          _requestUserData[index][0]
+                                              ['avatar_url'],
+                                      requestedUserName: _requestUserData[index]
+                                          [0]['username'],
+                                      yourAvatar: widget.yourAvatar,
+                                      yourName: widget.yourName,
+                                      isYourKnock: false,
+                                    );
+                                  },
+                                ),
+                              );
+                              return;
+                            }
+                            Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) {
-                                return KnockPlanDetailsScreen(
+                                return KnockDevelopScreen(
                                   title: _requestKnock[index]['title'],
-                                  thumbnail: _requestKnock[index]['thumbnail'],
-                                  planDetailsList: _requestKnock[index]
-                                      ['plans'],
-                                  requestedUserAvatar: _requestUserData[index]
-                                      [0]['avatar_url'],
-                                  requestedUserName: _requestUserData[index][0]
+                                  period: _requestKnock[index]['period'],
+                                  destination: _requestKnock[index]
+                                      ['destination'],
+                                  requestUserAvatar: _requestUserData[index][0]
+                                      ['avatar_url'],
+                                  requestUserName: _requestUserData[index][0]
                                       ['username'],
-                                  yourAvatar: widget.yourAvatar,
-                                  yourName: widget.yourName,
-                                  isYourKnock: false,
+                                  knockId: _requestKnock[index]['id'],
                                 );
                               },
-                            ),
-                          );
-                          return;
-                        }
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) {
-                            return KnockDevelopScreen(
-                              title: _requestKnock[index]['title'],
-                              period: _requestKnock[index]['period'],
-                              destination: _requestKnock[index]['destination'],
-                              requestUserAvatar: _requestUserData[index][0]
-                                  ['avatar_url'],
-                              requestUserName: _requestUserData[index][0]
-                                  ['username'],
-                              knockId: _requestKnock[index]['id'],
-                            );
+                            ));
                           },
-                        ));
-                      },
-                      child: Stack(
-                        alignment: Alignment.topRight,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            margin: const EdgeInsets.all(20),
-                            width: 390,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              color: const Color(0xffF2F2F2),
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 70,
-                                  height: 70,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                  ),
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  child: CachedNetworkImage(
-                                    imageUrl: _requestUserData[index][0]
-                                        ['avatar_url'],
-                                    width: 70,
-                                    height: 70,
-                                    fit: BoxFit.cover,
-                                  ),
+                          child: Stack(
+                            alignment: Alignment.topRight,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(20),
+                                margin: const EdgeInsets.all(20),
+                                constraints: const BoxConstraints(minHeight: 100),
+                                width: 390,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xffF2F2F2),
+                                  borderRadius: BorderRadius.circular(30),
                                 ),
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width / 30,
-                                ), // 40
-                                Column(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text(
-                                      'From ' +
-                                          _requestUserData[index][0]
-                                              ['username'],
-                                      style: const TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
+                                    Container(
+                                      width: 70,
+                                      height: 70,
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                      ),
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      child: CachedNetworkImage(
+                                        imageUrl: _requestUserData[index][0]
+                                            ['avatar_url'],
+                                        width: 70,
+                                        height: 70,
+                                        fit: BoxFit.cover,
                                       ),
                                     ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      _requestKnock[index]['title'],
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600,
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width /
+                                          30,
+                                    ), // 40
+                                    Flexible(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'From ' +
+                                                _requestUserData[index][0]
+                                                    ['username'],
+                                            style: const TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text(
+                                            _requestKnock[index]['title'],
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          _requestKnock[index]['is_completed']
-                              ? Container(
-                                  width: 115,
-                                  height: 40,
-                                  margin: const EdgeInsets.only(right: 12),
-                                  decoration: BoxDecoration(
-                                      color: Colors.black,
-                                      borderRadius: BorderRadius.circular(20)),
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  child: const Center(
-                                    child: Text(
-                                      'Completed',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
+                              ),
+                              _requestKnock[index]['is_completed']
+                                  ? Container(
+                                      width: 115,
+                                      height: 40,
+                                      margin: const EdgeInsets.only(right: 12),
+                                      decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      child: const Center(
+                                        child: Text(
+                                          'Completed',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                )
-                              : const SizedBox(),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                                    )
+                                  : const SizedBox(),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               );
   }
 }

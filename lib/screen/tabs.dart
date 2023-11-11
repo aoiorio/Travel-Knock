@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/screen/plans/plans.dart';
 import 'package:travelknock/screen/profile.dart';
 
@@ -37,6 +38,7 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final supabase = Supabase.instance.client;
     return Scaffold(
       // transparent margin background.
       extendBody: true,
@@ -105,7 +107,14 @@ class _TabsScreenState extends State<TabsScreen> {
           ),
         ),
       ),
-      body: _pages[_currentPageIndex],
+      body: supabase.auth.currentUser == null && _currentPageIndex == 1
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [Text('You should to sign in!')],
+              ),
+            )
+          : _pages[_currentPageIndex],
     );
   }
 }

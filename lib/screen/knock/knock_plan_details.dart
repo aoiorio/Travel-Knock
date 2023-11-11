@@ -7,7 +7,7 @@ import 'package:travelknock/components/custom_clipper.dart';
 
 import 'dart:convert';
 
-import 'package:travelknock/components/plan_detail_card.dart';
+import 'package:travelknock/components/plan_details_card.dart';
 import 'package:travelknock/screen/login.dart';
 
 class KnockPlanDetailsScreen extends StatefulWidget {

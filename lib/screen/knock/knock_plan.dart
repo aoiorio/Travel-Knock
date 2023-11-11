@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 // About files
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/custom_day_text_field.dart';
+import 'package:travelknock/screen/tabs.dart';
 
 class KnockPlanScreen extends StatefulWidget {
   const KnockPlanScreen({
@@ -80,7 +81,11 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
       _isLoading = false;
     });
     // print('knock!: $title');
-    Navigator.of(context).pop();
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: (context) {
+        return const TabsScreen(initialPageIndex: 1);
+      },
+    ));
   }
 
   @override

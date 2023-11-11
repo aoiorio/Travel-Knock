@@ -7,8 +7,9 @@ import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travelknock/components/plan_detail_card.dart';
+import 'package:travelknock/components/plan_details_card.dart';
 import 'package:travelknock/screen/create_plan/add_plan.dart';
+import 'package:travelknock/screen/create_plan/edit_plan.dart';
 import 'package:travelknock/screen/tabs.dart';
 
 class DevelopPlanScreen extends StatefulWidget {
@@ -17,12 +18,14 @@ class DevelopPlanScreen extends StatefulWidget {
     required this.title,
     required this.dayNumber,
     required this.placeName,
+    this.planList,
     required this.isKnock,
   });
 
   final String title;
   final String dayNumber;
   final String placeName;
+  final List<List<Map<String, String>>>? planList;
   final bool isKnock;
 
   @override
@@ -49,6 +52,23 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
       }
       return false;
     });
+
+    if (widget.planList != null) {
+      planList = widget.planList!;
+      if (planList.length < int.parse(widget.dayNumber)) {
+        planList = List.generate(int.parse(widget.dayNumber), (index) => []);
+        for (var i = 0; widget.planList!.length < planList.length; i++) {
+          // edit feature, input values!
+          try {
+            planList[i] = widget.planList![i];
+          } on RangeError {
+            print('please ignore a range error!');
+            break;
+          }
+        }
+      }
+      return;
+    }
     // 要素が全て一体化？してしまうためgenerateを使って要素を別々にする
     // planList = List.filled(int.parse(widget.dayNumber), []);
     planList = List.generate(int.parse(widget.dayNumber), (index) => []);
@@ -207,8 +227,8 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                             // Pick an image.
                                             final XFile? image =
                                                 await picker.pickImage(
-                                                    source: ImageSource.gallery,
-                                                    imageQuality: 0);
+                                              source: ImageSource.gallery,
+                                            );
                                             if (image == null) {
                                               return;
                                             }
@@ -255,18 +275,24 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                                   }
                                                 });
                                                 // 1 Dayだけを選択した人もinclude
-                                                if (image == null || isEmpty) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                          'You have to add plan and thumbnail'),
-                                                      backgroundColor:
-                                                          Color(0xff4B4B5A),
-                                                    ),
-                                                  );
-                                                  Navigator.of(context).pop();
-                                                  return;
+                                                try {
+                                                  if (image == null ||
+                                                      isEmpty) {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text(
+                                                            'You have to add plan and thumbnail'),
+                                                        backgroundColor:
+                                                            Color(0xff4B4B5A),
+                                                      ),
+                                                    );
+                                                    Navigator.of(context).pop();
+                                                    return;
+                                                  }
+                                                } on Exception {
+                                                  print('Something went wrong');
                                                 }
                                                 saveDataToSupabase();
                                               },
@@ -375,6 +401,16 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     print('Pressed Edit Button!');
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return EditPlanScreen(
+                          planTitleText: widget.title,
+                          placeName: widget.placeName,
+                          period: widget.dayNumber,
+                          plans: planList,
+                        );
+                      },
+                    ));
                   },
                   style: ElevatedButton.styleFrom(
                     shadowColor: Colors.transparent,
