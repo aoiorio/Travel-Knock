@@ -6,6 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import 'dart:math';
 import 'dart:ui';
 import '../../components/custom_fab.dart';
+import '../knock/knock_plan.dart';
 import '../login.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,6 +27,7 @@ class _PlansScreenState extends State<PlansScreen> {
   List posts = [];
   String _userAvatar = '';
   String _userName = '';
+  bool _isLiked = false;
 
   void getPosts() async {
     if (!mounted) return;
@@ -34,17 +36,6 @@ class _PlansScreenState extends State<PlansScreen> {
     setState(() {
       posts = posts;
     });
-  }
-
-  void signOut() async {
-    if (!mounted) return;
-    await supabase.auth.signOut();
-
-    if (context.mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-      );
-    }
   }
 
   Future getUserInfo(int index) async {
@@ -67,6 +58,54 @@ class _PlansScreenState extends State<PlansScreen> {
     });
   }
 
+  void showKnockPlan(int index) {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(70),
+          topLeft: Radius.circular(70),
+        ),
+      ),
+      backgroundColor: Colors.white,
+      context: context,
+      builder: (BuildContext context) {
+        return KnockPlanScreen(
+          ownerAvatar: _userAvatar,
+          ownerName: _userName,
+          requestUserId: supabase.auth.currentUser!.id,
+          ownerId: posts[index]['user_id'],
+        );
+      },
+    );
+  }
+
+  void likePost(int index, int likeNumber) async {
+    final userId = supabase.auth.currentUser!.id;
+    print('Liked!!');
+    List userList = posts[index]['post_like_users'];
+    if (userList.contains(userId)) {
+      userList.remove(userId);
+      setState(() {
+        _isLiked = false;
+        likeNumber -= 1;
+      });
+    } else {
+      userList.add(supabase.auth.currentUser!.id);
+      setState(() {
+        _isLiked = true;
+        likeNumber++;
+      });
+    }
+    try {
+      await supabase
+          .from('posts')
+          .update({'post_like_users': userList}).eq('id', posts[index]['id']);
+    } on Exception {
+      print('error');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -75,16 +114,7 @@ class _PlansScreenState extends State<PlansScreen> {
 
   @override
   Widget build(BuildContext context) {
-    void signOut() async {
-      await supabase.auth.signOut();
-
-      if (context.mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
-      }
-    }
-
+    // TODO implement hotPlace feature!
     final hotPlacesList = [
       {
         'placeName': 'Okinawa',
@@ -119,10 +149,6 @@ class _PlansScreenState extends State<PlansScreen> {
         // 回転しちゃうぞ
         angle: -1 * pi / 180,
         child: Container(
-          // padding: EdgeInsets.only(
-          //   left: MediaQuery.of(context).size.width / 2, // 300
-          //   // top: 60,
-          // ),
           margin: const EdgeInsets.only(right: 0),
           child: SizedBox(
             width: 90,
@@ -266,7 +292,15 @@ class _PlansScreenState extends State<PlansScreen> {
               ),
             ),
             posts.isEmpty
-                ? Center(child: Container(margin: const EdgeInsets.all(100), child: const Text('No plans yet!!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),)
+                ? Center(
+                    child: Container(
+                        margin: const EdgeInsets.all(100),
+                        child: const Text(
+                          'No plans yet!!',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        )),
+                  )
                 :
                 // todo plans
                 // DONE add GestureDetector to transition to detail_page
@@ -275,6 +309,9 @@ class _PlansScreenState extends State<PlansScreen> {
                     physics: const NeverScrollableScrollPhysics(), //追加ƒ
                     itemCount: posts.length,
                     itemBuilder: (context, index) {
+                      List likes = posts[index]['post_like_users'];
+                      int likeNumber = likes.length;
+                      // bool isLiked = false;
                       return OpenContainer(
                         transitionType: ContainerTransitionType.fadeThrough,
                         closedColor: Colors.transparent,
@@ -312,41 +349,50 @@ class _PlansScreenState extends State<PlansScreen> {
                                     ),
                                   ),
                                 ),
-                                Container(
-                                  width: 100,
-                                  height: 50,
-                                  margin: const EdgeInsets.only(
-                                    right: 30,
-                                  ),
-                                  child: DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30),
-                                      color: const Color(0xffF2F2F2),
+                                GestureDetector(
+                                  onTap: () {
+                                    likePost(index, likeNumber);
+                                  },
+                                  child: Container(
+                                    width: 100,
+                                    height: 50,
+                                    margin: const EdgeInsets.only(
+                                      right: 30,
                                     ),
-                                    position: DecorationPosition.background,
-                                    child: Center(
-                                      child: Row(
-                                        children: [
-                                          IconButton(
-                                            // TODO implement like features
-                                            onPressed: () {
-                                              print('Liked!!');
-                                            },
-                                            splashColor: Colors.transparent,
-                                            highlightColor: Colors.transparent,
-                                            icon: const Icon(
-                                              Icons.local_fire_department,
-                                              size: 30,
+                                    child: DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                        color: const Color(0xffF2F2F2),
+                                      ),
+                                      position: DecorationPosition.background,
+                                      child: Center(
+                                        child: Row(
+                                          children: [
+                                            IconButton(
+                                              // TODO implement like features
+                                              onPressed: () {
+                                                likePost(index, likeNumber);
+                                              },
+                                              splashColor: Colors.transparent,
+                                              highlightColor:
+                                                  Colors.transparent,
+                                              icon: Icon(
+                                                Icons.local_fire_department,
+                                                color: _isLiked
+                                                    ? Colors.red
+                                                    : Colors.black,
+                                                size: 30,
+                                              ),
                                             ),
-                                          ),
-                                          const Text(
-                                            '43',
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w600,
+                                            Text(
+                                              likeNumber.toString(),
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -391,7 +437,10 @@ class _PlansScreenState extends State<PlansScreen> {
                                                   width: 120,
                                                   height: 45,
                                                   child: ElevatedButton(
-                                                    onPressed: signOut,
+                                                    onPressed: () async {
+                                                      await getUserInfo(index);
+                                                      showKnockPlan(index);
+                                                    },
                                                     style: ElevatedButton
                                                         .styleFrom(
                                                       backgroundColor:

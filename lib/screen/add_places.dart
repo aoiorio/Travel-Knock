@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class AddPlacesScreen extends StatelessWidget {
-  const AddPlacesScreen({super.key, required this.placeNameController, required this.addPlace});
+  const AddPlacesScreen({
+    super.key,
+    required this.placeNameController,
+    required this.addPlace,
+  });
 
   final TextEditingController placeNameController;
   final Function(String) addPlace;
@@ -85,7 +89,8 @@ class AddPlacesScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(30))),
                     child: const Text(
                       'Add',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),

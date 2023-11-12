@@ -16,8 +16,10 @@ class Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isLoading = false;
     final supabase = Supabase.instance.client;
     void pickImage() async {
+      isLoading = true;
       final ImagePicker picker = ImagePicker();
       // Pick an image.
       final XFile? image =
@@ -42,6 +44,7 @@ class Header extends StatelessWidget {
       headerUrl = Uri.parse(headerUrl).replace(
           queryParameters: {'t': DateTime.now().toIso8601String()}).toString();
       onUpload(headerUrl);
+      isLoading = false;
     }
 
     return Stack(
