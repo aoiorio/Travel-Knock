@@ -48,6 +48,7 @@ dependencies:
   cached_network_image: ^3.3.0
   shimmer: ^3.0.0
   smooth_page_indicator: ^1.1.0
+  rive: ^0.12.3
 
 dev_dependencies:
   pedantic_mono: any
@@ -80,6 +81,8 @@ flutter:
     - assets/images/post-shape.png
     - assets/images/nothing-plan.png
     - assets/images/no-knocked.PNG
+    - assets/rivs/rive-black-like-fire.riv
+    - assets/rivs/rive-red-fire.riv
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

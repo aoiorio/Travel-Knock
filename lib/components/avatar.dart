@@ -5,12 +5,13 @@ import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Avatar extends StatelessWidget {
-  const Avatar(
-      {super.key,
-      required this.imageUrl,
-      required this.onUpload,
-      required this.height,
-      required this.width});
+  const Avatar({
+    super.key,
+    required this.imageUrl,
+    required this.onUpload,
+    required this.height,
+    required this.width,
+  });
 
   final String? imageUrl;
   final void Function(String imageUrl) onUpload;

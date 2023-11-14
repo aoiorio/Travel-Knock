@@ -105,6 +105,8 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // List likes = [index]['post_like_users'];
+    //                   int likeNumber = likes.length;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),

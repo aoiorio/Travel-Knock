@@ -1,11 +1,13 @@
 import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:rive/rive.dart';
 import 'package:shimmer/shimmer.dart';
 
 import 'dart:math';
 import 'dart:ui';
 import '../../components/custom_fab.dart';
+import '../knock/knock_plan.dart';
 import '../login.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,6 +28,9 @@ class _PlansScreenState extends State<PlansScreen> {
   List posts = [];
   String _userAvatar = '';
   String _userName = '';
+  final _yourLikePostsData = [];
+  List likedPost = [];
+  // bool _isLiked = false;
 
   void getPosts() async {
     if (!mounted) return;
@@ -34,17 +39,6 @@ class _PlansScreenState extends State<PlansScreen> {
     setState(() {
       posts = posts;
     });
-  }
-
-  void signOut() async {
-    if (!mounted) return;
-    await supabase.auth.signOut();
-
-    if (context.mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-      );
-    }
   }
 
   Future getUserInfo(int index) async {
@@ -67,24 +61,101 @@ class _PlansScreenState extends State<PlansScreen> {
     });
   }
 
+  void showKnockPlan(int index) {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(70),
+          topLeft: Radius.circular(70),
+        ),
+      ),
+      backgroundColor: Colors.white,
+      context: context,
+      builder: (BuildContext context) {
+        return KnockPlanScreen(
+          ownerAvatar: _userAvatar,
+          ownerName: _userName,
+          requestUserId: supabase.auth.currentUser!.id,
+          ownerId: posts[index]['user_id'],
+        );
+      },
+    );
+  }
+
+  void likePost(int index, int likeNumber, List likedPost) async {
+    final userId = supabase.auth.currentUser!.id;
+    // print('Liked!!');
+    List userList = posts[index]['post_like_users'];
+    if (userList.contains(userId)) {
+      userList.remove(userId);
+      setState(() {
+        likeNumber -= 1;
+      });
+    } else {
+      userList.add(supabase.auth.currentUser!.id);
+      setState(() {
+        likeNumber++;
+      });
+    }
+    try {
+      await supabase
+          .from('posts')
+          .update({'post_like_users': userList}).eq('id', posts[index]['id']);
+
+      final likedPost0 = await supabase
+          .from('likes')
+          .select('id')
+          .eq('post_id', posts[index]['id'])
+          .eq('user_id', supabase.auth.currentUser!.id);
+      setState(() {
+        likedPost = likedPost0;
+      });
+      // userがいいねをしていたらreturnする
+      if (likedPost.isNotEmpty) {
+        setState(() {
+          _yourLikePostsData.remove(posts[index]['id']);
+        });
+        await supabase.from('likes').delete().eq('id', likedPost[0]['id']);
+        return;
+      }
+      setState(() {
+        _yourLikePostsData.add(posts[index]['id']);
+      });
+      await supabase.from('likes').insert({
+        'user_id': supabase.auth.currentUser!.id,
+        'post_id': posts[index]['id'],
+      });
+    } catch (e) {
+      print('error: $e');
+    }
+  }
+
+  void getLikePosts() async {
+    final List yourLikePostsData = await supabase
+        .from('likes')
+        .select('post_id')
+        .eq('user_id', supabase.auth.currentUser!.id);
+    setState(() {
+      for (var i = 0;
+          _yourLikePostsData.length < yourLikePostsData.length;
+          i++) {
+        _yourLikePostsData.add(yourLikePostsData[i]['post_id']);
+      }
+      print('_yourLikePostsData$_yourLikePostsData');
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    getLikePosts();
     getPosts();
   }
 
   @override
   Widget build(BuildContext context) {
-    void signOut() async {
-      await supabase.auth.signOut();
-
-      if (context.mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
-      }
-    }
-
+    // TODO implement hotPlace feature!
     final hotPlacesList = [
       {
         'placeName': 'Okinawa',
@@ -119,10 +190,6 @@ class _PlansScreenState extends State<PlansScreen> {
         // 回転しちゃうぞ
         angle: -1 * pi / 180,
         child: Container(
-          // padding: EdgeInsets.only(
-          //   left: MediaQuery.of(context).size.width / 2, // 300
-          //   // top: 60,
-          // ),
           margin: const EdgeInsets.only(right: 0),
           child: SizedBox(
             width: 90,
@@ -265,8 +332,17 @@ class _PlansScreenState extends State<PlansScreen> {
                 },
               ),
             ),
+
             posts.isEmpty
-                ? Center(child: Container(margin: const EdgeInsets.all(100), child: const Text('No plans yet!!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),)
+                ? Center(
+                    child: Container(
+                        margin: const EdgeInsets.all(100),
+                        child: const Text(
+                          'No plans yet!!',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        )),
+                  )
                 :
                 // todo plans
                 // DONE add GestureDetector to transition to detail_page
@@ -275,6 +351,9 @@ class _PlansScreenState extends State<PlansScreen> {
                     physics: const NeverScrollableScrollPhysics(), //追加ƒ
                     itemCount: posts.length,
                     itemBuilder: (context, index) {
+                      List likes = posts[index]['post_like_users'];
+                      int likeNumber = likes.length;
+                      // bool isLiked = false;
                       return OpenContainer(
                         transitionType: ContainerTransitionType.fadeThrough,
                         closedColor: Colors.transparent,
@@ -312,41 +391,85 @@ class _PlansScreenState extends State<PlansScreen> {
                                     ),
                                   ),
                                 ),
-                                Container(
-                                  width: 100,
-                                  height: 50,
-                                  margin: const EdgeInsets.only(
-                                    right: 30,
-                                  ),
-                                  child: DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30),
-                                      color: const Color(0xffF2F2F2),
+                                GestureDetector(
+                                  onTap: () {
+                                    likePost(index, likeNumber, likedPost);
+                                  },
+                                  child: Container(
+                                    width: 100,
+                                    height: 50,
+                                    margin: const EdgeInsets.only(
+                                      right: 30,
                                     ),
-                                    position: DecorationPosition.background,
-                                    child: Center(
-                                      child: Row(
-                                        children: [
-                                          IconButton(
-                                            // TODO implement like features
-                                            onPressed: () {
-                                              print('Liked!!');
-                                            },
-                                            splashColor: Colors.transparent,
-                                            highlightColor: Colors.transparent,
-                                            icon: const Icon(
-                                              Icons.local_fire_department,
-                                              size: 30,
+                                    child: DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                        color: const Color(0xffF2F2F2),
+                                      ),
+                                      position: DecorationPosition.background,
+                                      child: Center(
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 10),
+                                              child: Stack(
+                                                alignment:
+                                                    Alignment.bottomRight,
+                                                children: [
+                                                  SizedBox(
+                                                    width: 70,
+                                                    height: 70,
+                                                    child: RiveAnimation.asset(
+                                                      _yourLikePostsData
+                                                              .contains(
+                                                                  posts[index]
+                                                                      ['id'])
+                                                          ? 'assets/rivs/rive-red-fire.riv'
+                                                          : 'assets/rivs/rive-black-like-fire.riv',
+                                                    ),
+                                                  ),
+                                                  // RIVEのロゴを隠すWidget
+                                                  const SizedBox(
+                                                    width: 27,
+                                                    height: 5,
+                                                    child: DecoratedBox(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                      color: Color(0xffF2F2F2),
+                                                    )),
+                                                  )
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          const Text(
-                                            '43',
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w600,
+                                            // IconButton(
+                                            //   // TODO implement like features
+                                            //   onPressed: () {
+                                            //     likePost(index, likeNumber,
+                                            //         likedPost);
+                                            //   },
+                                            //   splashColor: Colors.transparent,
+                                            //   highlightColor:
+                                            //       Colors.transparent,
+                                            //   icon: Icon(
+                                            //     Icons.local_fire_department,
+                                            //     color:
+                                            //         _yourLikePostsData.contains(
+                                            //                 posts[index]['id'])
+                                            //             ? Colors.red
+                                            //             : Colors.black,
+                                            //     size: 30,
+                                            //   ),
+                                            // ),
+                                            Text(
+                                              likeNumber.toString(),
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -391,7 +514,10 @@ class _PlansScreenState extends State<PlansScreen> {
                                                   width: 120,
                                                   height: 45,
                                                   child: ElevatedButton(
-                                                    onPressed: signOut,
+                                                    onPressed: () async {
+                                                      await getUserInfo(index);
+                                                      showKnockPlan(index);
+                                                    },
                                                     style: ElevatedButton
                                                         .styleFrom(
                                                       backgroundColor:

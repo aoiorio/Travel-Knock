@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:travelknock/screen/login.dart';
 import 'package:travelknock/screen/plans/plans.dart';
 import 'package:travelknock/screen/profile.dart';
 
@@ -108,10 +109,55 @@ class _TabsScreenState extends State<TabsScreen> {
         ),
       ),
       body: supabase.auth.currentUser == null && _currentPageIndex == 1
-          ? const Center(
+          ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [Text('You should to sign in!')],
+                children: [
+                  Image.asset('assets/images/no-knocked.PNG'),
+                  const Text(
+                    'You should sign in!',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: 300,
+                    height: 60,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      // DONE add feature that login with Google
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) {
+                            return const LoginScreen();
+                          },
+                        ));
+                      },
+                      icon: SizedBox(
+                        width: 30,
+                        child: Container(
+                            padding: const EdgeInsets.only(right: 4),
+                            child:
+                                Image.asset('assets/images/google-logo.png')),
+                      ),
+                      label: const Text(
+                        'Sign In With Google',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             )
           : _pages[_currentPageIndex],
