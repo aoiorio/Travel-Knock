@@ -39,7 +39,7 @@ class _PlanDetailsCardState extends State<PlanDetailsCard> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      clipBehavior: Clip.antiAlias,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
                       child: Card(
                         child: CachedNetworkImage(
                           imageUrl: widget.planList[index]['imageUrl'],

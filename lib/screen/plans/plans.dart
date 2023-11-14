@@ -1,6 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:rive/rive.dart';
 import 'package:shimmer/shimmer.dart';
 
 import 'dart:math';
@@ -27,7 +28,9 @@ class _PlansScreenState extends State<PlansScreen> {
   List posts = [];
   String _userAvatar = '';
   String _userName = '';
-  bool _isLiked = false;
+  final _yourLikePostsData = [];
+  List likedPost = [];
+  // bool _isLiked = false;
 
   void getPosts() async {
     if (!mounted) return;
@@ -80,20 +83,18 @@ class _PlansScreenState extends State<PlansScreen> {
     );
   }
 
-  void likePost(int index, int likeNumber) async {
+  void likePost(int index, int likeNumber, List likedPost) async {
     final userId = supabase.auth.currentUser!.id;
-    print('Liked!!');
+    // print('Liked!!');
     List userList = posts[index]['post_like_users'];
     if (userList.contains(userId)) {
       userList.remove(userId);
       setState(() {
-        _isLiked = false;
         likeNumber -= 1;
       });
     } else {
       userList.add(supabase.auth.currentUser!.id);
       setState(() {
-        _isLiked = true;
         likeNumber++;
       });
     }
@@ -101,14 +102,54 @@ class _PlansScreenState extends State<PlansScreen> {
       await supabase
           .from('posts')
           .update({'post_like_users': userList}).eq('id', posts[index]['id']);
-    } on Exception {
-      print('error');
+
+      final likedPost0 = await supabase
+          .from('likes')
+          .select('id')
+          .eq('post_id', posts[index]['id'])
+          .eq('user_id', supabase.auth.currentUser!.id);
+      setState(() {
+        likedPost = likedPost0;
+      });
+      // userがいいねをしていたらreturnする
+      if (likedPost.isNotEmpty) {
+        setState(() {
+          _yourLikePostsData.remove(posts[index]['id']);
+        });
+        await supabase.from('likes').delete().eq('id', likedPost[0]['id']);
+        return;
+      }
+      setState(() {
+        _yourLikePostsData.add(posts[index]['id']);
+      });
+      await supabase.from('likes').insert({
+        'user_id': supabase.auth.currentUser!.id,
+        'post_id': posts[index]['id'],
+      });
+    } catch (e) {
+      print('error: $e');
     }
+  }
+
+  void getLikePosts() async {
+    final List yourLikePostsData = await supabase
+        .from('likes')
+        .select('post_id')
+        .eq('user_id', supabase.auth.currentUser!.id);
+    setState(() {
+      for (var i = 0;
+          _yourLikePostsData.length < yourLikePostsData.length;
+          i++) {
+        _yourLikePostsData.add(yourLikePostsData[i]['post_id']);
+      }
+      print('_yourLikePostsData$_yourLikePostsData');
+    });
   }
 
   @override
   void initState() {
     super.initState();
+    getLikePosts();
     getPosts();
   }
 
@@ -291,6 +332,7 @@ class _PlansScreenState extends State<PlansScreen> {
                 },
               ),
             ),
+
             posts.isEmpty
                 ? Center(
                     child: Container(
@@ -351,7 +393,7 @@ class _PlansScreenState extends State<PlansScreen> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    likePost(index, likeNumber);
+                                    likePost(index, likeNumber, likedPost);
                                   },
                                   child: Container(
                                     width: 100,
@@ -368,22 +410,57 @@ class _PlansScreenState extends State<PlansScreen> {
                                       child: Center(
                                         child: Row(
                                           children: [
-                                            IconButton(
-                                              // TODO implement like features
-                                              onPressed: () {
-                                                likePost(index, likeNumber);
-                                              },
-                                              splashColor: Colors.transparent,
-                                              highlightColor:
-                                                  Colors.transparent,
-                                              icon: Icon(
-                                                Icons.local_fire_department,
-                                                color: _isLiked
-                                                    ? Colors.red
-                                                    : Colors.black,
-                                                size: 30,
+                                            Container(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 10),
+                                              child: Stack(
+                                                alignment:
+                                                    Alignment.bottomRight,
+                                                children: [
+                                                  SizedBox(
+                                                    width: 70,
+                                                    height: 70,
+                                                    child: RiveAnimation.asset(
+                                                      _yourLikePostsData
+                                                              .contains(
+                                                                  posts[index]
+                                                                      ['id'])
+                                                          ? 'assets/rivs/rive-red-fire.riv'
+                                                          : 'assets/rivs/rive-black-like-fire.riv',
+                                                    ),
+                                                  ),
+                                                  // RIVEのロゴを隠すWidget
+                                                  const SizedBox(
+                                                    width: 27,
+                                                    height: 5,
+                                                    child: DecoratedBox(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                      color: Color(0xffF2F2F2),
+                                                    )),
+                                                  )
+                                                ],
                                               ),
                                             ),
+                                            // IconButton(
+                                            //   // TODO implement like features
+                                            //   onPressed: () {
+                                            //     likePost(index, likeNumber,
+                                            //         likedPost);
+                                            //   },
+                                            //   splashColor: Colors.transparent,
+                                            //   highlightColor:
+                                            //       Colors.transparent,
+                                            //   icon: Icon(
+                                            //     Icons.local_fire_department,
+                                            //     color:
+                                            //         _yourLikePostsData.contains(
+                                            //                 posts[index]['id'])
+                                            //             ? Colors.red
+                                            //             : Colors.black,
+                                            //     size: 30,
+                                            //   ),
+                                            // ),
                                             Text(
                                               likeNumber.toString(),
                                               style: const TextStyle(
