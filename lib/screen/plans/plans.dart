@@ -3,6 +3,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:travelknock/functions/like_function.dart';
+import 'package:travelknock/screen/search.dart';
 
 import 'dart:math';
 import 'dart:ui';
@@ -39,6 +41,14 @@ class _PlansScreenState extends State<PlansScreen> {
     setState(() {
       posts = posts;
     });
+  }
+
+  void searchTest() async {
+    final searchResult = await supabase.from('posts').select('*').textSearch(
+          'place_name',
+          "okinawa",
+        );
+    print(searchResult);
   }
 
   Future getUserInfo(int index) async {
@@ -87,17 +97,6 @@ class _PlansScreenState extends State<PlansScreen> {
     final userId = supabase.auth.currentUser!.id;
     // print('Liked!!');
     List userList = posts[index]['post_like_users'];
-    if (userList.contains(userId)) {
-      userList.remove(userId);
-      setState(() {
-        likeNumber -= 1;
-      });
-    } else {
-      userList.add(supabase.auth.currentUser!.id);
-      setState(() {
-        likeNumber++;
-      });
-    }
     try {
       await supabase
           .from('posts')
@@ -111,6 +110,18 @@ class _PlansScreenState extends State<PlansScreen> {
       setState(() {
         likedPost = likedPost0;
       });
+      // 数字が変わるのと、アイコンの色が変わるのが別々で耐え難かったからこちらに移動
+      if (userList.contains(userId)) {
+        userList.remove(userId);
+        setState(() {
+          likeNumber -= 1;
+        });
+      } else {
+        userList.add(supabase.auth.currentUser!.id);
+        setState(() {
+          likeNumber++;
+        });
+      }
       // userがいいねをしていたらreturnする
       if (likedPost.isNotEmpty) {
         setState(() {
@@ -146,11 +157,20 @@ class _PlansScreenState extends State<PlansScreen> {
     });
   }
 
+  void goBackToLoginScreen() {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: (context) {
+        return const LoginScreen();
+      },
+    ));
+  }
+
   @override
   void initState() {
     super.initState();
     getLikePosts();
     getPosts();
+    // searchTest();
   }
 
   @override
@@ -186,6 +206,29 @@ class _PlansScreenState extends State<PlansScreen> {
     final double itemWidth = size.width / 2;
 
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: IconButton(
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) {
+                  return const SearchScreen();
+                },
+              ));
+            },
+            icon: const Icon(
+              Icons.search,
+              color: Colors.black,
+              size: 40,
+            ),
+          ),
+        ),
+        actions: const [],
+      ),
       floatingActionButton: Transform.rotate(
         // 回転しちゃうぞ
         angle: -1 * pi / 180,
@@ -246,6 +289,8 @@ class _PlansScreenState extends State<PlansScreen> {
           size.width / 15,
           0), // FloatingActionButtonLocation.miniEndTop 20
       floatingActionButtonAnimator: AnimationNoScaling(),
+
+      extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -434,33 +479,15 @@ class _PlansScreenState extends State<PlansScreen> {
                                                     width: 27,
                                                     height: 5,
                                                     child: DecoratedBox(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                      color: Color(0xffF2F2F2),
-                                                    )),
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            Color(0xffF2F2F2),
+                                                      ),
+                                                    ),
                                                   )
                                                 ],
                                               ),
                                             ),
-                                            // IconButton(
-                                            //   // TODO implement like features
-                                            //   onPressed: () {
-                                            //     likePost(index, likeNumber,
-                                            //         likedPost);
-                                            //   },
-                                            //   splashColor: Colors.transparent,
-                                            //   highlightColor:
-                                            //       Colors.transparent,
-                                            //   icon: Icon(
-                                            //     Icons.local_fire_department,
-                                            //     color:
-                                            //         _yourLikePostsData.contains(
-                                            //                 posts[index]['id'])
-                                            //             ? Colors.red
-                                            //             : Colors.black,
-                                            //     size: 30,
-                                            //   ),
-                                            // ),
                                             Text(
                                               likeNumber.toString(),
                                               style: const TextStyle(
@@ -514,10 +541,23 @@ class _PlansScreenState extends State<PlansScreen> {
                                                   width: 120,
                                                   height: 45,
                                                   child: ElevatedButton(
-                                                    onPressed: () async {
-                                                      await getUserInfo(index);
-                                                      showKnockPlan(index);
-                                                    },
+                                                    onPressed: supabase.auth
+                                                                .currentUser ==
+                                                            null
+                                                        ? goBackToLoginScreen
+                                                        : supabase
+                                                                    .auth
+                                                                    .currentUser!
+                                                                    .id ==
+                                                                posts[index]
+                                                                    ['user_id']
+                                                            ? null
+                                                            : () async {
+                                                                await getUserInfo(
+                                                                    index);
+                                                                showKnockPlan(
+                                                                    index);
+                                                              },
                                                     style: ElevatedButton
                                                         .styleFrom(
                                                       backgroundColor:
