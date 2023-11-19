@@ -102,7 +102,6 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
           i++) {
         _yourLikePostsData.add(yourLikePostsData[i]['post_id']);
       }
-      // final yourLikes = _yourLikePostsData;
     });
   }
 
@@ -123,7 +122,6 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
     setState(() {
       _userAvatar = userAvatarList;
       _userName = userNameList;
-      print(_userName);
       // print(_userAvatar);
     });
   }
@@ -143,7 +141,13 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
     }
 
     return widget.searchResult.isEmpty
-        ? Image.asset('assets/images/no-knocked.PNG')
+        ? Column(
+          children: [
+            const SizedBox(height: 100,),
+            Image.asset('assets/images/no-knocked.PNG'),
+            const Text('No plans found!', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),)
+          ],
+        )
         : Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
