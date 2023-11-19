@@ -136,6 +136,8 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
         },
       ),
     );
+    // ADDDDD!!!!!!
+    Navigator.pop(context);
   }
 
   @override
