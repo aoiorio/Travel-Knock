@@ -171,181 +171,184 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
         elevation: 0,
         foregroundColor: Colors.black,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 110, left: 35),
-              child: Text(
-                'Add Plan 📌',
-                style: TextStyle(
-                  fontSize: 37,
-                  fontWeight: FontWeight.bold,
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 110, left: 35),
+                child: Text(
+                  'Add Plan 📌',
+                  style: TextStyle(
+                    fontSize: 37,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 30, left: 35),
-              child: CustomTextField(
-                title: 'Title',
-                labelText: 'e.g. Eat at Banta Cafe',
-                controller: planDetailTitleController,
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 40, left: 35),
-              child: Text(
-                'Time',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+              Padding(
+                padding: const EdgeInsets.only(top: 30, left: 35),
+                child: CustomTextField(
+                  title: 'Title',
+                  labelText: 'e.g. Eat at Banta Cafe',
+                  controller: planDetailTitleController,
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 35),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 120,
-                    height: 60,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _showModalPicker(context, 'startTime');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: const Color(0xffEEEEEE),
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+              const Padding(
+                padding: EdgeInsets.only(top: 40, left: 35),
+                child: Text(
+                  'Time',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 20, left: 35),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 120,
+                      height: 60,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _showModalPicker(context, 'startTime');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor: const Color(0xffEEEEEE),
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        child: Text(
+                          stringStartTime,
+                          style: const TextStyle(fontSize: 20),
                         ),
                       ),
-                      child: Text(
-                        stringStartTime,
-                        style: const TextStyle(fontSize: 20),
-                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 30,
-                  ),
-                  const Text(
-                    '-',
-                    style: TextStyle(fontSize: 30),
-                  ),
-                  const SizedBox(
-                    width: 30,
-                  ),
-                  SizedBox(
-                    width: 120,
-                    height: 60,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _showModalPicker(context, 'endTime');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: const Color(0xffEEEEEE),
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                    const SizedBox(
+                      width: 30,
+                    ),
+                    const Text(
+                      '-',
+                      style: TextStyle(fontSize: 30),
+                    ),
+                    const SizedBox(
+                      width: 30,
+                    ),
+                    SizedBox(
+                      width: 120,
+                      height: 60,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _showModalPicker(context, 'endTime');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor: const Color(0xffEEEEEE),
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        child: Text(
+                          stringEndTime,
+                          style: const TextStyle(fontSize: 20),
                         ),
                       ),
-                      child: Text(
-                        stringEndTime,
-                        style: const TextStyle(fontSize: 20),
-                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 40, left: 35),
-              child: Text(
-                'Photo',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  ],
                 ),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.only(top: 20, left: 35),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: 320,
-                    height: 190,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: const Color(0xffEEEEEE),
-                    ),
-                    child: image != null
-                        ? DecoratedBox(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: FileImage(image!),
+              const Padding(
+                padding: EdgeInsets.only(top: 40, left: 35),
+                child: Text(
+                  'Photo',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.only(top: 20, left: 35),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: 320,
+                      height: 190,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: const Color(0xffEEEEEE),
+                      ),
+                      child: image != null
+                          ? DecoratedBox(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: FileImage(image!),
+                                ),
+                              ),
+                            )
+                          : const DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: Color(0xffEEEEEE),
                               ),
                             ),
-                          )
-                        : const DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: Color(0xffEEEEEE),
-                            ),
-                          ),
-                  ),
-                  IconButton(
-                    onPressed: pickImage,
-                    icon: const Icon(
-                      Icons.photo,
-                      size: 40,
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 30, top: 35),
-              child: Center(
-                child: SizedBox(
-                  width: 170,
-                  height: 70,
-                  child: isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xff4B4B5A),
-                          ),
-                        )
-                      : ElevatedButton(
-                          // DONE add feature of add to the list button
-                          onPressed: () async {
-                            if (planDetailTitleController.text.isEmpty) {
-                              return;
-                            }
-                            savePhotoToSupabase(setValues);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xff4B4B5A),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          child: const Text(
-                            'Add',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w600),
-                          ),
-                        ),
+                    IconButton(
+                      onPressed: pickImage,
+                      icon: const Icon(
+                        Icons.photo,
+                        size: 40,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.only(bottom: 30, top: 35),
+                child: Center(
+                  child: SizedBox(
+                    width: 170,
+                    height: 70,
+                    child: isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xff4B4B5A),
+                            ),
+                          )
+                        : ElevatedButton(
+                            // DONE add feature of add to the list button
+                            onPressed: () async {
+                              if (planDetailTitleController.text.isEmpty) {
+                                return;
+                              }
+                              savePhotoToSupabase(setValues);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xff4B4B5A),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: const Text(
+                              'Add',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

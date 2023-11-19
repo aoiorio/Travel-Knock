@@ -194,7 +194,7 @@ class _KnockedScreenState extends State<KnockedScreen> {
                                     ),
                                     SizedBox(
                                       width: MediaQuery.of(context).size.width /
-                                          30,
+                                          20, // 30
                                     ), // 40
                                     Flexible(
                                       child: Column(

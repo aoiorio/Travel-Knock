@@ -63,102 +63,106 @@ class NewPlanScreen extends StatelessWidget {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 110,
-              ),
-              const Text(
-                'New Plan 💡',
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 110,
                 ),
-              ),
-              const SizedBox(
-                height: 60,
-              ),
-              CustomTextField(
-                title: 'Title',
-                labelText: 'e.g. Okinawa in 3 days',
-                controller: planTitleController,
-              ),
-              const SizedBox(
-                height: 60,
-              ),
-              CustomTextField(
-                title: 'Place',
-                labelText: 'e.g. Okinawa',
-                controller: placeNameController,
-              ),
-              const SizedBox(
-                height: 60,
-              ),
-              const Text(
-                'Period',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              CustomDayTextField(controller: periodController, labelText: 'e.g. 3'),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 60,
-                  right: 50,
-                  left: 50,
-                  bottom: 50,
+                const Text(
+                  'New Plan 💡',
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                child: SizedBox(
-                  height: 70,
-                  width: 200,
-                  child: ElevatedButton(
-                    // DONE create a transition to PlansScreen and add details to the database
-                    onPressed: () {
-                      if (planTitleController.text.isEmpty ||
-                          placeNameController.text.isEmpty ||
-                          periodController.text.isEmpty ||
-                          periodController.text[0] == '0') {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Fill the title, place name and period',
+                const SizedBox(
+                  height: 60,
+                ),
+                CustomTextField(
+                  title: 'Title',
+                  labelText: 'e.g. Okinawa in 3 days',
+                  controller: planTitleController,
+                ),
+                const SizedBox(
+                  height: 60,
+                ),
+                CustomTextField(
+                  title: 'Place',
+                  labelText: 'e.g. Okinawa',
+                  controller: placeNameController,
+                ),
+                const SizedBox(
+                  height: 60,
+                ),
+                const Text(
+                  'Period',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                CustomDayTextField(
+                    controller: periodController, labelText: 'e.g. 3'),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 60,
+                    right: 50,
+                    left: 50,
+                    bottom: 50,
+                  ),
+                  child: SizedBox(
+                    height: 70,
+                    width: 200,
+                    child: ElevatedButton(
+                      // DONE create a transition to PlansScreen and add details to the database
+                      onPressed: () {
+                        if (planTitleController.text.isEmpty ||
+                            placeNameController.text.isEmpty ||
+                            periodController.text.isEmpty ||
+                            periodController.text[0] == '0') {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Fill the title, place name and period',
+                              ),
+                              backgroundColor: Color.fromARGB(255, 94, 94, 109),
                             ),
-                            backgroundColor: Color.fromARGB(255, 94, 94, 109),
+                          );
+                          return;
+                        }
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return DevelopPlanScreen(
+                                title: planTitleController.text,
+                                dayNumber: periodController.text,
+                                placeName: placeNameController.text,
+                                isKnock: false,
+                              );
+                            },
                           ),
                         );
-                        return;
-                      }
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return DevelopPlanScreen(
-                              title: planTitleController.text,
-                              dayNumber: periodController.text,
-                              placeName: placeNameController.text,
-                              isKnock: false,
-                            );
-                          },
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff4B4B5A),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xff4B4B5A),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
                       ),
-                    ),
-                    child: const Text(
-                      'Create a plan',
-                      style: TextStyle(fontSize: 20),
+                      child: const Text(
+                        'Create a plan',
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:travelknock/screen/login.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -12,6 +13,11 @@ void main() async {
     authFlowType: AuthFlowType.pkce,
   );
 
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+  //許可する向きを指定する。
+    DeviceOrientation.portraitUp, //上向きを許可
+  ]);
   runApp(const MyApp());
 }
 
@@ -30,7 +36,9 @@ class MyApp extends StatelessWidget {
           if (snapshot.hasData) {
             print('PlansScreen');
             // DONE replace the screen to PlansScreen
-            return const TabsScreen(initialPageIndex: 0,);
+            return const TabsScreen(
+              initialPageIndex: 0,
+            );
           }
           // If user was login as a guest, I want the user can see the PlansScreen. How do I implement it?
           print('LoginScreen');
