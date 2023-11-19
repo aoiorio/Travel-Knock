@@ -237,11 +237,14 @@ class _SearchScreenState extends State<SearchScreen> {
                           ],
                         ),
                   _isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xff4B4B5A),
+                      ? Center(
+                        child: Container(
+                          padding: const EdgeInsets.all(200),
+                            child: const CircularProgressIndicator(
+                              color: Color(0xff4B4B5A),
+                            ),
                           ),
-                        )
+                      )
                       : searchTextController.text.isEmpty
                           // TODO add illustration (e.g. Let's search place name!)!
                           ? const Padding(
