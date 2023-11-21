@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/search_results_card.dart';
+import 'package:travelknock/screen/tabs.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key, required this.yourLikePostsData});
+  const SearchScreen({
+    super.key,
+    required this.yourLikePostsData,
+    this.searchText,
+  });
 
   final List yourLikePostsData;
+  final String? searchText;
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -28,7 +34,7 @@ class _SearchScreenState extends State<SearchScreen> {
           .eq('id', _searchResult[i]['user_id'])
           .single();
       _userAvatar.add(userData);
-      print(_userAvatar);
+      // print(_userAvatar);
     }
   }
 
@@ -48,16 +54,46 @@ class _SearchScreenState extends State<SearchScreen> {
         .textSearch('place_name', searchTextController.text);
     setState(() {
       _searchResult = searchResult;
-      print(_searchResult);
+      // print(_searchResult);
       _isLoading = false;
     });
+  }
+
+  void hotPlaceSearch(String searchText) async {
+    setState(() {
+      _isLoading = true;
+    });
+    final searchResult = await supabase
+        .from('posts')
+        .select('*')
+        .textSearch('place_name', searchText);
+    setState(() {
+      _searchResult = searchResult;
+      // print(_searchResult);
+      _isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.searchText != null) {
+      searchTextController.text = widget.searchText!;
+      hotPlaceSearch(widget.searchText!);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        Navigator.pop(context, true);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) {
+            return const TabsScreen(
+              initialPageIndex: 0,
+            );
+          },
+        ));
         return Future.value(false);
       },
       child: Scaffold(
@@ -239,10 +275,10 @@ class _SearchScreenState extends State<SearchScreen> {
                   _isLoading
                       ? Container(
                           padding: const EdgeInsets.all(100),
-                            child: const CircularProgressIndicator(
-                              color: Color(0xff4B4B5A),
-                            ),
-                      )
+                          child: const CircularProgressIndicator(
+                            color: Color(0xff4B4B5A),
+                          ),
+                        )
                       : searchTextController.text.isEmpty
                           // TODO add illustration (e.g. Let's search place name!)!
                           ? const Padding(
@@ -253,7 +289,9 @@ class _SearchScreenState extends State<SearchScreen> {
                             )
                           : SearchResultsCard(
                               searchResult: _searchResult,
-                              searchText: searchTextController.text,
+                              searchText: widget.searchText != null
+                                  ? widget.searchText!
+                                  : searchTextController.text,
                               // yourLikePostsData: widget.yourLikePostsData,
                             ),
                 ],

@@ -1,4 +1,4 @@
-// TODO create profile page
+// DONE create profile page
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';

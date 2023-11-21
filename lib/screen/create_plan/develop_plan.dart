@@ -127,6 +127,10 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
     setState(() {
       isLoading = false;
     });
+       // TODO asdfjalsdjfskdfsdf!!!!!!
+    Navigator.pop(context);
+
+
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) {
@@ -136,8 +140,6 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
         },
       ),
     );
-    // ADDDDD!!!!!!
-    Navigator.pop(context);
   }
 
   @override

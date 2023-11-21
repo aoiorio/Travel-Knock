@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/screen/login.dart';
 import 'package:travelknock/screen/plans/plans.dart';
-import 'package:travelknock/screen/profile.dart';
+import 'package:travelknock/screen/own_profile.dart';
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key, required this.initialPageIndex});

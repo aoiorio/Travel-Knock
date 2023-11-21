@@ -45,14 +45,23 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
     final userId = supabase.auth.currentUser!.id;
     // print('Liked!!');
     List userList = widget.searchResult[index]['post_like_users'];
+    final likes = await supabase
+        .from('posts')
+        .select('likes')
+        .eq('id', widget.searchResult[index]['id'])
+        .single();
     try {
       if (userList.contains(userId)) {
         userList.remove(userId);
+        await supabase.from('posts').update({'likes': likes['likes'] - 1}).eq(
+            'id', widget.searchResult[index]['id']);
         setState(() {
           likeNumber -= 1;
         });
       } else {
         userList.add(supabase.auth.currentUser!.id);
+        await supabase.from('posts').update({'likes': likes['likes'] + 1}).eq(
+            'id', widget.searchResult[index]['id']);
         setState(() {
           likeNumber++;
         });
@@ -142,12 +151,17 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
 
     return widget.searchResult.isEmpty
         ? Column(
-          children: [
-            const SizedBox(height: 100,),
-            Image.asset('assets/images/no-knocked.PNG'),
-            const Text('No plans found!', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),)
-          ],
-        )
+            children: [
+              const SizedBox(
+                height: 100,
+              ),
+              Image.asset('assets/images/no-knocked.PNG'),
+              const Text(
+                'No plans found!',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+              )
+            ],
+          )
         : Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,9 +196,8 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                             thumbnail: widget.searchResult[index]['thumbnail'],
                             planDetailsList: widget.searchResult[index]
                                 ['plans'],
-                            userAvatar: _userAvatar[index],
-                            userName: _userName[index],
                             ownerId: widget.searchResult[index]['user_id'],
+                            yourId: supabase.auth.currentUser!.id,
                           );
                         },
                       ));
