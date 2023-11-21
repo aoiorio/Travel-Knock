@@ -173,10 +173,9 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                                                   planDetailsList: _posts[
                                                           index % _posts.length]
                                                       ['plans'],
-                                                  userAvatar: _userAvatar,
-                                                  userName: _userName,
                                                   ownerId: _posts[index %
                                                       _posts.length]['user_id'],
+                                                  yourId: supabase.auth.currentUser!.id,
                                                 );
                                               },
                                             ));

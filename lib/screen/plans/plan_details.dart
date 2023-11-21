@@ -17,16 +17,14 @@ class PlanDetailsScreen extends StatefulWidget {
     required this.title,
     required this.thumbnail,
     required this.planDetailsList,
-    required this.userAvatar,
-    required this.userName,
+    required this.yourId,
     required this.ownerId,
   });
 
   final String title;
   final String thumbnail;
   final List planDetailsList;
-  final String userAvatar;
-  final String userName;
+  final String yourId;
   final String ownerId;
 
   @override
@@ -38,6 +36,8 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
   var _isSelected = [true, false];
   List<List<Map<String, dynamic>>> plans = [];
   var heroTag = '';
+  String _ownerAvatar = '';
+  String _ownerName = '';
   final supabase = Supabase.instance.client;
 
   void goBackToLoginScreen() {
@@ -46,6 +46,21 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
         return const LoginScreen();
       },
     ));
+  }
+
+  void getOwnerInfo() async {
+    final ownerAvatar = await supabase
+        .from('profiles')
+        .select('avatar_url')
+        .eq('id', widget.ownerId).single();
+    final ownerName = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', widget.ownerId).single();
+    setState(() {
+      _ownerAvatar = ownerAvatar['avatar_url'];
+      _ownerName = ownerName['username'];
+    });
   }
 
   @override
@@ -60,6 +75,7 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
     });
     plans = convertStringToMap(widget.planDetailsList);
     heroTag = widget.thumbnail;
+    getOwnerInfo();
   }
 
   // 受け取ったリストの中のリストのマップが文字列になっていたからマップに変える関数
@@ -94,8 +110,8 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
       context: context,
       builder: (BuildContext context) {
         return KnockPlanScreen(
-          ownerAvatar: widget.userAvatar,
-          ownerName: widget.userName,
+          ownerAvatar: _ownerAvatar,
+          ownerName: _ownerName,
           requestUserId: supabase.auth.currentUser!.id,
           ownerId: widget.ownerId,
         );
@@ -105,8 +121,6 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // List likes = [index]['post_like_users'];
-    //                   int likeNumber = likes.length;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -156,21 +170,21 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                       decoration: const BoxDecoration(shape: BoxShape.circle),
                       clipBehavior: Clip.antiAliasWithSaveLayer,
                       margin: const EdgeInsets.only(left: 35),
-                      child: widget.userAvatar.isEmpty
+                      child: _ownerAvatar.isEmpty
                           ? Shimmer.fromColors(
                               baseColor: Colors.grey[300]!,
                               highlightColor: Colors.grey[200]!,
                               child: const ColoredBox(color: Colors.grey),
                             )
                           : CachedNetworkImage(
-                              imageUrl: widget.userAvatar.toString(),
+                              imageUrl: _ownerAvatar.toString(),
                               fit: BoxFit.cover,
                             ),
                     ),
                     const SizedBox(
                       width: 20,
                     ),
-                    widget.userName.isEmpty
+                    _ownerName.isEmpty
                         ? Shimmer.fromColors(
                             baseColor: Colors.grey[300]!,
                             highlightColor: Colors.grey[200]!,
@@ -181,11 +195,11 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                                   const BoxDecoration(color: Colors.white),
                             ),
                           )
-                        : widget.userName.length >= 9
+                        : _ownerName.length >= 9
                             ? SizedBox(
                                 width: 60,
                                 child: Text(
-                                  widget.userName,
+                                  _ownerName,
                                   style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600),
@@ -194,7 +208,7 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                             : SizedBox(
                                 width: 60,
                                 child: Text(
-                                  widget.userName,
+                                  _ownerName,
                                   style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w600,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:travelknock/screen/search.dart';
+import 'package:travelknock/screen/tabs.dart';
 
 import 'dart:math';
 import 'dart:ui';
@@ -29,24 +30,19 @@ class _PlansScreenState extends State<PlansScreen> {
   List posts = [];
   String _userAvatar = '';
   String _userName = '';
-  final _yourLikePostsData = [];
+  final List _yourLikePostsData = [];
   List likedPost = [];
+  List _hotPlaceList = [];
 
   Future<void> getPosts() async {
     if (!mounted) return;
-    posts =
-        await supabase.from('posts').select('*').order('id', ascending: false);
+    posts = await supabase
+        .from('posts')
+        .select('*')
+        .order('likes', ascending: false);
     setState(() {
       posts = posts;
     });
-  }
-
-  void searchTest() async {
-    final searchResult = await supabase.from('posts').select('*').textSearch(
-          'place_name',
-          "okinawa",
-        );
-    print(searchResult);
   }
 
   Future getUserInfo(int index) async {
@@ -92,46 +88,62 @@ class _PlansScreenState extends State<PlansScreen> {
   }
 
   void likePost(int index, int likeNumber, List likedPost) async {
+    // まず、登録をしていないお客様はこちらへどうぞ
     if (supabase.auth.currentUser == null) {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) {
-          return const LoginScreen();
-        },
-      ));
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const TabsScreen(initialPageIndex: 1),
+        ),
+      );
+      return;
+    }
+    final userId = supabase.auth.currentUser!.id;
+
+    // userは自分の投稿したpostにいいねできない
+    if (userId == posts[index]['user_id']) {
       return;
     }
 
-    final userId = supabase.auth.currentUser!.id;
-    // print('Liked!!');
     List userList = posts[index]['post_like_users'];
+    final likes = await supabase
+        .from('posts')
+        .select('likes')
+        .eq('id', posts[index]['id'])
+        .single();
+
     try {
       if (userList.contains(userId)) {
         userList.remove(userId);
+        await supabase
+            .from('posts')
+            .update({'likes': likes['likes'] - 1}).eq('id', posts[index]['id']);
         setState(() {
           likeNumber -= 1;
         });
       } else {
-        userList.add(supabase.auth.currentUser!.id);
+        userList.add(userId);
+        await supabase
+            .from('posts')
+            .update({'likes': likes['likes'] + 1}).eq('id', posts[index]['id']);
         setState(() {
           likeNumber++;
         });
       }
-      final updatedUserList = await supabase
+      await supabase
           .from('posts')
           .update({'post_like_users': userList}).eq('id', posts[index]['id']);
-      print(updatedUserList);
 
-      final likedPost0 = await supabase
+      final aLikedPost = await supabase
           .from('likes')
           .select('id')
           .eq('post_id', posts[index]['id'])
           .eq('user_id', supabase.auth.currentUser!.id);
       setState(() {
-        likedPost = likedPost0;
+        likedPost = aLikedPost;
       });
       // 数字が変わるのと、アイコンの色が変わるのが別々で耐え難かったからこちらに移動 => いや、機能しないやん
 
-      // userがいいねをしていたらreturnする
+      // userがその投稿にいいねをしていたらreturnする
       if (likedPost.isNotEmpty) {
         setState(() {
           _yourLikePostsData.remove(posts[index]['id']);
@@ -175,39 +187,38 @@ class _PlansScreenState extends State<PlansScreen> {
     ));
   }
 
+  // it's the most attractive place in Travel Knock
+  void getHotPlace() async {
+    final duplicatedPlaceList = [];
+    final hotPlaceList = [];
+    for (var i = 0; posts.length > i; i++) {
+      final List placeCountList = await supabase
+          .from('posts')
+          .select('*')
+          .eq('place_name', posts[i]['place_name']);
+      if (placeCountList.length > 1 &&
+          !duplicatedPlaceList.contains(posts[i]['place_name']) &&
+          hotPlaceList.length < 7) {
+        duplicatedPlaceList.add(posts[i]['place_name']);
+        setState(() {
+          hotPlaceList.add(posts[i]);
+        });
+      }
+    }
+    setState(() {
+      _hotPlaceList = hotPlaceList;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getLikePosts();
-    getPosts();
+    getPosts().then((value) => getHotPlace());
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO implement hotPlace feature!
-    final hotPlacesList = [
-      {
-        'placeName': 'Okinawa',
-        'imageUrl':
-            'https://i.pinimg.com/564x/48/4c/fd/484cfdb7de2fc35e6f6661966befe970.jpg',
-      },
-      {
-        'placeName': 'Osaka',
-        'imageUrl':
-            'https://i.pinimg.com/564x/93/ee/a0/93eea007958b53ecf4879366128b8753.jpg',
-      },
-      {
-        'placeName': 'Thai',
-        'imageUrl':
-            'https://i.pinimg.com/564x/a8/a5/61/a8a5619a67d3502ff7eb1057137a784f.jpg',
-      },
-      {
-        'placeName': 'Gifu',
-        'imageUrl':
-            'https://i.pinimg.com/564x/2a/19/ee/2a19ee26bd2f285c5e5f31da4840db11.jpg',
-      }
-    ];
-
     var size = MediaQuery.of(context).size;
 
     /*24 is for notification bar on Android*/
@@ -223,13 +234,15 @@ class _PlansScreenState extends State<PlansScreen> {
           padding: const EdgeInsets.all(8.0),
           child: IconButton(
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) {
-                  return SearchScreen(
-                    yourLikePostsData: _yourLikePostsData,
-                  );
-                },
-              ));
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return SearchScreen(
+                      yourLikePostsData: _yourLikePostsData,
+                    );
+                  },
+                ),
+              );
             },
             icon: const Icon(
               Icons.search,
@@ -238,7 +251,6 @@ class _PlansScreenState extends State<PlansScreen> {
             ),
           ),
         ),
-        actions: const [],
       ),
       floatingActionButton: Transform.rotate(
         // 回転しちゃうぞ
@@ -304,9 +316,8 @@ class _PlansScreenState extends State<PlansScreen> {
       extendBodyBehindAppBar: true,
       body: RefreshIndicator(
         onRefresh: () async {
-          // final model = context.read();
-          // model.reload();
           await getPosts();
+          getLikePosts();
         },
         child: SingleChildScrollView(
           child: Column(
@@ -343,67 +354,117 @@ class _PlansScreenState extends State<PlansScreen> {
                   ),
                 ),
               ),
-              // todo Hot Places
-              Container(
-                margin: const EdgeInsets.only(
-                  top: 25,
-                ),
-                height: 200,
-                width: double.infinity,
-                child: GridView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: hotPlacesList.length,
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 100.0,
-                    crossAxisSpacing: 20.0,
-                    mainAxisSpacing: 20.0,
-                    childAspectRatio: (itemWidth / itemHeight),
-                  ),
-                  itemBuilder: (context, index) {
-                    return Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      margin: const EdgeInsets.only(left: 20, right: 10),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          ImageFiltered(
-                            imageFilter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-                            child: Image.network(
-                              hotPlacesList[index]['imageUrl']!,
-                              fit: BoxFit.cover,
-                              width: 200,
-                              height: 100,
-                            ),
+              // DONE Hot Places
+              _hotPlaceList.isEmpty
+                  ? Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 25),
+                        height: 200,
+                        width: double.infinity,
+                        child: GridView.builder(
+                          itemCount: 4,
+                          scrollDirection: Axis.horizontal,
+                          gridDelegate:
+                              SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 100.0,
+                            crossAxisSpacing: 20.0,
+                            mainAxisSpacing: 20.0,
+                            childAspectRatio: (itemWidth / itemHeight),
                           ),
-                          Center(
-                            child: Text(
-                              hotPlacesList[index]['placeName']!,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
+                          itemBuilder: (context, index) {
+                            return Card(
+                              margin:
+                                  const EdgeInsets.only(left: 20, right: 10),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              color: Colors.white,
+                            );
+                          },
+                        ),
+                      ),
+                    )
+                  : Container(
+                      margin: const EdgeInsets.only(top: 25),
+                      height: 200,
+                      width: double.infinity,
+                      child: GridView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _hotPlaceList.length,
+                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 100.0,
+                          crossAxisSpacing: 20.0,
+                          mainAxisSpacing: 20.0,
+                          childAspectRatio: (itemWidth / itemHeight),
+                        ),
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return SearchScreen(
+                                      yourLikePostsData: _yourLikePostsData,
+                                      searchText: _hotPlaceList[index]
+                                          ['place_name'],
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              margin:
+                                  const EdgeInsets.only(left: 20, right: 10),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  ImageFiltered(
+                                    imageFilter:
+                                        ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                                    child: CachedNetworkImage(
+                                      imageUrl: _hotPlaceList[index]
+                                          ['thumbnail'],
+                                      fit: BoxFit.cover,
+                                      width: 200,
+                                      height: 100,
+                                    ),
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      _hotPlaceList[index]['place_name'],
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
+                    ),
 
+              // Display posts!
               posts.isEmpty
                   ? Center(
                       child: Container(
-                          margin: const EdgeInsets.all(100),
-                          child: const Text(
-                            'No plans yet!!',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          )),
+                        margin: const EdgeInsets.all(100),
+                        child: const Text(
+                          'No plans yet!!',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     )
                   :
                   // todo plans
@@ -416,6 +477,7 @@ class _PlansScreenState extends State<PlansScreen> {
                       itemBuilder: (context, index) {
                         List likes = posts[index]['post_like_users'];
                         int likeNumber = likes.length;
+                        // int likes = posts[index]['likes'];
                         return OpenContainer(
                           transitionType: ContainerTransitionType.fadeThrough,
                           closedColor: Colors.transparent,
@@ -623,9 +685,8 @@ class _PlansScreenState extends State<PlansScreen> {
                               title: posts[index]['title'],
                               thumbnail: posts[index]['thumbnail'],
                               planDetailsList: posts[index]['plans'],
-                              userAvatar: _userAvatar,
-                              userName: _userName,
                               ownerId: posts[index]['user_id'],
+                              yourId: supabase.auth.currentUser!.id,
                             );
                           },
                         );
