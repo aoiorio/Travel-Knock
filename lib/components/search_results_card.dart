@@ -5,6 +5,7 @@ import 'package:rive/rive.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/screen/plans/plan_details.dart';
+import 'package:travelknock/screen/user_profile.dart';
 
 import '../screen/login.dart';
 
@@ -43,6 +44,11 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
       return;
     }
     final userId = supabase.auth.currentUser!.id;
+
+        // userは自分の投稿したpostにいいねできない
+    if (userId == widget.searchResult[index]['user_id']) {
+      return;
+    }
     // print('Liked!!');
     List userList = widget.searchResult[index]['post_like_users'];
     final likes = await supabase
@@ -345,9 +351,22 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                                           color: Colors.white),
                                     ),
                                   )
-                                : CachedNetworkImage(
-                                    imageUrl: _userAvatar[index],
-                                    fit: BoxFit.cover,
+                                : GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              UserProfileScreen(
+                                            userId: widget.searchResult[index]
+                                                ['user_id'],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: CachedNetworkImage(
+                                      imageUrl: _userAvatar[index],
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                           ),
                         ),
@@ -357,10 +376,11 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                 },
               ),
               const Center(
-                  child: Text(
-                'Over!🍈',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ))
+                child: Text(
+                  'Over!🍈',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+              )
             ],
           );
   }

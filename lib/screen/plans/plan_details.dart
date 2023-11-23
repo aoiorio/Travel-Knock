@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'package:travelknock/components/plan_details_card.dart';
 import 'package:travelknock/screen/knock/knock_plan.dart';
 import 'package:travelknock/screen/login.dart';
+import 'package:travelknock/screen/user_profile.dart';
 
 class PlanDetailsScreen extends StatefulWidget {
   const PlanDetailsScreen({
@@ -17,14 +18,14 @@ class PlanDetailsScreen extends StatefulWidget {
     required this.title,
     required this.thumbnail,
     required this.planDetailsList,
-    required this.yourId,
+    this.yourId,
     required this.ownerId,
   });
 
   final String title;
   final String thumbnail;
   final List planDetailsList;
-  final String yourId;
+  final String? yourId;
   final String ownerId;
 
   @override
@@ -38,6 +39,7 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
   var heroTag = '';
   String _ownerAvatar = '';
   String _ownerName = '';
+  final String _ownerId = '';
   final supabase = Supabase.instance.client;
 
   void goBackToLoginScreen() {
@@ -52,11 +54,13 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
     final ownerAvatar = await supabase
         .from('profiles')
         .select('avatar_url')
-        .eq('id', widget.ownerId).single();
+        .eq('id', widget.ownerId)
+        .single();
     final ownerName = await supabase
         .from('profiles')
         .select('username')
-        .eq('id', widget.ownerId).single();
+        .eq('id', widget.ownerId)
+        .single();
     setState(() {
       _ownerAvatar = ownerAvatar['avatar_url'];
       _ownerName = ownerName['username'];
@@ -176,9 +180,21 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                               highlightColor: Colors.grey[200]!,
                               child: const ColoredBox(color: Colors.grey),
                             )
-                          : CachedNetworkImage(
-                              imageUrl: _ownerAvatar.toString(),
-                              fit: BoxFit.cover,
+                          : GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return UserProfileScreen(
+                                          userId: widget.ownerId);
+                                    },
+                                  ),
+                                );
+                              },
+                              child: CachedNetworkImage(
+                                imageUrl: _ownerAvatar.toString(),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                     ),
                     const SizedBox(

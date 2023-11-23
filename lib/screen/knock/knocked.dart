@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/screen/knock/knock_plan_details.dart';
+import 'package:travelknock/screen/user_profile.dart';
 
 import 'knock_develop.dart';
 
@@ -35,7 +36,8 @@ class _KnockedScreenState extends State<KnockedScreen> {
     final requestKnock = await supabase
         .from('knock')
         .select('*')
-        .eq('owner_id', supabase.auth.currentUser!.id).order('is_completed', ascending: true);
+        .eq('owner_id', supabase.auth.currentUser!.id)
+        .order('is_completed', ascending: true);
     setState(() {
       _requestKnock = requestKnock;
     });
@@ -137,6 +139,8 @@ class _KnockedScreenState extends State<KnockedScreen> {
                                               ['avatar_url'],
                                       requestedUserName: _requestUserData[index]
                                           [0]['username'],
+                                      requestedUserId: _requestUserData[index]
+                                          [0]['id'],
                                       yourAvatar: widget.yourAvatar,
                                       yourName: widget.yourName,
                                       isYourKnock: false,
@@ -168,7 +172,8 @@ class _KnockedScreenState extends State<KnockedScreen> {
                               Container(
                                 padding: const EdgeInsets.all(20),
                                 margin: const EdgeInsets.all(20),
-                                constraints: const BoxConstraints(minHeight: 100),
+                                constraints:
+                                    const BoxConstraints(minHeight: 100),
                                 width: 390,
                                 decoration: BoxDecoration(
                                   color: const Color(0xffF2F2F2),
@@ -177,19 +182,33 @@ class _KnockedScreenState extends State<KnockedScreen> {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Container(
-                                      width: 70,
-                                      height: 70,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                      ),
-                                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      child: CachedNetworkImage(
-                                        imageUrl: _requestUserData[index][0]
-                                            ['avatar_url'],
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                UserProfileScreen(
+                                              userId: _requestUserData[index][0]
+                                                  ['id'],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
                                         width: 70,
                                         height: 70,
-                                        fit: BoxFit.cover,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                        ),
+                                        clipBehavior:
+                                            Clip.antiAliasWithSaveLayer,
+                                        child: CachedNetworkImage(
+                                          imageUrl: _requestUserData[index][0]
+                                              ['avatar_url'],
+                                          width: 70,
+                                          height: 70,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
                                     SizedBox(
@@ -208,6 +227,7 @@ class _KnockedScreenState extends State<KnockedScreen> {
                                               fontSize: 17,
                                               fontWeight: FontWeight.w600,
                                             ),
+                                            textAlign: TextAlign.center,
                                           ),
                                           const SizedBox(height: 10),
                                           Text(

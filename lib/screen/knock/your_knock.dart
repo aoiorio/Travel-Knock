@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/screen/knock/knock_plan_details.dart';
+import 'package:travelknock/screen/user_profile.dart';
 
 class YourKnock extends StatefulWidget {
   const YourKnock({
@@ -131,6 +132,8 @@ class _YourKnockState extends State<YourKnock> {
                                           ['avatar_url'],
                                       requestedUserName: _ownerData[index][0]
                                           ['username'],
+                                      requestedUserId: _ownerData[index][0]
+                                          ['id'],
                                       yourAvatar: widget.yourAvatar,
                                       yourName: widget.yourName,
                                       isYourKnock: true,
@@ -158,24 +161,38 @@ class _YourKnockState extends State<YourKnock> {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Container(
-                                      width: 70,
-                                      height: 70,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                      ),
-                                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      child: CachedNetworkImage(
-                                        imageUrl: _ownerData[index][0]
-                                            ['avatar_url'],
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                UserProfileScreen(
+                                              userId: _ownerData[index][0]
+                                                  ['id'],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
                                         width: 70,
                                         height: 70,
-                                        fit: BoxFit.cover,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                        ),
+                                        clipBehavior:
+                                            Clip.antiAliasWithSaveLayer,
+                                        child: CachedNetworkImage(
+                                          imageUrl: _ownerData[index][0]
+                                              ['avatar_url'],
+                                          width: 70,
+                                          height: 70,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
                                     SizedBox(
                                       width: MediaQuery.of(context).size.width /
-                                          30,
+                                          10,
                                     ),
                                     Flexible(
                                       child: Column(
@@ -189,6 +206,7 @@ class _YourKnockState extends State<YourKnock> {
                                               fontSize: 17,
                                               fontWeight: FontWeight.w600,
                                             ),
+                                            textAlign: TextAlign.center,
                                           ),
                                           const SizedBox(height: 10),
                                           Text(
