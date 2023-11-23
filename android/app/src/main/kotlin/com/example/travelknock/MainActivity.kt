@@ -1,4 +1,4 @@
-package com.example.travelknock
+package com.first.travelknock
 
 import io.flutter.embedding.android.FlutterActivity
 
