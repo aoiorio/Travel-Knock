@@ -31,6 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? _yourHeader;
 
   Future getYourInfo() async {
+    if (!mounted) return;
     setState(() {
       _isLoading = true;
     });
@@ -281,7 +282,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               )),
                           child: const Text(
                             'Sign Out',
-                            style: TextStyle(fontSize: 15, color: Color.fromARGB(255, 128, 76, 72)),
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Color.fromARGB(255, 128, 76, 72)),
                           ),
                         ),
                       ),

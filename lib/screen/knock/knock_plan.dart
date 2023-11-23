@@ -8,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/custom_day_text_field.dart';
 import 'package:travelknock/screen/tabs.dart';
+import 'package:travelknock/screen/user_profile.dart';
 
 class KnockPlanScreen extends StatefulWidget {
   const KnockPlanScreen({
@@ -131,41 +132,59 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 20, left: 15),
-                      child: Column(
-                        children: [
-                          Text(
-                            requestUserName,
-                            style: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
+                      child: Container(
+                        constraints: const BoxConstraints(maxWidth: 110),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              requestUserName,
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            width: 100,
-                            height: 100,
-                            decoration:
-                                const BoxDecoration(shape: BoxShape.circle),
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            child: requestUserAvatar.isEmpty
-                                ? Shimmer.fromColors(
-                                    baseColor: Colors.grey[300]!,
-                                    highlightColor: Colors.grey[100]!,
-                                    child:
-                                        const ColoredBox(color: Colors.white),
-                                  )
-                                : CachedNetworkImage(
-                                    key: UniqueKey(),
-                                    imageUrl: requestUserAvatar,
-                                    fit: BoxFit.cover,
-                                  ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                        ],
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration:
+                                  const BoxDecoration(shape: BoxShape.circle),
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              child: requestUserAvatar.isEmpty
+                                  ? Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[100]!,
+                                      child:
+                                          const ColoredBox(color: Colors.white),
+                                    )
+                                  : GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                UserProfileScreen(
+                                              userId:
+                                                  supabase.auth.currentUser!.id,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: CachedNetworkImage(
+                                        key: UniqueKey(),
+                                        imageUrl: requestUserAvatar,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     Padding(
@@ -182,41 +201,58 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                       padding: const EdgeInsets.only(
                         top: 20,
                       ),
-                      child: Column(
-                        children: [
-                          Text(
-                            widget.ownerName,
-                            style: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
+                      child: Container(
+                        constraints: const BoxConstraints(maxWidth: 110),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              widget.ownerName,
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            width: 100,
-                            height: 100,
-                            decoration:
-                                const BoxDecoration(shape: BoxShape.circle),
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            child: requestUserAvatar.isEmpty
-                                ? Shimmer.fromColors(
-                                    baseColor: Colors.grey[300]!,
-                                    highlightColor: Colors.grey[100]!,
-                                    child:
-                                        const ColoredBox(color: Colors.white),
-                                  )
-                                : CachedNetworkImage(
-                                    key: UniqueKey(),
-                                    imageUrl: widget.ownerAvatar,
-                                    fit: BoxFit.cover,
-                                  ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                        ],
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration:
+                                  const BoxDecoration(shape: BoxShape.circle),
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              child: requestUserAvatar.isEmpty
+                                  ? Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[100]!,
+                                      child:
+                                          const ColoredBox(color: Colors.white),
+                                    )
+                                  : GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                UserProfileScreen(
+                                              userId: widget.ownerId,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: CachedNetworkImage(
+                                        key: UniqueKey(),
+                                        imageUrl: widget.ownerAvatar,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

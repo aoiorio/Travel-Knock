@@ -9,6 +9,7 @@ import 'dart:convert';
 
 import 'package:travelknock/components/plan_details_card.dart';
 import 'package:travelknock/screen/login.dart';
+import 'package:travelknock/screen/user_profile.dart';
 
 class KnockPlanDetailsScreen extends StatefulWidget {
   const KnockPlanDetailsScreen({
@@ -18,6 +19,7 @@ class KnockPlanDetailsScreen extends StatefulWidget {
     required this.planDetailsList,
     required this.requestedUserAvatar,
     required this.requestedUserName,
+    required this.requestedUserId,
     required this.yourAvatar,
     required this.yourName,
     required this.isYourKnock,
@@ -28,6 +30,7 @@ class KnockPlanDetailsScreen extends StatefulWidget {
   final List planDetailsList;
   final String requestedUserAvatar;
   final String requestedUserName;
+  final String requestedUserId;
   final String yourAvatar;
   final String yourName;
   final bool isYourKnock;
@@ -127,111 +130,149 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                     ),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 150,
-                      child: Column(
-                        children: [
-                          Container(
-                            width: 70,
-                            height: 70,
-                            decoration:
-                                const BoxDecoration(shape: BoxShape.circle),
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            // margin: const EdgeInsets.only(left: 35),
-                            child: widget.requestedUserAvatar.isEmpty
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        constraints: const BoxConstraints(maxWidth: 150),
+                        width: 150,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Container(
+                              width: 70,
+                              height: 70,
+                              decoration:
+                                  const BoxDecoration(shape: BoxShape.circle),
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              child: widget.requestedUserAvatar.isEmpty
+                                  ? Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[200]!,
+                                      child: const ColoredBox(color: Colors.grey),
+                                    )
+                                  : GestureDetector(
+                                      onTap: () {
+                                        if (!mounted) return;
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                UserProfileScreen(
+                                              userId: widget.isYourKnock
+                                                  ? supabase.auth.currentUser!.id
+                                                  : widget.requestedUserId,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: CachedNetworkImage(
+                                        imageUrl: widget.isYourKnock
+                                            ? widget.yourAvatar
+                                            : widget.requestedUserAvatar
+                                                .toString(),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                            ),
+                            widget.requestedUserName.isEmpty
                                 ? Shimmer.fromColors(
                                     baseColor: Colors.grey[300]!,
                                     highlightColor: Colors.grey[200]!,
-                                    child: const ColoredBox(color: Colors.grey),
+                                    child: Container(
+                                      width: 50,
+                                      height: 30,
+                                      decoration: const BoxDecoration(
+                                          color: Colors.white),
+                                    ),
                                   )
-                                : CachedNetworkImage(
-                                    imageUrl: widget.isYourKnock
-                                        ? widget.yourAvatar
-                                        : widget.requestedUserAvatar.toString(),
-                                    fit: BoxFit.cover,
-                                  ),
-                          ),
-                          widget.requestedUserName.isEmpty
-                              ? Shimmer.fromColors(
-                                  baseColor: Colors.grey[300]!,
-                                  highlightColor: Colors.grey[200]!,
-                                  child: Container(
-                                    width: 50,
-                                    height: 30,
-                                    decoration: const BoxDecoration(
-                                        color: Colors.white),
-                                  ),
-                                )
-                              : Padding(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  child: Text(
-                                    widget.isYourKnock
-                                        ? widget.yourName
-                                        : widget.requestedUserName,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600,
+                                : Padding(
+                                    padding: const EdgeInsets.only(top: 10),
+                                    child: Text(
+                                      widget.isYourKnock
+                                          ? widget.yourName
+                                          : widget.requestedUserName,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    const Icon(Icons.multiple_stop),
-                    SizedBox(
-                      width: 150,
-                      child: Column(
-                        children: [
-                          Container(
-                            width: 70,
-                            height: 70,
-                            decoration:
-                                const BoxDecoration(shape: BoxShape.circle),
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            child: widget.yourAvatar.isEmpty
+                      const Icon(Icons.multiple_stop),
+                      Container(
+                        constraints: const BoxConstraints(maxWidth: 150),
+                        width: 150,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Container(
+                              width: 70,
+                              height: 70,
+                              decoration:
+                                  const BoxDecoration(shape: BoxShape.circle),
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              child: widget.yourAvatar.isEmpty
+                                  ? Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[200]!,
+                                      child: const ColoredBox(color: Colors.grey),
+                                    )
+                                  : GestureDetector(
+                                      onTap: () {
+                                        if (!mounted) return;
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                UserProfileScreen(
+                                              userId: widget.isYourKnock
+                                                  ? widget.requestedUserId
+                                                  : supabase.auth.currentUser!.id,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: CachedNetworkImage(
+                                        imageUrl: widget.isYourKnock
+                                            ? widget.requestedUserAvatar
+                                            : widget.yourAvatar,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                            ),
+                            widget.yourName.isEmpty
                                 ? Shimmer.fromColors(
                                     baseColor: Colors.grey[300]!,
                                     highlightColor: Colors.grey[200]!,
-                                    child: const ColoredBox(color: Colors.grey),
+                                    child: Container(
+                                      width: 50,
+                                      height: 30,
+                                      decoration: const BoxDecoration(
+                                          color: Colors.white),
+                                    ),
                                   )
-                                : CachedNetworkImage(
-                                    imageUrl: widget.isYourKnock
-                                        ? widget.requestedUserAvatar
-                                        : widget.yourAvatar,
-                                    fit: BoxFit.cover,
-                                  ),
-                          ),
-                          widget.yourName.isEmpty
-                              ? Shimmer.fromColors(
-                                  baseColor: Colors.grey[300]!,
-                                  highlightColor: Colors.grey[200]!,
-                                  child: Container(
-                                    width: 50,
-                                    height: 30,
-                                    decoration: const BoxDecoration(
-                                        color: Colors.white),
-                                  ),
-                                )
-                              : Padding(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  child: Text(
-                                    widget.isYourKnock
-                                        ? widget.requestedUserName
-                                        : widget.yourName,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600,
+                                : Padding(
+                                    padding: const EdgeInsets.only(top: 10),
+                                    child: Text(
+                                      widget.isYourKnock
+                                          ? widget.requestedUserName
+                                          : widget.yourName,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),

@@ -107,7 +107,9 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) {
-          return const TabsScreen(initialPageIndex: 1,);
+          return const TabsScreen(
+            initialPageIndex: 1,
+          );
         },
       ),
     );
@@ -241,6 +243,7 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                                               onPressed: () async {
                                                 setState(() {
                                                   // planListの中の要素が一つでも空だったらtrueを返す
+                                                  // TODO 編集をしてperiodを少なくしたら、以前のperiod分planを追加しないと投稿できないバグを直す
                                                   for (var plan in planList) {
                                                     if (plan.isEmpty) {
                                                       isEmpty = true;
@@ -362,28 +365,17 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                 ),
               ),
             ),
-            Row(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(left: 25),
-                  child: const Text(
-                    'Knocked by ',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+            // TODO RowにしてuserProfileScreenに飛べるようにしても良いかも（userNameだけ色かえる？）
+            Container(
+              margin: const EdgeInsets.only(left: 25),
+              child: Text(
+                'Knocked by ${widget.requestUserName}',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                 ),
-                Text(
-                  widget.requestUserName,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+              ),
             ),
-            // Days
             Container(
               padding: const EdgeInsets.only(top: 40, left: 15, right: 10),
               height: 100,

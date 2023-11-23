@@ -37,9 +37,12 @@ class _LoginScreenState extends State<LoginScreen> {
       supabase.auth.onAuthStateChange.listen((data) {
         final event = data.event;
         if (event == AuthChangeEvent.signedIn) {
+          if (!mounted) return;
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => const SettingProfileScreen(isEdit: false,),
+              builder: (context) => const SettingProfileScreen(
+                isEdit: false,
+              ),
             ),
           );
         }
@@ -255,7 +258,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) {
-                      return const TabsScreen(initialPageIndex: 0,);
+                      return const TabsScreen(
+                        initialPageIndex: 0,
+                      );
                     },
                   ),
                 );
