@@ -23,6 +23,7 @@ class _YourKnockState extends State<YourKnock> {
   List _requestedKnock = [];
   List _userData = [];
   List _ownerData = [];
+  final List _yourLikePostsData = [];
   bool _isLoading = false;
 
   void getRequestedKnockInfo() async {
@@ -58,10 +59,28 @@ class _YourKnockState extends State<YourKnock> {
     });
   }
 
+  void getLikePosts() async {
+    if (!mounted) return;
+    if (supabase.auth.currentUser == null) return;
+    final List yourLikePostsData = await supabase
+        .from('likes')
+        .select('post_id')
+        .eq('user_id', supabase.auth.currentUser!.id);
+    setState(() {
+      for (var i = 0;
+          _yourLikePostsData.length < yourLikePostsData.length;
+          i++) {
+        _yourLikePostsData.add(yourLikePostsData[i]['post_id']);
+      }
+      print('_yourLikePostsData$_yourLikePostsData');
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getRequestedKnockInfo();
+    getLikePosts();
   }
 
   @override
@@ -169,6 +188,7 @@ class _YourKnockState extends State<YourKnock> {
                                                 UserProfileScreen(
                                               userId: _ownerData[index][0]
                                                   ['id'],
+                                              yourLikePostsData: _yourLikePostsData,
                                             ),
                                           ),
                                         );
