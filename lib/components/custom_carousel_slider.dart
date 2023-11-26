@@ -20,6 +20,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
   String _userAvatar = '';
   String _userName = '';
   var isZero = true;
+  final _yourLikePostsData = [];
 
   Future getUserInfo(int index) async {
     if (!mounted) return;
@@ -38,6 +39,21 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
         .single();
     setState(() {
       _userName = userName['username'];
+    });
+  }
+
+  void getLikePosts() async {
+    if (supabase.auth.currentUser == null) return;
+    final List yourLikePostsData = await supabase
+        .from('likes')
+        .select('post_id')
+        .eq('user_id', supabase.auth.currentUser!.id);
+    setState(() {
+      for (var i = 0;
+          _yourLikePostsData.length < yourLikePostsData.length;
+          i++) {
+        _yourLikePostsData.add(yourLikePostsData[i]['post_id']);
+      }
     });
   }
 
@@ -175,7 +191,15 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                                                       ['plans'],
                                                   ownerId: _posts[index %
                                                       _posts.length]['user_id'],
-                                                  yourId: supabase.auth.currentUser!.id,
+                                                  yourId: supabase
+                                                      .auth.currentUser!.id,
+                                                  placeName: _posts[
+                                                          index % _posts.length]
+                                                      ['place_name'],
+                                                  posts: _posts[
+                                                      index % _posts.length],
+                                                  yourLikeData:
+                                                      _yourLikePostsData,
                                                 );
                                               },
                                             ));

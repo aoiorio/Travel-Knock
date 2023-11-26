@@ -9,9 +9,11 @@ import 'knock/knock_plan.dart';
 import 'login.dart';
 
 class UserProfileScreen extends StatefulWidget {
-  const UserProfileScreen({super.key, required this.userId});
+  const UserProfileScreen(
+      {super.key, required this.userId, required this.yourLikePostsData});
 
   final String userId;
+  final List yourLikePostsData;
 
   @override
   State<UserProfileScreen> createState() => _UserProfileScreenState();
@@ -28,7 +30,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   int? _userKnockedCount;
   List _userPostsList = [];
   bool _isLoading = false;
-  final _yourLikePostsData = [];
+  List _yourLikePostsData = [];
 
   void goBackToLoginScreen() {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -228,8 +230,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   void getUserPosts() async {
-    final userPostsData =
-        await supabase.from('posts').select('*').eq('user_id', widget.userId).order('likes', ascending: false);
+    final userPostsData = await supabase
+        .from('posts')
+        .select('*')
+        .eq('user_id', widget.userId)
+        .order('likes', ascending: false);
     setState(() {
       _userPostsList = userPostsData;
     });
@@ -238,7 +243,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   void initState() {
     super.initState();
-    getLikePosts();
+    // getLikePosts();
+    _yourLikePostsData = widget.yourLikePostsData;
     getUserInfo();
     getUserKnockInfo();
     getUserPosts();

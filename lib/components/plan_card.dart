@@ -41,7 +41,8 @@ class PlanCard extends StatelessWidget {
       );
     }
 
-    return // Display posts!
+    return
+        // Display posts!
         posts.isEmpty
             ? Center(
                 child: Container(
@@ -255,6 +256,9 @@ class PlanCard extends StatelessWidget {
                         thumbnail: posts[index]['thumbnail'],
                         planDetailsList: posts[index]['plans'],
                         ownerId: posts[index]['user_id'],
+                        placeName: posts[index]['place_name'],
+                        posts: posts[index],
+                        yourLikeData: yourLikePostsData,
                         // ログインしていないユーザーが見れないのでnullありにし削除
                         // yourId: supabase.auth.currentUser!.id,
                       );

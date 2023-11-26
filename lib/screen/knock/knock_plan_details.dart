@@ -42,6 +42,7 @@ class KnockPlanDetailsScreen extends StatefulWidget {
 class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
   var _selectedDayIndex = 0;
   var _isSelected = [true, false];
+  final List _yourLikePostsData = [];
   List<List<Map<String, dynamic>>> plans = [];
   var heroTag = '';
   final supabase = Supabase.instance.client;
@@ -52,20 +53,6 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
         return const LoginScreen();
       },
     ));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // 最初に選択されているDayは1日目というのを設定している
-    _isSelected = List.generate(widget.planDetailsList.length, (index) {
-      if (index == 0) {
-        return true;
-      }
-      return false;
-    });
-    plans = convertStringToMap(widget.planDetailsList);
-    heroTag = widget.thumbnail;
   }
 
   // 受け取ったリストの中のリストのマップが文字列になっていたからマップに変える関数
@@ -85,6 +72,38 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
       }
     }
     return dayPlans;
+  }
+
+  void getLikePosts() async {
+    if (!mounted) return;
+    if (supabase.auth.currentUser == null) return;
+    final List yourLikePostsData = await supabase
+        .from('likes')
+        .select('post_id')
+        .eq('user_id', supabase.auth.currentUser!.id);
+    setState(() {
+      for (var i = 0;
+          _yourLikePostsData.length < yourLikePostsData.length;
+          i++) {
+        _yourLikePostsData.add(yourLikePostsData[i]['post_id']);
+      }
+      print('_yourLikePostsData$_yourLikePostsData');
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // 最初に選択されているDayは1日目というのを設定している
+    _isSelected = List.generate(widget.planDetailsList.length, (index) {
+      if (index == 0) {
+        return true;
+      }
+      return false;
+    });
+    plans = convertStringToMap(widget.planDetailsList);
+    heroTag = widget.thumbnail;
+    getLikePosts();
   }
 
   @override
@@ -151,7 +170,8 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                                   ? Shimmer.fromColors(
                                       baseColor: Colors.grey[300]!,
                                       highlightColor: Colors.grey[200]!,
-                                      child: const ColoredBox(color: Colors.grey),
+                                      child:
+                                          const ColoredBox(color: Colors.grey),
                                     )
                                   : GestureDetector(
                                       onTap: () {
@@ -161,8 +181,10 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                                             builder: (context) =>
                                                 UserProfileScreen(
                                               userId: widget.isYourKnock
-                                                  ? supabase.auth.currentUser!.id
+                                                  ? supabase
+                                                      .auth.currentUser!.id
                                                   : widget.requestedUserId,
+                                              yourLikePostsData: _yourLikePostsData,
                                             ),
                                           ),
                                         );
@@ -220,7 +242,8 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                                   ? Shimmer.fromColors(
                                       baseColor: Colors.grey[300]!,
                                       highlightColor: Colors.grey[200]!,
-                                      child: const ColoredBox(color: Colors.grey),
+                                      child:
+                                          const ColoredBox(color: Colors.grey),
                                     )
                                   : GestureDetector(
                                       onTap: () {
@@ -231,7 +254,9 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                                                 UserProfileScreen(
                                               userId: widget.isYourKnock
                                                   ? widget.requestedUserId
-                                                  : supabase.auth.currentUser!.id,
+                                                  : supabase
+                                                      .auth.currentUser!.id,
+                                              yourLikePostsData: _yourLikePostsData,
                                             ),
                                           ),
                                         );

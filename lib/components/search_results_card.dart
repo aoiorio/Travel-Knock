@@ -45,7 +45,7 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
     }
     final userId = supabase.auth.currentUser!.id;
 
-        // userは自分の投稿したpostにいいねできない
+    // userは自分の投稿したpostにいいねできない
     if (userId == widget.searchResult[index]['user_id']) {
       return;
     }
@@ -204,6 +204,9 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                                 ['plans'],
                             ownerId: widget.searchResult[index]['user_id'],
                             yourId: supabase.auth.currentUser!.id,
+                            placeName: widget.searchResult[index]['place_name'],
+                            posts: widget.searchResult[index],
+                            yourLikeData: _yourLikePostsData,
                           );
                         },
                       ));
@@ -359,6 +362,7 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                                               UserProfileScreen(
                                             userId: widget.searchResult[index]
                                                 ['user_id'],
+                                            yourLikePostsData: _yourLikePostsData,
                                           ),
                                         ),
                                       );
