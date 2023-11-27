@@ -12,6 +12,7 @@ import 'package:travelknock/components/plan_details_card.dart';
 import 'package:travelknock/screen/knock/knock_plan.dart';
 import 'package:travelknock/screen/login.dart';
 import 'package:travelknock/screen/user_profile.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../tabs.dart';
 
@@ -211,8 +212,27 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
     );
   }
 
+  void _openLink() async {
+    const url = 'http://abehiroshi.la.coocan.jp/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void _openReportForm() async {
+    final url = Uri.parse("https://forms.gle/1fgkioJvsF3uWkpf7");
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not Launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // forBun();
     List likes = widget.posts['post_like_users'];
     int likeNumber = likes.length;
 
@@ -228,6 +248,19 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
           elevation: 0,
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.black,
+          actions: widget.ownerId == supabase.auth.currentUser!.id
+              ? null
+              : [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: IconButton(
+                      onPressed: _openReportForm,
+                      icon: const Icon(
+                        Icons.warning_amber_outlined,
+                      ),
+                    ),
+                  ),
+                ],
         ),
         extendBodyBehindAppBar: true,
         body: SingleChildScrollView(
@@ -398,112 +431,55 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 20),
                           child: GestureDetector(
-                              onTap: () => likePost(likeNumber, _likedPost),
-                              behavior: HitTestBehavior.translucent,
-                              child: Center(
-                                child: Row(
-                                  children: [
-                                    Stack(
-                                      alignment: Alignment.bottomRight,
-                                      children: [
-                                        SizedBox(
-                                          // margin: const EdgeInsets.only(top: 5),
-                                          width: 60,
-                                          height: 60,
-                                          child: RiveAnimation.asset(
-                                            _yourLikePostsData
-                                                    .contains(widget.posts['id'])
-                                                ? 'assets/rivs/rive-red-fire.riv'
-                                                : 'assets/rivs/rive-black-like-fire.riv',
-                                          ),
-                                        ),
-                                        // RIVEのロゴを隠すWidget
-                                        const SizedBox(
-                                          width: 22,
-                                          height: 5,
-                                          child: DecoratedBox(
-                                            decoration: BoxDecoration(
-                                              color: Color.fromARGB(
-                                                  255, 250, 250, 250),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    Container(
-                                      margin: const EdgeInsets.only(top: 30),
-                                      child: Text(
-                                        likeNumber.toString(),
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600,
+                            onTap: () => likePost(likeNumber, _likedPost),
+                            behavior: HitTestBehavior.translucent,
+                            child: Center(
+                              child: Row(
+                                children: [
+                                  Stack(
+                                    alignment: Alignment.bottomRight,
+                                    children: [
+                                      SizedBox(
+                                        // margin: const EdgeInsets.only(top: 5),
+                                        width: 60,
+                                        height: 60,
+                                        child: RiveAnimation.asset(
+                                          _yourLikePostsData
+                                                  .contains(widget.posts['id'])
+                                              ? 'assets/rivs/rive-red-fire.riv'
+                                              : 'assets/rivs/rive-black-like-fire.riv',
                                         ),
                                       ),
+                                      // RIVEのロゴを隠すWidget
+                                      const SizedBox(
+                                        width: 22,
+                                        height: 5,
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(
+                                            color: Color.fromARGB(
+                                                255, 250, 250, 250),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 30),
+                                    child: Text(
+                                      likeNumber.toString(),
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
+                          ),
                         ),
                       ],
                     ),
-                    // Stack(
-                    //   clipBehavior: Clip.none,
-                    //   // alignment: Alignment.bottomLeft,
-                    //   children: [
-                    //     Positioned(
-                    //       top: -30,
-                    //       right: 0,
-                    //       child: GestureDetector(
-                    //         onTap: () => likePost(likeNumber, _likedPost),
-                    //         behavior: HitTestBehavior.translucent,
-                    //         child: Center(
-                    //           child: Row(
-                    //             children: [
-                    //               Stack(
-                    //                 alignment: Alignment.bottomRight,
-                    //                 children: [
-                    //                   SizedBox(
-                    //                     // margin: const EdgeInsets.only(top: 5),
-                    //                     width: 60,
-                    //                     height: 60,
-                    //                     child: RiveAnimation.asset(
-                    //                       _yourLikePostsData
-                    //                               .contains(widget.posts['id'])
-                    //                           ? 'assets/rivs/rive-red-fire.riv'
-                    //                           : 'assets/rivs/rive-black-like-fire.riv',
-                    //                     ),
-                    //                   ),
-                    //                   // RIVEのロゴを隠すWidget
-                    //                   const SizedBox(
-                    //                     width: 22,
-                    //                     height: 5,
-                    //                     child: DecoratedBox(
-                    //                       decoration: BoxDecoration(
-                    //                         color: Color.fromARGB(
-                    //                             255, 250, 250, 250),
-                    //                       ),
-                    //                     ),
-                    //                   )
-                    //                 ],
-                    //               ),
-                    //               Container(
-                    //                 margin: const EdgeInsets.only(top: 30),
-                    //                 child: Text(
-                    //                   likeNumber.toString(),
-                    //                   style: const TextStyle(
-                    //                     fontSize: 20,
-                    //                     fontWeight: FontWeight.w600,
-                    //                   ),
-                    //                 ),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
                   ],
                 ),
               ),

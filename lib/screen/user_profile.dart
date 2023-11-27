@@ -4,6 +4,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/plan_card.dart';
 import 'package:travelknock/screen/tabs.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'knock/knock_plan.dart';
 import 'login.dart';
@@ -240,6 +241,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     });
   }
 
+  void _openReportForm() async {
+    final url = Uri.parse("https://forms.gle/1fgkioJvsF3uWkpf7");
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not Launch $url';
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -257,19 +267,21 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
-        actions: [
-          // TODO create report features
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.warning_amber_outlined,
-                size: 30,
-              ),
-            ),
-          )
-        ],
+        actions: widget.userId == supabase.auth.currentUser!.id
+            ? null
+            : [
+                // TODO create report features
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: IconButton(
+                    onPressed: _openReportForm,
+                    icon: const Icon(
+                      Icons.warning_amber_outlined,
+                      size: 30,
+                    ),
+                  ),
+                )
+              ],
       ),
       extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
