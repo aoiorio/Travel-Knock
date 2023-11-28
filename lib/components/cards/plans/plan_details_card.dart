@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// libraries import
+// library import
 import 'package:cached_network_image/cached_network_image.dart';
 
 class PlanDetailsCard extends StatefulWidget {
