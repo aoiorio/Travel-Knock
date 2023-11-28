@@ -37,6 +37,7 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
   String requestUserAvatar = '';
   String requestUserName = '';
   List _ownerPlaces = [];
+  final List _yourLikePostsData = [];
 
   // dropButton
   List places = [];
@@ -91,11 +92,29 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
     ));
   }
 
+  void getLikePosts() async {
+    if (!mounted) return;
+    if (supabase.auth.currentUser == null) return;
+    final List yourLikePostsData = await supabase
+        .from('likes')
+        .select('post_id')
+        .eq('user_id', supabase.auth.currentUser!.id);
+    setState(() {
+      for (var i = 0;
+          _yourLikePostsData.length < yourLikePostsData.length;
+          i++) {
+        _yourLikePostsData.add(yourLikePostsData[i]['post_id']);
+      }
+      print('_yourLikePostsData$_yourLikePostsData');
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getRequestUserInfo();
     getOwnerInfo();
+    getLikePosts();
   }
 
   @override
@@ -171,6 +190,7 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                                                 UserProfileScreen(
                                               userId:
                                                   supabase.auth.currentUser!.id,
+                                              // yourLikePostsData: _yourLikePostsData,
                                             ),
                                           ),
                                         );
@@ -239,6 +259,7 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                                             builder: (context) =>
                                                 UserProfileScreen(
                                               userId: widget.ownerId,
+                                              // yourLikePostsData: _yourLikePostsData,
                                             ),
                                           ),
                                         );
@@ -345,9 +366,9 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                                     _periodController.text.isEmpty) {
                                   return;
                                 }
-                                doKnock(_periodController.text == 1
-                                    ? '${'To ' + _selectedPlace} For a Day'
-                                    : '${'To ' + _selectedPlace} For ${_periodController.text} Days');
+                                doKnock(_periodController.text == "1"
+                                    ? '${'In ' + _selectedPlace} For a Day'
+                                    : '${'In ' + _selectedPlace} For ${_periodController.text} Days');
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.black,

@@ -27,7 +27,9 @@ class KnockedScreen extends StatefulWidget {
 class _KnockedScreenState extends State<KnockedScreen> {
   List _requestKnock = [];
   List _requestUserData = [];
+  final List _yourLikePostsData = [];
   bool _isLoading = false;
+  final supabase = Supabase.instance.client;
 
   Future getKnockInfo() async {
     if (!mounted) return;
@@ -67,10 +69,28 @@ class _KnockedScreenState extends State<KnockedScreen> {
     });
   }
 
+  void getLikePosts() async {
+    if (!mounted) return;
+    if (supabase.auth.currentUser == null) return;
+    final List yourLikePostsData = await supabase
+        .from('likes')
+        .select('post_id')
+        .eq('user_id', supabase.auth.currentUser!.id);
+    setState(() {
+      for (var i = 0;
+          _yourLikePostsData.length < yourLikePostsData.length;
+          i++) {
+        _yourLikePostsData.add(yourLikePostsData[i]['post_id']);
+      }
+      print('_yourLikePostsData$_yourLikePostsData');
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getKnockInfo();
+    getLikePosts();
   }
 
   @override
@@ -193,6 +213,8 @@ class _KnockedScreenState extends State<KnockedScreen> {
                                                 UserProfileScreen(
                                               userId: _requestUserData[index][0]
                                                   ['id'],
+                                              // yourLikePostsData:
+                                              //     _yourLikePostsData,
                                             ),
                                           ),
                                         );
