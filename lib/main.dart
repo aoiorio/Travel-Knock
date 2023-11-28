@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-import 'package:travelknock/screen/login.dart';
+// libraries import
+import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travelknock/screen/tabs.dart';
+
+// screens import
+import 'package:travelknock/screens/login/login.dart';
+import 'package:travelknock/screens/tabs.dart';
 
 void main() async {
   await Supabase.initialize(
