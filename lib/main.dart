@@ -3,22 +3,28 @@ import 'package:flutter/material.dart';
 // libraries import
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // screens import
 import 'package:travelknock/screens/login/login.dart';
 import 'package:travelknock/screens/tabs.dart';
 
 void main() async {
+  // envを召喚
+  await dotenv.load(fileName: '.env');
+
+  final String anonKey = dotenv.env['SUPABASE_ANON'] ?? ''; // Anon keyを.envから取得
+  final String projectUrl = dotenv.env['SUPABASE_URL'] ?? ''; // URLを.envから取得
+
   await Supabase.initialize(
-    url: 'https://pmmgjywnzshfclavyeix.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtbWdqeXduenNoZmNsYXZ5ZWl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTY2NzQ5NzEsImV4cCI6MjAxMjI1MDk3MX0.iGqgR-1EAXecyi6sF9eXzfFJRqBqnN0F9hmpjDA43HM',
+    url: projectUrl,
+    anonKey: anonKey,
     authFlowType: AuthFlowType.pkce,
   );
 
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([
-  //許可する向きを指定する。
+    //許可する向きを指定する。
     DeviceOrientation.portraitUp, //上向きを許可
   ]);
   runApp(const MyApp());
