@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 // libraries import
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:rive/rive.dart';
@@ -8,9 +7,9 @@ import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 // screens import
-import 'package:travelknock/screens/plans/plan_details.dart';
-import 'package:travelknock/screens/profile/user_profile.dart';
 import '../../../screens/login/login.dart';
+import '../../../screens/plans/plan_details.dart';
+import '../../../screens/profile/user_profile.dart';
 
 class SearchResultsCard extends StatefulWidget {
   const SearchResultsCard({
@@ -206,10 +205,10 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                             planDetailsList: widget.searchResult[index]
                                 ['plans'],
                             ownerId: widget.searchResult[index]['user_id'],
-                            yourId: supabase.auth.currentUser!.id,
-                            // placeName: widget.searchResult[index]['place_name'],
-                            // posts: widget.searchResult[index],
-                            // yourLikeData: _yourLikePostsData,
+                            // yourId: supabase.auth.currentUser!.id,
+                            placeName: widget.searchResult[index]['place_name'],
+                            posts: widget.searchResult[index],
+                            yourLikeData: _yourLikePostsData,
                           );
                         },
                       ));
@@ -365,7 +364,7 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                                               UserProfileScreen(
                                             userId: widget.searchResult[index]
                                                 ['user_id'],
-                                            // yourLikePostsData: _yourLikePostsData,
+                                            yourLikePostsData: _yourLikePostsData,
                                           ),
                                         ),
                                       );

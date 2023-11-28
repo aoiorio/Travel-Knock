@@ -1,13 +1,10 @@
-import 'package:flutter/material.dart';
-
-// libraries import
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-// screen import
-import 'package:travelknock/screens/plans/plan_details.dart';
+import '../../../screens/plans/plan_details.dart';
 
 class CustomCarouselSlider extends StatefulWidget {
   const CustomCarouselSlider({super.key});
@@ -195,15 +192,13 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                                                       ['plans'],
                                                   ownerId: _posts[index %
                                                       _posts.length]['user_id'],
-                                                  yourId: supabase
-                                                      .auth.currentUser!.id,
-                                                  // placeName: _posts[
-                                                  //         index % _posts.length]
-                                                  //     ['place_name'],
-                                                  // posts: _posts[
-                                                  //     index % _posts.length],
-                                                  // yourLikeData:
-                                                  //     _yourLikePostsData,
+                                                  placeName: _posts[
+                                                          index % _posts.length]
+                                                      ['place_name'],
+                                                  posts: _posts[
+                                                      index % _posts.length],
+                                                  yourLikeData:
+                                                      _yourLikePostsData,
                                                 );
                                               },
                                             ));

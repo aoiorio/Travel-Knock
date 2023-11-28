@@ -1,12 +1,9 @@
-import 'package:flutter/material.dart';
-
-// libraries import
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-// screens import
-import 'package:travelknock/screens/knock/profile_knock/knock_plan_details.dart';
-import 'package:travelknock/screens/profile/user_profile.dart';
+import '../../profile/user_profile.dart';
+import 'knock_plan_details.dart';
 
 class YourKnock extends StatefulWidget {
   const YourKnock({
@@ -192,7 +189,7 @@ class _YourKnockState extends State<YourKnock> {
                                                 UserProfileScreen(
                                               userId: _ownerData[index][0]
                                                   ['id'],
-                                              // yourLikePostsData: _yourLikePostsData,
+                                              yourLikePostsData: _yourLikePostsData,
                                             ),
                                           ),
                                         );
