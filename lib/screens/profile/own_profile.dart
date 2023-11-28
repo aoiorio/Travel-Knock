@@ -12,7 +12,7 @@ import 'package:travelknock/screens/profile/setting_profile/setting_profile.dart
 import '../create_plan/new_plan.dart';
 import '../login/login.dart';
 
-// components import
+// component import
 import '../../components/custom_widgets/plans/custom_fab.dart';
 
 class ProfileScreen extends StatefulWidget {

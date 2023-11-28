@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
-// libraries import
+// libraries immport
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 // screens import
-import 'package:travelknock/screens/knock/profile_knock/knock_plan_details.dart';
-import 'package:travelknock/screens/profile/user_profile.dart';
-
+import '../../../profile/user_profile.dart';
+import '../knock_plan_details.dart';
 import 'knock_develop.dart';
 
 class KnockedScreen extends StatefulWidget {
@@ -213,8 +212,8 @@ class _KnockedScreenState extends State<KnockedScreen> {
                                                 UserProfileScreen(
                                               userId: _requestUserData[index][0]
                                                   ['id'],
-                                              // yourLikePostsData:
-                                              //     _yourLikePostsData,
+                                              yourLikePostsData:
+                                                  _yourLikePostsData,
                                             ),
                                           ),
                                         );

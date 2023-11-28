@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 // libraries import
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 // screens import
-import 'package:travelknock/screens/tabs.dart';
-import 'package:travelknock/screens/profile/user_profile.dart';
+import '../profile/user_profile.dart';
 
 // component import
-import 'package:travelknock/components/custom_widgets/text_fields/custom_day_text_field.dart';
+import '../../components/custom_widgets/text_fields/custom_day_text_field.dart';
+import '../tabs.dart';
 
 class KnockPlanScreen extends StatefulWidget {
   const KnockPlanScreen({
@@ -190,7 +190,7 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                                                 UserProfileScreen(
                                               userId:
                                                   supabase.auth.currentUser!.id,
-                                              // yourLikePostsData: _yourLikePostsData,
+                                              yourLikePostsData: _yourLikePostsData,
                                             ),
                                           ),
                                         );
@@ -259,7 +259,7 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                                             builder: (context) =>
                                                 UserProfileScreen(
                                               userId: widget.ownerId,
-                                              // yourLikePostsData: _yourLikePostsData,
+                                              yourLikePostsData: _yourLikePostsData,
                                             ),
                                           ),
                                         );

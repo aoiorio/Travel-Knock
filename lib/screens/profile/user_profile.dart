@@ -4,19 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // screens import
-import 'package:travelknock/screens/tabs.dart';
 import '../knock/knock_plan.dart';
 import '../login/login.dart';
 
 // component import
-import 'package:travelknock/components/cards/plans/plan_card.dart';
+import '../../components/cards/plans/plan_card.dart';
+import '../tabs.dart';
 
 class UserProfileScreen extends StatefulWidget {
-  const UserProfileScreen({super.key, required this.userId});
+  const UserProfileScreen(
+      {super.key, required this.userId, required this.yourLikePostsData});
 
   final String userId;
+  final List yourLikePostsData;
 
   @override
   State<UserProfileScreen> createState() => _UserProfileScreenState();
@@ -33,7 +36,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   int? _userKnockedCount;
   List _userPostsList = [];
   bool _isLoading = false;
-  final _yourLikePostsData = [];
+  List _yourLikePostsData = [];
 
   void goBackToLoginScreen() {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -233,17 +236,30 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   void getUserPosts() async {
-    final userPostsData =
-        await supabase.from('posts').select('*').eq('user_id', widget.userId).order('likes', ascending: false);
+    final userPostsData = await supabase
+        .from('posts')
+        .select('*')
+        .eq('user_id', widget.userId)
+        .order('likes', ascending: false);
     setState(() {
       _userPostsList = userPostsData;
     });
   }
 
+  void _openReportForm() async {
+    final url = Uri.parse("https://forms.gle/1fgkioJvsF3uWkpf7");
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not Launch $url';
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    getLikePosts();
+    // getLikePosts();
+    _yourLikePostsData = widget.yourLikePostsData;
     getUserInfo();
     getUserKnockInfo();
     getUserPosts();
@@ -256,19 +272,23 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
-        actions: [
-          // TODO create report features
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.warning_amber_outlined,
-                size: 30,
-              ),
-            ),
-          )
-        ],
+        actions: supabase.auth.currentUser == null
+            ? null
+            : widget.userId == supabase.auth.currentUser!.id
+                ? null
+                : [
+                    // TODO create report features
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: IconButton(
+                        onPressed: _openReportForm,
+                        icon: const Icon(
+                          Icons.warning_amber_outlined,
+                          size: 30,
+                        ),
+                      ),
+                    )
+                  ],
       ),
       extendBodyBehindAppBar: true,
       body: SingleChildScrollView(

@@ -8,12 +8,12 @@ import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 // screens import
-import 'package:travelknock/screens/login/login.dart';
-import 'package:travelknock/screens/profile/user_profile.dart';
+import '../../login/login.dart';
+import '../../profile/user_profile.dart';
 
 // components import
-import 'package:travelknock/components/custom_clippers/details_clipper.dart';
-import 'package:travelknock/components/cards/plans/plan_details_card.dart';
+import '../../../components/cards/plans/plan_details_card.dart';
+import '../../../components/custom_clippers/details_clipper.dart';
 
 class KnockPlanDetailsScreen extends StatefulWidget {
   const KnockPlanDetailsScreen({
@@ -188,7 +188,7 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                                                   ? supabase
                                                       .auth.currentUser!.id
                                                   : widget.requestedUserId,
-                                              // yourLikePostsData: _yourLikePostsData,
+                                              yourLikePostsData: _yourLikePostsData,
                                             ),
                                           ),
                                         );
@@ -260,7 +260,7 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                                                   ? widget.requestedUserId
                                                   : supabase
                                                       .auth.currentUser!.id,
-                                              // yourLikePostsData: _yourLikePostsData,
+                                              yourLikePostsData: _yourLikePostsData,
                                             ),
                                           ),
                                         );
