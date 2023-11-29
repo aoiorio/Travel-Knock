@@ -49,6 +49,10 @@ dependencies:
   shimmer: ^3.0.0
   smooth_page_indicator: ^1.1.0
   rive: ^0.12.3
+  url_launcher: ^6.1.14
+  flutter_dotenv: ^5.1.0
+  shared_preferences: ^2.2.2
+  # url_launcher: ^6.2.1
 
 dev_dependencies:
   pedantic_mono: any
@@ -83,6 +87,7 @@ flutter:
     - assets/images/no-knocked.PNG
     - assets/rivs/rive-black-like-fire.riv
     - assets/rivs/rive-red-fire.riv
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
