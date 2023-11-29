@@ -76,7 +76,6 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCarouselPosts();
   }
