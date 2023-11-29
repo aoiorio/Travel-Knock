@@ -8,6 +8,7 @@ import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:crypto/crypto.dart';
+import 'package:travelknock/preferences/preferences_manager.dart';
 
 // screens import
 import 'package:travelknock/screens/profile/setting_profile/setting_profile.dart';
@@ -129,6 +130,8 @@ class _LoginScreenState extends State<LoginScreen> {
     } on Exception {
       print('Cancel button');
     }
+
+    await PreferencesManager().setIsLogin(isLogin: true);
     // Just a random string
     return AuthResponse();
   }
@@ -256,7 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               // DONE Add feature that transition to PlansScreen.
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) {
@@ -266,6 +269,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                 );
+                await PreferencesManager().setIsLogin(isLogin: true);
               },
               child: const Text(
                 'Join As A Guest',
