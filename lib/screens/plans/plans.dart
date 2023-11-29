@@ -20,8 +20,6 @@ import 'package:travelknock/components/cards/plans/plan_card.dart';
 import 'package:travelknock/components/custom_widgets/plans/custom_carousel_slider.dart';
 import '../../components/custom_widgets/plans/custom_fab.dart';
 
-
-
 class PlansScreen extends StatefulWidget {
   const PlansScreen({super.key});
 
@@ -195,7 +193,6 @@ class _PlansScreenState extends State<PlansScreen> {
 
   // it's the most attractive places in Travel Knock
   void getHotPlace() async {
-    if (!mounted) return;
     final duplicatedPlaceList = [];
     final hotPlaceList = [];
     for (var i = 0; posts.length > i; i++) {
@@ -204,6 +201,7 @@ class _PlansScreenState extends State<PlansScreen> {
           .from('posts')
           .select('*')
           .eq('place_name', posts[i]['place_name']);
+      if (!mounted) return;
       if (placeCountList.length > 1 &&
           !duplicatedPlaceList.contains(posts[i]['place_name']) &&
           hotPlaceList.length < 7) {
@@ -241,6 +239,9 @@ class _PlansScreenState extends State<PlansScreen> {
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: IconButton(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            hoverColor: Colors.transparent,
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(

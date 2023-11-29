@@ -64,15 +64,21 @@ class Header extends StatelessWidget {
                   imageUrl: headerUrl!,
                   fit: BoxFit.cover,
                 )
-              : Shimmer.fromColors(
-                  baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.grey[100]!,
-                  child: Container(
-                    width: 330,
-                    height: 200,
-                    decoration: const BoxDecoration(color: Colors.white),
-                  ),
-                ),
+              : isLoading
+                  ? Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        width: 330,
+                        height: 200,
+                        decoration: const BoxDecoration(color: Colors.white),
+                      ),
+                    )
+                  : CachedNetworkImage(
+                      imageUrl:
+                          'https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/6ab44cec-df53-4cc3-8c09-85907eb37815/IMG_8796.jpg',
+                      fit: BoxFit.cover,
+                    ),
         ),
         IconButton(
           onPressed: pickImage,

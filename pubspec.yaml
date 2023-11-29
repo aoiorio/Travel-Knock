@@ -51,6 +51,7 @@ dependencies:
   rive: ^0.12.3
   url_launcher: ^6.1.14
   flutter_dotenv: ^5.1.0
+  shared_preferences: ^2.2.2
   # url_launcher: ^6.2.1
 
 dev_dependencies:

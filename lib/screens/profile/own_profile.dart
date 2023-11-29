@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/screens/knock/profile_knock/knocked/knocked.dart';
 import 'package:travelknock/screens/knock/profile_knock/your_knock.dart';
 import 'package:travelknock/screens/profile/setting_profile/setting_profile.dart';
+import '../../preferences/preferences_manager.dart';
 import '../create_plan/new_plan.dart';
 import '../login/login.dart';
 
@@ -58,6 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void signOut() async {
     if (!mounted) return;
     await supabase.auth.signOut();
+    await PreferencesManager().setIsLogin(isLogin: false);
 
     if (context.mounted) {
       Navigator.of(context).pushReplacement(
@@ -162,7 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(
                     height: 70,
                   ),
-                  // TODO create profile page here and users can update own profile!!
+                  // DONE create profile page here and users can update own profile!!
                   Padding(
                     padding: const EdgeInsets.only(right: 240, bottom: 30),
                     child: SizedBox(
