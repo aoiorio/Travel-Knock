@@ -528,7 +528,7 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                 planList: plans[_selectedDayIndex],
                 isDevelop: false,
               ),
-              const SizedBox(height: 120),
+              const SizedBox(height: 30),
             ],
           ),
         ),

@@ -62,24 +62,10 @@ class _MyAppState extends State<MyApp> {
 
     return MaterialApp(
         debugShowCheckedModeBanner: false,
+        // shared preferencesを使って取得したisLoginがtrueだったらTabsScreenが初期画面になる
         home: _isLogin
             ? const TabsScreen(initialPageIndex: 0)
             : const LoginScreen()
-        // StreamBuilder(
-        //   stream: supabase.auth.onAuthStateChange,
-        //   builder: (context, snapshot) {
-        //     if (snapshot.hasData) {
-        //       print('PlansScreen');
-        //       // DONE replace the screen to PlansScreen
-        //       return const TabsScreen(
-        //         initialPageIndex: 0,
-        //       );
-        //     }
-        //     // If user was login as a guest, I want the user can see the PlansScreen. How do I implement it?
-        //     print('LoginScreen');
-        //     return const LoginScreen();
-        //   },
-        // ),
         );
   }
 }

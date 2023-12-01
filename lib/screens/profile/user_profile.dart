@@ -277,7 +277,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             : widget.userId == supabase.auth.currentUser!.id
                 ? null
                 : [
-                    // TODO create report features
+                    // DONE create report features
                     Padding(
                       padding: const EdgeInsets.only(right: 10),
                       child: IconButton(

@@ -360,7 +360,7 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                               ),
                             )
                           : ElevatedButton(
-                              // TODO implement knock feature!!
+                              // DONE implement knock feature!!
                               onPressed: () {
                                 if (_selectedPlace == null ||
                                     _periodController.text.isEmpty) {
