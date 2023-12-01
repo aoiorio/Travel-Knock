@@ -122,7 +122,7 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      // todo Post button
+      // Post button
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -133,7 +133,7 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
             child: SizedBox(
               width: 120,
               height: 40,
-              // todo Post Button
+              // done Post Button
               child: ElevatedButton(
                 onPressed: () {
                   // After pressed post button
@@ -368,7 +368,7 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                 ),
               ),
             ),
-            // TODO RowにしてuserProfileScreenに飛べるようにしても良いかも（userNameだけ色かえる？）
+            // DONE RowにしてuserProfileScreenに飛べるようにしても良いかも（userNameだけ色かえる？）
             Container(
               margin: const EdgeInsets.only(left: 25),
               child: Text(

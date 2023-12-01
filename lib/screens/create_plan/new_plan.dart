@@ -13,16 +13,21 @@ import '../login/login.dart';
 import 'package:travelknock/components/custom_widgets/text_fields/custom_day_text_field.dart';
 import 'package:travelknock/components/custom_widgets/text_fields/custom_text_field.dart';
 
-class NewPlanScreen extends StatelessWidget {
+class NewPlanScreen extends StatefulWidget {
   const NewPlanScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final supabase = Supabase.instance.client;
-    final planTitleController = TextEditingController();
-    final placeNameController = TextEditingController();
-    final periodController = TextEditingController();
+  State<NewPlanScreen> createState() => _NewPlanScreenState();
+}
 
+class _NewPlanScreenState extends State<NewPlanScreen> {
+  final supabase = Supabase.instance.client;
+  final planTitleController = TextEditingController();
+  final placeNameController = TextEditingController();
+  final periodController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
     void signOut() async {
       await supabase.auth.signOut();
 
