@@ -131,7 +131,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
     setState(() {
       isLoading = false;
     });
-       // TODO asdfjalsdjfskdfsdf!!!!!!
+       // TODO asdfjalsdjfskdfsdf!!!!!! 投稿した後のpopの挙動を見る
     Navigator.pop(context);
 
 
@@ -150,7 +150,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      // todo Post button
+      // Post button
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -161,7 +161,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
             child: SizedBox(
               width: 120,
               height: 40,
-              // todo Post Button
+              // done Post Button
               child: ElevatedButton(
                 onPressed: () {
                   // After pressed post button
@@ -400,7 +400,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                 ),
               ),
             ),
-            // TODO edit button
+            // done edit button
             Padding(
               padding: const EdgeInsets.only(left: 25),
               child: SizedBox(
