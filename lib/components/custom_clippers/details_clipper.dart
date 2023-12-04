@@ -4,7 +4,7 @@ class DetailsClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    final double xScaling = size.height / 366;
+    final double xScaling = size.height / 366; // size.height / 366
     final double yScaling = size.height / 367;
     path.lineTo(4.82945 * xScaling, 39.0893 * yScaling);
     path.cubicTo(
