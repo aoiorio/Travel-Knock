@@ -9,7 +9,6 @@ import 'package:travelknock/screens/tabs.dart';
 // components import
 import 'package:travelknock/components/cards/search/search_results_card.dart';
 
-
 class SearchScreen extends StatefulWidget {
   const SearchScreen({
     super.key,
@@ -59,6 +58,7 @@ class _SearchScreenState extends State<SearchScreen> {
         .from('posts')
         .select('*')
         .textSearch('place_name', searchTextController.text);
+    if (!mounted) return;
     setState(() {
       _searchResult = searchResult;
       // print(_searchResult);

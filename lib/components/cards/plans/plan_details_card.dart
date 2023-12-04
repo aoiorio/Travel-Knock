@@ -16,10 +16,13 @@ class PlanDetailsCard extends StatefulWidget {
 }
 
 class _PlanDetailsCardState extends State<PlanDetailsCard> {
+  List<List<Map<String, String>>> plans = [];
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
+
     Widget planTimeWidget(int index) {
       return Row(
         children: [
@@ -50,7 +53,8 @@ class _PlanDetailsCardState extends State<PlanDetailsCard> {
       );
     }
 
-    void showPlanDetailsCardBottomSheet(String title, String imageUrl, Widget planTimeWidget) {
+    void showPlanDetailsCardBottomSheet(
+        String title, String imageUrl, Widget planTimeWidget) {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -61,7 +65,11 @@ class _PlanDetailsCardState extends State<PlanDetailsCard> {
           ),
         ),
         builder: (context) {
-          return PlanDetailsBottomSheet(title: title, imageUrl: imageUrl, planTimeWidget: planTimeWidget,);
+          return PlanDetailsBottomSheet(
+            title: title,
+            imageUrl: imageUrl,
+            planTimeWidget: planTimeWidget,
+          );
         },
       );
     }
@@ -121,12 +129,11 @@ class _PlanDetailsCardState extends State<PlanDetailsCard> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 20, left: 20, bottom: 7),
-                          // padding: EdgeInsets.only(
-                          //     top: height * 0.025, left: width * 0.05, bottom: height * 0.008),
-                          child: planTimeWidget(index)
-                        ),
+                            padding: const EdgeInsets.only(
+                                top: 20, left: 20, bottom: 7),
+                            // padding: EdgeInsets.only(
+                            //     top: height * 0.025, left: width * 0.05, bottom: height * 0.008),
+                            child: planTimeWidget(index)),
                         Flexible(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,

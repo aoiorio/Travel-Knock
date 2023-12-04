@@ -48,7 +48,7 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
   final supabase = Supabase.instance.client;
   var _selectedDayIndex = 0;
   var _isSelected = [true, false];
-  List<List<Map<String, dynamic>>> plans = [];
+  List plans = [];
   var heroTag = '';
   String _ownerAvatar = '';
   String _ownerName = '';
@@ -177,6 +177,9 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
       return false;
     });
     plans = convertStringToMap(widget.planDetailsList);
+    // final planList = widget.planDetailsList;
+    // print("plan list: $planList");
+    // plans = widget.planDetailsList;
     heroTag = widget.thumbnail;
     getOwnerInfo();
     _yourLikePostsData = widget.yourLikeData;
@@ -225,6 +228,8 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final planList = widget.planDetailsList;
+    print("plan list: $planList");
     List likes = widget.posts['post_like_users'];
     int likeNumber = likes.length;
 
@@ -267,7 +272,8 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                   Hero(
                     tag: heroTag,
                     child: Transform.scale(
-                      scale: MediaQuery.of(context).size.width / 385, // 1.03
+                      scale:
+                          1.03, // 1.03  MediaQuery.of(context).size.width / 385
                       child: ClipPath(
                         clipper: DetailsClipper(),
                         child: Center(
