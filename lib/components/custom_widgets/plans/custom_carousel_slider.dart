@@ -82,6 +82,9 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     // DONE change to CarouselSlider.builder, after finish connecting to the database
     return isLoading
         ? Shimmer.fromColors(
@@ -91,8 +94,8 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
               child: Column(
                 children: [
                   Container(
-                    width: 350,
-                    height: 270,
+                    width: width * 0.9, // 350
+                    height: width >= 1000 ? 400 : height * 0.33, // 270
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
@@ -116,35 +119,38 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
         : Column(
             children: [
               SizedBox(
-                height: 270,
+                height: width >= 1000 ? 400 : height * 0.33, // 270
                 child: PageView.builder(
                   controller: controller,
                   itemBuilder: (context, index) {
                     return Card(
-                      margin:
-                          const EdgeInsets.only(right: 20, left: 20, bottom: 0),
+                      margin: EdgeInsets.only(
+                          right: width * 0.05, left: width * 0.05), // 20, 20
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30)),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(30),
                         child: Stack(
+                          alignment: Alignment.bottomCenter,
                           children: [
                             CachedNetworkImage(
                               key: UniqueKey(),
                               imageUrl: _posts[index % _posts.length]
                                   ['thumbnail'],
-                              width: 500,
-                              height: 300,
+                              width: double.infinity,
+                              height: double.infinity,
                               fit: BoxFit.cover,
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 180, right: 30, bottom: 30, left: 30),
+                              padding: EdgeInsets.only(
+                                left: width * 0.07,
+                                bottom: height * 0.035,
+                              ), // height * 0.22, right: 30, bottom: 30, left: 30
                               child: Row(
                                 children: [
                                   Container(
-                                    width: 210,
-                                    height: 60,
+                                    width: width * 0.55, // 210
+                                    height: height * 0.07, // 60
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(25),
@@ -155,19 +161,20 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                                         _posts[index % _posts.length]['title']
                                             .toString(),
                                         style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w600,
-                                            overflow: TextOverflow.ellipsis),
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    width: 30,
+                                  SizedBox(
+                                    width: width * 0.08,
                                   ),
                                   Container(
-                                    width: 50,
-                                    height: 70,
+                                    width: width * 0.13, // 50
+                                    height: 70, // 70
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
                                       color: const Color(0xff4B4B5A),
@@ -204,9 +211,10 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                                           },
                                         );
                                       },
-                                      icon: const Icon(
+                                      icon: Icon(
                                         Icons.arrow_forward,
                                         color: Colors.white,
+                                        size: width >= 1000 ? 40 : 30,
                                       ),
                                     ),
                                   ),

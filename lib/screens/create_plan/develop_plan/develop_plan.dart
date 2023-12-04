@@ -45,6 +45,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
   String? _imageUrl;
   var isLoading = false;
   var isEmpty = false;
+  bool isPlanListNotSameLength = false;
 
   @override
   void initState() {
@@ -90,7 +91,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
     }
     setState(() {
       isLoading = true;
-      print(isLoading);
+      // print(isLoading);
     });
     final imageExtension = image!.path.split('.').last.toLowerCase();
     final imageBytes = await image!.readAsBytes();
@@ -121,19 +122,23 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
         'user_id': supabase.auth.currentUser!.id,
         'title': widget.title,
         'thumbnail': _imageUrl,
-        'plans': planList,
+        'plans_list': planList,
         'place_name': widget.placeName,
       });
-      print('プランリスト：$planList');
+      print('planList: $planList');
     } catch (e) {
       print(e);
+      print('error-planList: $planList');
+      print("something went wrong");
+      return;
     }
+    if (!mounted) return;
+
     setState(() {
       isLoading = false;
     });
-       // TODO asdfjalsdjfskdfsdf!!!!!! 投稿した後のpopの挙動を見る
+    // TODO asdfjalsdjfskdfsdf!!!!!! 投稿した後のpopの挙動を見る(まあ大丈夫そうだよ)
     Navigator.pop(context);
-
 
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
@@ -272,26 +277,73 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                           : ElevatedButton(
                                               // DONE implement features of post, connect to database
                                               onPressed: () async {
+                                                final planListLengths = [];
+
+                                                for (var plan in planList) {
+                                                  setState(
+                                                    () {
+                                                      planListLengths
+                                                          .add(plan.length);
+                                                    },
+                                                  );
+                                                }
+
+                                                for (var i = 1;
+                                                    planListLengths.length > i;
+                                                    i++) {
+                                                  // print(planListLengths[i]);
+                                                  if (i != 0 &&
+                                                      planListLengths[0] !=
+                                                          planListLengths[i]) {
+                                                    setState(
+                                                      () {
+                                                        isPlanListNotSameLength =
+                                                            true;
+                                                      },
+                                                    );
+                                                  }
+                                                }
+
                                                 setState(() {
+                                                  // planListの要素数が一緒ではなかったらtrueを返すそしてsnackbarを表示させる
                                                   // planListの中の要素が一つでも空だったらtrueを返す
                                                   for (var plan in planList) {
+                                                    planListLengths
+                                                        .add(plan.length);
                                                     if (plan.isEmpty) {
                                                       isEmpty = true;
                                                     } else {
                                                       isEmpty = false;
                                                     }
                                                   }
+
+                                                  // もしも各日で作ったplansが全て同じではなかったら（これをしないとpostgressでエラーが出る！！！）
+                                                  for (var i = 1;
+                                                      planListLengths.length >
+                                                          i;
+                                                      i++) {
+                                                    // print(planListLengths[i]);
+                                                    if (i != 0 &&
+                                                        planListLengths[0] !=
+                                                            planListLengths[
+                                                                i]) {
+                                                      isPlanListNotSameLength =
+                                                          true;
+                                                    }
+                                                  }
+                                                  // print(planListLengths);
                                                 });
-                                                // 1 Dayだけを選択した人もinclude
+                                                // 1 Dayだけを選択した人もinclude, すべてのplanの数が同じじゃないとエラーだからそれも察知するif文
                                                 try {
                                                   if (image == null ||
-                                                      isEmpty) {
+                                                      isEmpty ||
+                                                      isPlanListNotSameLength) {
                                                     ScaffoldMessenger.of(
                                                             context)
                                                         .showSnackBar(
                                                       const SnackBar(
                                                         content: Text(
-                                                            'You have to add plan and thumbnail'),
+                                                            "You have to sure that all days have plans as same number of plans and set the thumbnail"),
                                                         backgroundColor:
                                                             Color(0xff4B4B5A),
                                                       ),
@@ -300,7 +352,8 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                                     return;
                                                   }
                                                 } on Exception {
-                                                  print('Something went wrong');
+                                                  print(
+                                                      'Something went wrong with isPlanListNotSameLength');
                                                 }
                                                 saveDataToSupabase();
                                               },
@@ -321,7 +374,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                               ),
                                             ),
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                             ),

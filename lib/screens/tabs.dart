@@ -43,12 +43,16 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     final supabase = Supabase.instance.client;
     return Scaffold(
       // transparent margin background.
       extendBody: true,
       bottomNavigationBar: Container(
-        margin: const EdgeInsets.only(right: 120, bottom: 90),
+        margin: EdgeInsets.only(right: width >= 500 ? width * 0.5:width * 0.25 ,bottom: 90), // 120 , 90
+        // width: 91,
         height: 80,
         decoration: BoxDecoration(
           color: const Color(0xff4B4B5A),
@@ -67,8 +71,8 @@ class _TabsScreenState extends State<TabsScreen> {
         child: ListView.builder(
           itemCount: listOfIcons.length,
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          itemExtent: 120,
+          padding: EdgeInsets.symmetric(horizontal: width * 0.04), // 10
+          itemExtent: width >= 500 ? width * 0.2 :width * 0.31, // 120
           itemBuilder: (context, index) => InkWell(
             onTap: () {
               setState(

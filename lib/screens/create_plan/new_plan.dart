@@ -7,6 +7,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 // screens import
 import 'package:travelknock/screens/create_plan/develop_plan/develop_plan.dart';
+import 'package:travelknock/screens/tabs.dart';
+import '../../components/custom_widgets/plans/custom_fab.dart';
 import '../login/login.dart';
 
 // components import
@@ -28,6 +30,9 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     void signOut() async {
       await supabase.auth.signOut();
 
@@ -52,7 +57,11 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
             height: 90,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) {
+                    return const TabsScreen(initialPageIndex: 0);
+                  },
+                ));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xff4B4B5A),
@@ -73,7 +82,9 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
+      floatingActionButtonLocation: CustomizeFloatingLocation(
+          FloatingActionButtonLocation.miniEndTop, 20, 0),
+      floatingActionButtonAnimator: AnimationNoScaling(),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
@@ -120,10 +131,10 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
                 CustomDayTextField(
                     controller: periodController, labelText: 'e.g. 3'),
                 Padding(
-                  padding: const EdgeInsets.only(
+                  padding: EdgeInsets.only(
                     top: 60,
-                    right: 50,
-                    left: 50,
+                    right: width * 0.2,
+                    left: width * 0.2,
                     bottom: 50,
                   ),
                   child: SizedBox(
