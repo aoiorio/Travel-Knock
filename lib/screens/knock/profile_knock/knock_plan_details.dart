@@ -113,6 +113,8 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -128,18 +130,21 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
           children: [
             Stack(
               alignment: Alignment.bottomCenter,
+              clipBehavior: Clip.none,
               children: [
                 Hero(
                   tag: heroTag,
-                  child: Transform.scale(
-                    scale: MediaQuery.of(context).size.width / 385, // 1.03
-                    child: ClipPath(
-                      clipper: DetailsClipper(),
-                      child: Center(
-                        child: Container(
-                          padding: const EdgeInsets.only(top: 0, left: 0),
-                          width: double.infinity,
-                          height: 366,
+                  child: width >= 500
+                      ? Container(
+                          width: width,
+                          height: height * 0.43,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(100),
+                              bottomRight: Radius.circular(100),
+                            ),
+                          ),
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
                           child: CachedNetworkImage(
                             key: UniqueKey(),
                             imageUrl: widget.thumbnail,
@@ -149,166 +154,202 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                                   const BoxDecoration(color: Colors.grey),
                             ),
                           ),
+                        )
+                      : Transform.scale(
+                          scale:
+                              1.03, // 1.03  MediaQuery.of(context).size.width / 385
+                          child: ClipPath(
+                            clipper: DetailsClipper(),
+                            child: Center(
+                              child: SizedBox(
+                                // padding: const EdgeInsets.only(top: 0, left: 0),
+                                width: width,
+                                height: height * 0.43, // 366
+                                child: CachedNetworkImage(
+                                  key: UniqueKey(),
+                                  imageUrl: widget.thumbnail,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(
+                                    decoration:
+                                        const BoxDecoration(color: Colors.grey),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
                 ),
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        constraints: const BoxConstraints(maxWidth: 150),
-                        width: 150,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Container(
-                              width: 70,
-                              height: 70,
-                              decoration:
-                                  const BoxDecoration(shape: BoxShape.circle),
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              child: widget.requestedUserAvatar.isEmpty
+                width >= 500
+                    ? Positioned(
+                        bottom: -60,
+                        child: Container(
+                          width: width >= 1000 ? width * 0.35 : width * 0.5,
+                          height: width >= 1000 ? height * 0.15 : height * 0.1,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            color: const Color(0xfffafafa),
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
+                Positioned(
+                  bottom: width >= 500 ? width >= 1000?-(height * 0.06):-(height * 0.05) :0,
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          constraints: const BoxConstraints(maxWidth: 150),
+                          width: 150,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Container(
+                                width: 70,
+                                height: 70,
+                                decoration:
+                                    const BoxDecoration(shape: BoxShape.circle),
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                child: widget.requestedUserAvatar.isEmpty
+                                    ? Shimmer.fromColors(
+                                        baseColor: Colors.grey[300]!,
+                                        highlightColor: Colors.grey[200]!,
+                                        child:
+                                            const ColoredBox(color: Colors.grey),
+                                      )
+                                    : GestureDetector(
+                                        onTap: () {
+                                          if (!mounted) return;
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  UserProfileScreen(
+                                                userId: widget.isYourKnock
+                                                    ? supabase
+                                                        .auth.currentUser!.id
+                                                    : widget.requestedUserId,
+                                                yourLikePostsData:
+                                                    _yourLikePostsData,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: CachedNetworkImage(
+                                          imageUrl: widget.isYourKnock
+                                              ? widget.yourAvatar
+                                              : widget.requestedUserAvatar
+                                                  .toString(),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                              ),
+                              widget.requestedUserName.isEmpty
                                   ? Shimmer.fromColors(
                                       baseColor: Colors.grey[300]!,
                                       highlightColor: Colors.grey[200]!,
-                                      child:
-                                          const ColoredBox(color: Colors.grey),
+                                      child: Container(
+                                        width: 50,
+                                        height: 30,
+                                        decoration: const BoxDecoration(
+                                            color: Colors.white),
+                                      ),
                                     )
-                                  : GestureDetector(
-                                      onTap: () {
-                                        if (!mounted) return;
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                UserProfileScreen(
-                                              userId: widget.isYourKnock
-                                                  ? supabase
-                                                      .auth.currentUser!.id
-                                                  : widget.requestedUserId,
-                                              yourLikePostsData:
-                                                  _yourLikePostsData,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      child: CachedNetworkImage(
-                                        imageUrl: widget.isYourKnock
-                                            ? widget.yourAvatar
-                                            : widget.requestedUserAvatar
-                                                .toString(),
-                                        fit: BoxFit.cover,
+                                  : Padding(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      child: Text(
+                                        widget.isYourKnock
+                                            ? widget.yourName
+                                            : widget.requestedUserName,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                            ),
-                            widget.requestedUserName.isEmpty
-                                ? Shimmer.fromColors(
-                                    baseColor: Colors.grey[300]!,
-                                    highlightColor: Colors.grey[200]!,
-                                    child: Container(
-                                      width: 50,
-                                      height: 30,
-                                      decoration: const BoxDecoration(
-                                          color: Colors.white),
-                                    ),
-                                  )
-                                : Padding(
-                                    padding: const EdgeInsets.only(top: 10),
-                                    child: Text(
-                                      widget.isYourKnock
-                                          ? widget.yourName
-                                          : widget.requestedUserName,
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      const Icon(Icons.multiple_stop),
-                      Container(
-                        constraints: const BoxConstraints(maxWidth: 150),
-                        width: 150,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Container(
-                              width: 70,
-                              height: 70,
-                              decoration:
-                                  const BoxDecoration(shape: BoxShape.circle),
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              child: widget.yourAvatar.isEmpty
+                        const Icon(Icons.multiple_stop),
+                        Container(
+                          constraints: const BoxConstraints(maxWidth: 150),
+                          width: 150,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Container(
+                                width: 70,
+                                height: 70,
+                                decoration:
+                                    const BoxDecoration(shape: BoxShape.circle),
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                child: widget.yourAvatar.isEmpty
+                                    ? Shimmer.fromColors(
+                                        baseColor: Colors.grey[300]!,
+                                        highlightColor: Colors.grey[200]!,
+                                        child:
+                                            const ColoredBox(color: Colors.grey),
+                                      )
+                                    : GestureDetector(
+                                        onTap: () {
+                                          if (!mounted) return;
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  UserProfileScreen(
+                                                userId: widget.isYourKnock
+                                                    ? widget.requestedUserId
+                                                    : supabase
+                                                        .auth.currentUser!.id,
+                                                yourLikePostsData:
+                                                    _yourLikePostsData,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: CachedNetworkImage(
+                                          imageUrl: widget.isYourKnock
+                                              ? widget.requestedUserAvatar
+                                              : widget.yourAvatar,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                              ),
+                              widget.yourName.isEmpty
                                   ? Shimmer.fromColors(
                                       baseColor: Colors.grey[300]!,
                                       highlightColor: Colors.grey[200]!,
-                                      child:
-                                          const ColoredBox(color: Colors.grey),
+                                      child: Container(
+                                        width: 50,
+                                        height: 30,
+                                        decoration: const BoxDecoration(
+                                            color: Colors.white),
+                                      ),
                                     )
-                                  : GestureDetector(
-                                      onTap: () {
-                                        if (!mounted) return;
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                UserProfileScreen(
-                                              userId: widget.isYourKnock
-                                                  ? widget.requestedUserId
-                                                  : supabase
-                                                      .auth.currentUser!.id,
-                                              yourLikePostsData:
-                                                  _yourLikePostsData,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      child: CachedNetworkImage(
-                                        imageUrl: widget.isYourKnock
-                                            ? widget.requestedUserAvatar
-                                            : widget.yourAvatar,
-                                        fit: BoxFit.cover,
+                                  : Padding(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      child: Text(
+                                        widget.isYourKnock
+                                            ? widget.requestedUserName
+                                            : widget.yourName,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                            ),
-                            widget.yourName.isEmpty
-                                ? Shimmer.fromColors(
-                                    baseColor: Colors.grey[300]!,
-                                    highlightColor: Colors.grey[200]!,
-                                    child: Container(
-                                      width: 50,
-                                      height: 30,
-                                      decoration: const BoxDecoration(
-                                          color: Colors.white),
-                                    ),
-                                  )
-                                : Padding(
-                                    padding: const EdgeInsets.only(top: 10),
-                                    child: Text(
-                                      widget.isYourKnock
-                                          ? widget.requestedUserName
-                                          : widget.yourName,
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 40),
+            SizedBox(height: height * 0.08), // 40
             Padding(
               padding: const EdgeInsets.only(
                   top: 0, right: 25, left: 35, bottom: 10),
