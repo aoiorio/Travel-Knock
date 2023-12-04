@@ -96,7 +96,7 @@ class _PlanDetailsCardState extends State<PlanDetailsCard> {
               children: [
                 Container(
                   width: width * 0.75, // 290
-                  height: height * 0.25, // 210
+                  height: width >= 500 ? width >= 1000 ? height * 0.4:height * 0.3 : height * 0.25, // 210
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -109,7 +109,7 @@ class _PlanDetailsCardState extends State<PlanDetailsCard> {
                   ),
                 ),
                 Positioned(
-                  top: height * 0.16, // 150
+                  top: width >= 500 ? width >= 1000 ? height * 0.3:height * 0.25 : height * 0.16, // 150
                   child: Container(
                     constraints: BoxConstraints(maxHeight: height * 0.14),
                     width: width * 0.8, // 310

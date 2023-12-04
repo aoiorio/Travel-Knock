@@ -228,8 +228,9 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final planList = widget.planDetailsList;
-    print("plan list: $planList");
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    // final planList = widget.planDetailsList;
     List likes = widget.posts['post_like_users'];
     int likeNumber = likes.length;
 
@@ -268,19 +269,21 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
             children: [
               Stack(
                 alignment: Alignment.bottomCenter,
+                clipBehavior: Clip.none,
                 children: [
                   Hero(
                     tag: heroTag,
-                    child: Transform.scale(
-                      scale:
-                          1.03, // 1.03  MediaQuery.of(context).size.width / 385
-                      child: ClipPath(
-                        clipper: DetailsClipper(),
-                        child: Center(
-                          child: Container(
-                            padding: const EdgeInsets.only(top: 0, left: 0),
-                            width: double.infinity,
-                            height: 366,
+                    child: width >= 500
+                        ? Container(
+                            width: width,
+                            height: height * 0.43,
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(100),
+                                bottomRight: Radius.circular(100),
+                              ),
+                            ),
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
                             child: CachedNetworkImage(
                               key: UniqueKey(),
                               imageUrl: widget.thumbnail,
@@ -290,115 +293,159 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                                     const BoxDecoration(color: Colors.grey),
                               ),
                             ),
+                          )
+                        : Transform.scale(
+                            scale:
+                                1.03, // 1.03  MediaQuery.of(context).size.width / 385
+                            child: ClipPath(
+                              clipper: DetailsClipper(),
+                              child: Center(
+                                child: SizedBox(
+                                  // padding: const EdgeInsets.only(top: 0, left: 0),
+                                  width: width,
+                                  height: height * 0.43, // 366
+                                  child: CachedNetworkImage(
+                                    key: UniqueKey(),
+                                    imageUrl: widget.thumbnail,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Container(
+                                      decoration: const BoxDecoration(
+                                          color: Colors.grey),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                  ),
+                  width >= 500
+                      ? Positioned(
+                          bottom: -60,
+                          child: Container(
+                            width: width >= 1000 ? width * 0.35 : width * 0.5,
+                            height:
+                                width >= 1000 ? height * 0.15 : height * 0.1,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              color: const Color(0xfffafafa),
+                            ),
+                          ),
+                        )
+                      : const SizedBox(),
+                  Positioned(
+                    bottom: width >= 500 ? -(height * 0.02) : 0,
+                    child: Container(
+                      margin: EdgeInsets.only(
+                        left: width >= 500 ? 0 : 10,
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 70,
+                            height: 70,
+                            decoration:
+                                const BoxDecoration(shape: BoxShape.circle),
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            child: _ownerAvatar.isEmpty
+                                ? Shimmer.fromColors(
+                                    baseColor: Colors.grey[300]!,
+                                    highlightColor: Colors.grey[200]!,
+                                    child: const ColoredBox(color: Colors.grey),
+                                  )
+                                : GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return UserProfileScreen(
+                                              userId: widget.ownerId,
+                                              yourLikePostsData:
+                                                  _yourLikePostsData,
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    child: CachedNetworkImage(
+                                      imageUrl: _ownerAvatar.toString(),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          _ownerName.isEmpty
+                              ? Shimmer.fromColors(
+                                  baseColor: Colors.grey[300]!,
+                                  highlightColor: Colors.grey[200]!,
+                                  child: Container(
+                                    width: 50,
+                                    height: 30,
+                                    decoration: const BoxDecoration(
+                                        color: Colors.white),
+                                  ),
+                                )
+                              : _ownerName.length >= 9
+                                  ? SingleChildScrollView(
+                                      child: SizedBox(
+                                        height: 37,
+                                        width: 60,
+                                        child: Text(
+                                          _ownerName,
+                                          style: const TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox(
+                                      width: 60,
+                                      child: Text(
+                                        _ownerName,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                          const SizedBox(width: 20),
+                          // Knock button
+                          Container(
+                            margin: const EdgeInsets.only(top: 5, left: 10),
+                            width: 145,
+                            height: 60,
+                            child: ElevatedButton(
+                              onPressed: supabase.auth.currentUser == null
+                                  ? goBackToLoginScreen
+                                  : supabase.auth.currentUser!.id ==
+                                          widget.ownerId
+                                      ? null
+                                      : showKnockPlan,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: const Text(
+                                'Knock',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  Row(
-                    children: [
-                      Container(
-                        width: 70,
-                        height: 70,
-                        decoration: const BoxDecoration(shape: BoxShape.circle),
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        margin: const EdgeInsets.only(left: 35),
-                        child: _ownerAvatar.isEmpty
-                            ? Shimmer.fromColors(
-                                baseColor: Colors.grey[300]!,
-                                highlightColor: Colors.grey[200]!,
-                                child: const ColoredBox(color: Colors.grey),
-                              )
-                            : GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return UserProfileScreen(
-                                          userId: widget.ownerId,
-                                          yourLikePostsData: _yourLikePostsData,
-                                        );
-                                      },
-                                    ),
-                                  );
-                                },
-                                child: CachedNetworkImage(
-                                  imageUrl: _ownerAvatar.toString(),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      _ownerName.isEmpty
-                          ? Shimmer.fromColors(
-                              baseColor: Colors.grey[300]!,
-                              highlightColor: Colors.grey[200]!,
-                              child: Container(
-                                width: 50,
-                                height: 30,
-                                decoration:
-                                    const BoxDecoration(color: Colors.white),
-                              ),
-                            )
-                          : _ownerName.length >= 9
-                              ? SingleChildScrollView(
-                                  child: SizedBox(
-                                    height: 37,
-                                    width: 60,
-                                    child: Text(
-                                      _ownerName,
-                                      style: const TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : SizedBox(
-                                  width: 60,
-                                  child: Text(
-                                    _ownerName,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                      const SizedBox(width: 20),
-                      // Knock button
-                      Container(
-                        margin: const EdgeInsets.only(top: 5, left: 10),
-                        width: 145,
-                        height: 60,
-                        child: ElevatedButton(
-                          onPressed: supabase.auth.currentUser == null
-                              ? goBackToLoginScreen
-                              : supabase.auth.currentUser!.id == widget.ownerId
-                                  ? null
-                                  : showKnockPlan,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          child: const Text(
-                            'Knock',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
-              const SizedBox(height: 40),
+              SizedBox(height: height * 0.05), // 40
               Padding(
                 padding: const EdgeInsets.only(right: 40, left: 35),
                 child: Column(
