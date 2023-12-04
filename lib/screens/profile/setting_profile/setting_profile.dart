@@ -69,8 +69,10 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
       backgroundColor: Colors.white,
       context: context,
       builder: (BuildContext context) {
-        return AddPlacesScreen(
-            placeNameController: _placeNameController, addPlace: addPlace);
+        return GestureDetector(
+          child: AddPlacesScreen(
+              placeNameController: _placeNameController, addPlace: addPlace),
+        );
       },
     );
   }
@@ -83,13 +85,10 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
       userPlacesList.add(place);
     });
     Navigator.of(context).pop(_placeNameController.text);
-    print(userPlacesList);
+    // print(userPlacesList);
   }
 
   void updateProfile() async {
-    setState(() {
-      _isLoading = true;
-    });
     final userId = supabase.auth.currentUser!.id;
     final username = _nameController.text.trim();
 
@@ -108,6 +107,10 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
       return;
     }
 
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       await supabase.from('profiles').upsert({
         'id': userId,
@@ -117,6 +120,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
         'is_setting_profile': true,
       });
       print('Entered submit button!');
+      if (!mounted) return;
       // DONE use Navigator.of(context).pushReplacement and transition to PlansScreen
       if (widget.isEdit) {
         Navigator.of(context).pushReplacement(
@@ -152,216 +156,257 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(supabase.auth.currentUser!.id);
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
-        toolbarHeight: 30,
-        automaticallyImplyLeading: widget.isEdit ? true : false,
-      ),
-      extendBodyBehindAppBar: true,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              alignment: Alignment.centerLeft,
-              margin: const EdgeInsets.only(top: 110, left: 25),
-              child: Column(
-                children: [
-                  Text(
-                    widget.isEdit ? 'Edit You 🐴' : 'About You 🦄',
-                    style: const TextStyle(
-                      fontSize: 35,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                ],
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
+    // print(supabase.auth.currentUser!.id);
+    return GestureDetector(
+      // どこかをタップするとキーボードを閉じるコード
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.black,
+          toolbarHeight: 30,
+          automaticallyImplyLeading: widget.isEdit ? true : false,
+        ),
+        extendBodyBehindAppBar: true,
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                margin: EdgeInsets.only(
+                    top: height * 0.1, left: width * 0.09), // 110, 25
+                child: Column(
+                  children: [
+                    Text(
+                      widget.isEdit ? 'Edit You 🐴' : 'About You 🦄',
+                      style: const TextStyle(
+                        fontSize: 35,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
-            widget.isEdit
-                ? Container(
-                    margin: const EdgeInsets.only(top: 30, bottom: 90),
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      clipBehavior: Clip.none,
-                      children: [
-                        Header(
-                          headerUrl: _headerUrl,
-                          onUpload: (imageUrl) async {
-                            setState(() {
-                              _headerUrl = imageUrl;
-                            });
-                            final userId = supabase.auth.currentUser!.id;
-                            await supabase.from('profiles').update(
-                                {'header_url': imageUrl}).eq('id', userId);
-                          },
-                        ),
-                        Positioned(
-                          bottom: -80,
-                          child: Avatar(
-                            imageUrl: _imageUrl,
-                            width: 140,
-                            height: 140,
+              // display icon, and if user pushed the edit button from profileScreen, the header will appear.
+              widget.isEdit
+                  ? Container(
+                      margin: const EdgeInsets.only(top: 30, bottom: 90),
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        clipBehavior: Clip.none,
+                        children: [
+                          Header(
+                            headerUrl: _headerUrl,
                             onUpload: (imageUrl) async {
                               setState(() {
-                                _imageUrl = imageUrl;
+                                _headerUrl = imageUrl;
                               });
                               final userId = supabase.auth.currentUser!.id;
                               await supabase.from('profiles').update(
-                                  {'avatar_url': imageUrl}).eq('id', userId);
+                                  {'header_url': imageUrl}).eq('id', userId);
                             },
+                          ),
+                          Positioned(
+                            bottom: -80,
+                            child: Avatar(
+                              imageUrl: _imageUrl,
+                              width: 140,
+                              height: 140,
+                              onUpload: (imageUrl) async {
+                                setState(() {
+                                  _imageUrl = imageUrl;
+                                });
+                                final userId = supabase.auth.currentUser!.id;
+                                await supabase.from('profiles').update(
+                                    {'avatar_url': imageUrl}).eq('id', userId);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Avatar(
+                      imageUrl: _imageUrl,
+                      width: 250,
+                      height: 350,
+                      onUpload: (imageUrl) async {
+                        setState(() {
+                          _imageUrl = imageUrl;
+                        });
+                        final userId = supabase.auth.currentUser!.id;
+                        await supabase
+                            .from('profiles')
+                            .update({'avatar_url': imageUrl}).eq('id', userId);
+                      },
+                    ),
+              SizedBox(height: height * 0.03),
+
+              // nameTextField
+              Container(
+                margin:
+                    EdgeInsets.only(left: width * 0.09, right: width * 0.09),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomTextField(
+                      title: 'Name',
+                      labelText: 'Your name',
+                      controller: _nameController,
+                    ),
+                    SizedBox(
+                      height: height * 0.05,
+                    ),
+
+                    // yourPlace text and add places button
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Your Places',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          width: width >= 1000 ? 700 : width * 0.25, // 90
+                        ),
+                        Expanded(
+                          child: SizedBox(
+                            // width: 80, // 80
+                            height: height * 0.065, // 50
+                            child: ElevatedButton(
+                              // DONE display the add places screen as showBottomSheet
+                              onPressed: showAddPlacesScreen,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xff4B4B5A),
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.add,
+                                size: 40,
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  )
-                : Avatar(
-                    imageUrl: _imageUrl,
-                    width: 250,
-                    height: 350,
-                    onUpload: (imageUrl) async {
-                      setState(() {
-                        _imageUrl = imageUrl;
-                      });
-                      final userId = supabase.auth.currentUser!.id;
-                      await supabase
-                          .from('profiles')
-                          .update({'avatar_url': imageUrl}).eq('id', userId);
-                    },
-                  ),
-            Container(
-              margin: const EdgeInsets.only(left: 50, right: 50),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomTextField(
-                    title: 'Name',
-                    labelText: 'Your name',
-                    controller: _nameController,
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Your Places',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        width: 90,
-                        height: 0,
-                      ),
-                      Expanded(
-                        child: SizedBox(
-                          width: 80,
-                          height: 50, // 50
-                          child: ElevatedButton(
-                            // DONE display the add places screen as showBottomSheet
-                            onPressed: showAddPlacesScreen,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xff4B4B5A),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+
+                    // placesList
+                    if (userPlacesList.isNotEmpty)
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: userPlacesList.length,
+                        padding: const EdgeInsets.only(top: 30),
+                        itemBuilder: (context, index) {
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: 20),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.only(
+                                  top: 10, bottom: 10, left: 20, right: 20),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    userPlacesList[index],
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  // delete icon button
+                                  IconButton(
+                                    alignment: Alignment.centerRight,
+                                    onPressed: () {
+                                      setState(() {
+                                        userPlacesList.removeAt(index);
+                                        // print(userPlacesList);
+                                      });
+                                    },
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Color.fromARGB(255, 148, 89, 85),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            child: const Icon(
-                              Icons.add,
-                              size: 40,
-                            ),
-                          ),
-                        ),
+                          );
+                        },
                       ),
-                    ],
-                  ),
-                  if (userPlacesList.isNotEmpty)
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: userPlacesList.length,
-                      padding: const EdgeInsets.only(top: 30),
-                      itemBuilder: (context, index) {
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 20),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Container(
-                            padding: const EdgeInsets.only(
-                                top: 10, bottom: 10, left: 20, right: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  userPlacesList[index],
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
+
+                    // show illustrations if the user doesn't have any places
+                    userPlacesList.isEmpty
+                        ? Center(
+                            child: Container(
+                              padding: EdgeInsets.only(bottom: height * 0.04),
+                              // height: height * 0.1, // 50
+                              child: Column(
+                                children: [
+                                  Image.asset('assets/images/no-knocked.PNG'),
+                                  const Text(
+                                    'No Places',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600),
                                   ),
-                                ),
-                                // delete icon button
-                                IconButton(
-                                  alignment: Alignment.centerRight,
-                                  onPressed: () {
-                                    setState(() {
-                                      userPlacesList.removeAt(index);
-                                      print(userPlacesList);
-                                    });
-                                  },
-                                  icon: const Icon(Icons.delete,
-                                      color: Color.fromARGB(255, 148, 89, 85)),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
+                          )
+                        : SizedBox(
+                            height: height * 0.03, // 10
                           ),
-                        );
-                      },
-                    ),
-                  userPlacesList.isEmpty
-                      ? const SizedBox(
-                          height: 50,
-                        )
-                      : const SizedBox(
-                          height: 10,
-                        ),
-                  _isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xff4B4B5A),
-                          ),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.only(bottom: 30),
-                          child: Center(
-                            child: SizedBox(
-                              height: 70,
-                              width: 200,
-                              child: ElevatedButton(
-                                // DONE create a transition to PlansScreen and add details to the database
-                                onPressed: updateProfile,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xff4B4B5A),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
+
+                    // Submit Button
+                    _isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xff4B4B5A),
+                            ),
+                          )
+                        : Padding(
+                            padding:
+                                EdgeInsets.only(bottom: height * 0.05), // 30
+                            child: Center(
+                              child: SizedBox(
+                                height: 70,
+                                width: width * 0.5, // 200
+                                child: ElevatedButton(
+                                  // DONE create a transition to PlansScreen and add details to the database
+                                  onPressed: updateProfile,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xff4B4B5A),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
                                   ),
-                                ),
-                                child: const Text(
-                                  'Submit',
-                                  style: TextStyle(fontSize: 20),
+                                  child: const Text(
+                                    'Submit',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

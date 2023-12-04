@@ -47,7 +47,7 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
   var _selectedDayIndex = 0;
   var _isSelected = [true, false];
   final List _yourLikePostsData = [];
-  List<List<Map<String, dynamic>>> plans = [];
+  List plans = [];
   var heroTag = '';
   final supabase = Supabase.instance.client;
 
@@ -106,6 +106,7 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
       return false;
     });
     plans = convertStringToMap(widget.planDetailsList);
+    // plans = widget.planDetailsList;
     heroTag = widget.thumbnail;
     getLikePosts();
   }
@@ -188,7 +189,8 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                                                   ? supabase
                                                       .auth.currentUser!.id
                                                   : widget.requestedUserId,
-                                              yourLikePostsData: _yourLikePostsData,
+                                              yourLikePostsData:
+                                                  _yourLikePostsData,
                                             ),
                                           ),
                                         );
@@ -260,7 +262,8 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                                                   ? widget.requestedUserId
                                                   : supabase
                                                       .auth.currentUser!.id,
-                                              yourLikePostsData: _yourLikePostsData,
+                                              yourLikePostsData:
+                                                  _yourLikePostsData,
                                             ),
                                           ),
                                         );

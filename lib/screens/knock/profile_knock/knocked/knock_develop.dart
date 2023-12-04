@@ -208,7 +208,7 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                                             final XFile? image =
                                                 await picker.pickImage(
                                                     source: ImageSource.gallery,
-                                                    imageQuality: 0);
+                                                    );
                                             if (image == null) {
                                               return;
                                             }

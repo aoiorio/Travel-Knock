@@ -30,12 +30,10 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
     _setupAuthListener();
-    // _isSettingProfile();
     super.initState();
   }
 
   void _setupAuthListener() async {
-    if (!mounted) return;
     try {
       supabase.auth.onAuthStateChange.listen((data) {
         final event = data.event;
@@ -62,6 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<AuthResponse> signInWithGoogle() async {
+    await PreferencesManager().setIsLogin(isLogin: true);
     try {
       final rawNonce = _generateRandomString();
       final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
@@ -131,34 +130,37 @@ class _LoginScreenState extends State<LoginScreen> {
       print('Cancel button');
     }
 
-    await PreferencesManager().setIsLogin(isLogin: true);
     // Just a random string
     return AuthResponse();
   }
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: const Color(0xffC7C7C7),
       body: Column(
         children: [
           // 変な形の上にロゴを乗っける
           Stack(
+            alignment: Alignment.center,
             children: [
               // 変な形を作ってくれるpackage
               ClipPath(
                 clipper: WaveClipperTwo(),
                 child: Container(
-                  height: 340,
+                  height: height * 0.4, // 340
                   color: const Color(0xff4B4B5A),
                 ),
               ),
               // ロゴを表示
               Container(
-                padding: const EdgeInsets.only(top: 150),
+                // padding: EdgeInsets.only(top: height * 0.175), // 150 どうするかな〜〜〜！！！
                 child: Center(
                   child: SizedBox(
-                    width: 340,
+                    width: width >= 1000 ? 500 : width * 0.87, // 340
                     child: Image.asset(
                       'assets/images/Travel-Knock-Logo.png',
                       fit: BoxFit.cover,
@@ -169,16 +171,16 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
           ),
           // 二つの四角い形を生成
-          const SizedBox(
-            height: 30,
+          SizedBox(
+            height: height * 0.04, // 30
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               SizedBox(
-                height: 70,
-                width: 270,
-                child: DecoratedBox(
+                height: height * 0.085, // 70
+                width: width * 0.69, // 270
+                child: const DecoratedBox(
                   decoration: BoxDecoration(
                     color: Color(0xffA7A7A7),
                     borderRadius: BorderRadius.only(
@@ -190,16 +192,16 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ],
           ),
-          const SizedBox(
-            height: 50,
+          SizedBox(
+            height: height * 0.07, // 50
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
-                height: 70,
-                width: 250,
-                child: DecoratedBox(
+                height: height * 0.085,
+                width: width * 0.64, // 250
+                child: const DecoratedBox(
                   decoration: BoxDecoration(
                     color: Color(0xffA7A7A7),
                     borderRadius: BorderRadius.only(
@@ -210,14 +212,14 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ],
           ),
-          const SizedBox(
-            height: 40,
+          SizedBox(
+            height: height * 0.06, // 40
           ),
 
           // Sign in with google button
           SizedBox(
-            width: 300,
-            height: 60,
+            width: width * 0.8, // 300
+            height: height * 0.08, // 60
             child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
@@ -228,9 +230,9 @@ class _LoginScreenState extends State<LoginScreen> {
               // DONE add feature that login with Google
               onPressed: signInWithGoogle,
               icon: SizedBox(
-                width: 30,
+                width: 35, // 30
                 child: Container(
-                    padding: const EdgeInsets.only(right: 4),
+                    padding: const EdgeInsets.only(right: 5), // 4
                     child: Image.asset('assets/images/google-logo.png')),
               ),
               label: const Text(
@@ -243,14 +245,14 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
-          const SizedBox(
-            height: 40,
+          SizedBox(
+            height: height * 0.05,
           ),
 
           // Join as a guest button
           SizedBox(
-            width: 300,
-            height: 60,
+            width: width * 0.8,
+            height: height * 0.08,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
@@ -269,6 +271,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                 );
+                // sharedPreferencesにisLoginというkeyに保存する
                 await PreferencesManager().setIsLogin(isLogin: true);
               },
               child: const Text(

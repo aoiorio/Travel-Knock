@@ -225,19 +225,79 @@ class _PlansScreenState extends State<PlansScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    // var size = MediaQuery.of(context).size;
 
     /*24 is for notification bar on Android*/
-    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
-    final double itemWidth = size.width / 2;
+    // final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
+    // final double itemWidth = size.width / 2;
+    // print((width / height) * 1.1);
 
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
+        // appBarの後ろにあるwidgetがタップできない問題を解消するためにtrueにするよ！！！
+        forceMaterialTransparency: true,
+        toolbarHeight: 90,
+        actions: [
+          Transform.rotate(
+            // 回転しちゃうぞ
+            angle: 0 * pi / 180,
+            child: SizedBox(
+              width: 80,
+              height: 90,
+              child: ElevatedButton(
+                onPressed: () async {
+                  try {
+                    if (supabase.auth.currentUser == null) {
+                      await Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return const LoginScreen();
+                          },
+                        ),
+                      );
+                    }
+                  } on Exception {
+                    print('anonymous');
+                  }
+                  try {
+                    if (!mounted) return;
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const NewPlanScreen();
+                        },
+                      ),
+                    );
+                  } on Exception {
+                    print('anonymous!');
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xff4B4B5A),
+                  foregroundColor: Colors.white,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(40),
+                      bottomLeft: Radius.circular(20),
+                    ),
+                  ),
+                ),
+                child: const Icon(
+                  Icons.add,
+                  size: 50,
+                ),
+              ),
+            ),
+          ),
+        ],
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
+          // Search Button
           child: IconButton(
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
@@ -261,68 +321,12 @@ class _PlansScreenState extends State<PlansScreen> {
           ),
         ),
       ),
-      floatingActionButton: Transform.rotate(
-        // 回転しちゃうぞ
-        angle: -1 * pi / 180,
-        child: Container(
-          margin: const EdgeInsets.only(right: 0),
-          child: SizedBox(
-            width: 90,
-            height: 90,
-            child: ElevatedButton(
-              onPressed: () async {
-                if (!mounted) return;
-                try {
-                  if (supabase.auth.currentUser == null) {
-                    await Navigator.of(context)
-                        .pushReplacement(MaterialPageRoute(
-                      builder: (context) {
-                        return const LoginScreen();
-                      },
-                    ));
-                  }
-                } on Exception {
-                  print('anonymous');
-                }
-                try {
-                  if (!mounted) return;
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const NewPlanScreen();
-                      },
-                    ),
-                  );
-                } on Exception {
-                  print('anonymous!');
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xff4B4B5A),
-                foregroundColor: Colors.white,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(40),
-                    bottomLeft: Radius.circular(20),
-                    topRight: Radius.circular(0),
-                  ),
-                ),
-              ),
-              child: const Icon(
-                Icons.add,
-                size: 50,
-              ),
-            ),
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: CustomizeFloatingLocation(
-          FloatingActionButtonLocation.miniEndTop,
-          size.width / 15,
-          0), // FloatingActionButtonLocation.miniEndTop 20
-      floatingActionButtonAnimator: AnimationNoScaling(),
 
+      // New Post Button
+      floatingActionButtonAnimator: AnimationNoScaling(),
       extendBodyBehindAppBar: true,
+
+      // refresh bar
       body: RefreshIndicator(
         onRefresh: () async {
           await getPosts();
@@ -332,11 +336,12 @@ class _PlansScreenState extends State<PlansScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Stack(
+              Stack(
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(left: 25, top: 130),
-                    child: Text(
+                    padding: EdgeInsets.only(
+                        left: width * 0.05, top: 130), // 25, 130
+                    child: const Text(
                       "Let's Knock🚪",
                       style: TextStyle(
                         fontSize: 40,
@@ -346,13 +351,13 @@ class _PlansScreenState extends State<PlansScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: height * 0.03), // 30
               // CarouselSlider
               const CustomCarouselSlider(),
-              const SizedBox(height: 5),
-              const Padding(
-                padding: EdgeInsets.only(left: 25),
-                child: Text(
+              SizedBox(height: height * 0.01), // 5
+              Padding(
+                padding: EdgeInsets.only(left: width * 0.05),
+                child: const Text(
                   "🔥",
                   style: TextStyle(
                     fontSize: 50,
@@ -365,23 +370,25 @@ class _PlansScreenState extends State<PlansScreen> {
                       baseColor: Colors.grey[300]!,
                       highlightColor: Colors.grey[100]!,
                       child: Container(
-                        margin: const EdgeInsets.only(top: 25),
-                        height: 200,
+                        margin: EdgeInsets.only(top: height * 0.03), // 25
+                        height: height * 0.24,
                         width: double.infinity,
                         child: GridView.builder(
                           itemCount: 4,
                           scrollDirection: Axis.horizontal,
                           gridDelegate:
                               SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 100.0,
+                            maxCrossAxisExtent: width * 0.3, // 100
                             crossAxisSpacing: 20.0,
                             mainAxisSpacing: 20.0,
-                            childAspectRatio: (itemWidth / itemHeight),
+                            childAspectRatio: (width / height) * 1.1,
+                            mainAxisExtent: width * 0.46,
                           ),
                           itemBuilder: (context, index) {
                             return Card(
-                              margin:
-                                  const EdgeInsets.only(left: 20, right: 10),
+                              margin: EdgeInsets.only(
+                                  left: width * 0.05,
+                                  right: width * 0.02), // 20, 10
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)),
                               color: Colors.white,
@@ -390,72 +397,86 @@ class _PlansScreenState extends State<PlansScreen> {
                         ),
                       ),
                     )
-                  : Container(
-                      margin: const EdgeInsets.only(top: 25),
-                      height: 200,
-                      width: double.infinity,
-                      child: GridView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _hotPlaceList.length,
-                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 100.0,
-                          crossAxisSpacing: 20.0,
-                          mainAxisSpacing: 20.0,
-                          childAspectRatio: (itemWidth / itemHeight),
-                        ),
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    return SearchScreen(
-                                      yourLikePostsData: _yourLikePostsData,
-                                      searchText: _hotPlaceList[index]
-                                          ['place_name'],
-                                    );
-                                  },
+                  : Center(
+                    child: Container(
+                        margin: EdgeInsets.only(top: height * 0.03, ),
+                        height: height * 0.24, // 200
+                        width: double.infinity,
+                        child: GridView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _hotPlaceList.length,
+                          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: width * 0.3, // width * 0.3
+                            crossAxisSpacing: 20.0,
+                            mainAxisSpacing: 20.0,
+                            childAspectRatio: (width / height) * 1.1,
+                            mainAxisExtent: width * 0.46,
+                          ),
+                          itemBuilder: (context, index) {
+                            if (_hotPlaceList.isEmpty) {
+                              return Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey,
+                                child: Container(
+                                  color: Colors.white,
                                 ),
                               );
-                            },
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              margin:
-                                  const EdgeInsets.only(left: 20, right: 10),
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  ImageFiltered(
-                                    imageFilter:
-                                        ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-                                    child: CachedNetworkImage(
-                                      imageUrl: _hotPlaceList[index]
-                                          ['thumbnail'],
-                                      fit: BoxFit.cover,
-                                      width: 200,
-                                      height: 100,
-                                    ),
+                            }
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return SearchScreen(
+                                        yourLikePostsData: _yourLikePostsData,
+                                        searchText: _hotPlaceList[index]
+                                            ['place_name'],
+                                      );
+                                    },
                                   ),
-                                  Center(
-                                    child: Text(
-                                      _hotPlaceList[index]['place_name'],
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600,
+                                );
+                              },
+                              child: Center(
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  margin:
+                                      EdgeInsets.only(left: width * 0.05, right: width * 0.02),
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      ImageFiltered(
+                                        imageFilter:
+                                            ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                                        child: CachedNetworkImage(
+                                          imageUrl: _hotPlaceList[index]
+                                              ['thumbnail'],
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                        ),
                                       ),
-                                    ),
+                                      Center(
+                                        child: Text(
+                                          _hotPlaceList[index]['place_name'],
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
-                    ),
+                  ),
 
               // display user posts
               PlanCard(

@@ -14,6 +14,8 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -29,7 +31,7 @@ class CustomTextField extends StatelessWidget {
           height: 20,
         ),
         SizedBox(
-          width: 300,
+          width: width * 0.9, // 300
           child: TextField(
             decoration: InputDecoration(
               labelText: labelText,
@@ -45,6 +47,7 @@ class CustomTextField extends StatelessWidget {
               floatingLabelBehavior: FloatingLabelBehavior.never,
             ),
             controller: controller,
+            cursorColor: const Color(0xff4B4B5A),
           ),
         ),
       ],

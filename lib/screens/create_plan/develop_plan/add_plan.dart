@@ -52,11 +52,13 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     try {
       final ImagePicker picker = ImagePicker();
       // Pick an image.
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery, imageQuality: 0);
+      final XFile? image =
+          await picker.pickImage(source: ImageSource.gallery,);
       if (image == null) {
         return;
       }
       final imagePath = File(image.path);
+      if (!mounted) return;
 
       setState(() {
         this.image = imagePath;
@@ -95,6 +97,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             contentType: 'image/$imageExtension',
           ),
         );
+    if (!mounted) return;
     setState(() {
       isLoading = false;
     });
@@ -189,7 +192,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 30, left: 35),
+                padding: const EdgeInsets.only(top: 30, left: 35, right: 35),
                 child: CustomTextField(
                   title: 'Title',
                   labelText: 'e.g. Eat at Banta Cafe',
