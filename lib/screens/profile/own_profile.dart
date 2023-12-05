@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // libraries import
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 // screens import
@@ -18,8 +19,6 @@ import '../../components/custom_widgets/plans/custom_fab.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
-
-
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -87,67 +86,79 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    print(width * 0.08);
+
+    SystemChrome.setPreferredOrientations([
+      //許可する向きを指定する。
+      DeviceOrientation.portraitUp, //上向きを許可
+    ]);
+
     return Scaffold(
-      floatingActionButton: Transform.rotate(
-        // 回転しちゃうぞ
-        angle: -1 * pi / 180,
-        child: Container(
-          margin: const EdgeInsets.only(right: 0),
-          child: SizedBox(
-            width: 90,
-            height: 90,
-            child: ElevatedButton(
-              onPressed: () async {
-                if (!mounted) return;
-                try {
-                  if (supabase.auth.currentUser == null) {
-                    await Navigator.of(context)
-                        .pushReplacement(MaterialPageRoute(
-                      builder: (context) {
-                        return const LoginScreen();
-                      },
-                    ));
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        // appBarの後ろにあるwidgetがタップできない問題を解消するためにtrueにするよ！！！
+        forceMaterialTransparency: true,
+        toolbarHeight: 90,
+        actions: [
+          Transform.rotate(
+            // 回転しちゃうぞ
+            angle: 0 * pi / 180,
+            child: SizedBox(
+              width: 80,
+              height: 90,
+              child: ElevatedButton(
+                onPressed: () async {
+                  try {
+                    if (supabase.auth.currentUser == null) {
+                      await Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return const LoginScreen();
+                          },
+                        ),
+                      );
+                    }
+                  } on Exception {
+                    print('anonymous');
                   }
-                } on Exception {
-                  print('anonymous');
-                }
-                try {
-                  if (!mounted) return;
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const NewPlanScreen();
-                      },
+                  try {
+                    if (!mounted) return;
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const NewPlanScreen();
+                        },
+                      ),
+                    );
+                  } on Exception {
+                    print('anonymous!');
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xff4B4B5A),
+                  foregroundColor: Colors.white,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(40),
+                      bottomLeft: Radius.circular(20),
                     ),
-                  );
-                } on Exception {
-                  print('anonymous!');
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xff4B4B5A),
-                foregroundColor: Colors.white,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(40),
-                    bottomLeft: Radius.circular(20),
-                    topRight: Radius.circular(0),
                   ),
                 ),
-              ),
-              child: const Icon(
-                Icons.add,
-                size: 50,
+                child: const Icon(
+                  Icons.add,
+                  size: 50,
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ),
-      floatingActionButtonLocation: CustomizeFloatingLocation(
-          FloatingActionButtonLocation.miniEndTop,
-          MediaQuery.of(context).size.width / 15,
-          0),
       floatingActionButtonAnimator: AnimationNoScaling(),
+      extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         child: _isLoading
             ? Center(
@@ -160,24 +171,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               )
             : Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(
                     height: 70,
                   ),
                   // DONE create profile page here and users can update own profile!!
                   Padding(
-                    padding: const EdgeInsets.only(right: 240, bottom: 30),
+                    padding: EdgeInsets.only(left: width * 0.07, bottom: 30),
                     child: SizedBox(
-                      width: 100,
-                      height: 40,
+                      width: 100, // 100 width * 0.26
+                      height: 40, // 40 height * 0.045
                       child: ElevatedButton(
                         onPressed: () {
                           print('Pressed Profile Edit Button!');
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) {
-                              return const SettingProfileScreen(isEdit: true);
-                            },
-                          ));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return const SettingProfileScreen(isEdit: true);
+                              },
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
@@ -196,57 +212,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(right: 200, bottom: 30),
+                    margin: EdgeInsets.only(left: width * 0.07, bottom: 30),
                     child: const Text(
                       'Yours 🛠️',
                       style:
                           TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: [
-                      Container(
-                        width: 330,
-                        height: 200,
-                        margin: const EdgeInsets.only(bottom: 30),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
+                  Center(
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        Container(
+                          width: width * 0.84, // 330
+                          height: width >= 500
+                              ? height * 0.4
+                              : height * 0.24, // 200
+                          margin: const EdgeInsets.only(bottom: 30),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          child: CachedNetworkImage(
+                            imageUrl: _yourHeader != null
+                                ? _yourHeader!
+                                : 'https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/6ab44cec-df53-4cc3-8c09-85907eb37815/IMG_8796.jpg',
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        child: CachedNetworkImage(
-                          imageUrl: _yourHeader != null
-                              ? _yourHeader!
-                              : 'https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/6ab44cec-df53-4cc3-8c09-85907eb37815/IMG_8796.jpg',
-                          fit: BoxFit.cover,
+                        Container(
+                          width: 120, // 120  width * 0.31
+                          height: 120, // 120
+                          // width: 120, // 120
+                          // height: 120, // 120
+                          decoration:
+                              const BoxDecoration(shape: BoxShape.circle),
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          child: CachedNetworkImage(
+                            imageUrl: _yourAvatar,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      Container(
-                        width: 120,
-                        height: 120,
-                        decoration: const BoxDecoration(shape: BoxShape.circle),
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        child: CachedNetworkImage(
-                          imageUrl: _yourAvatar,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    _yourName,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                      ],
                     ),
                   ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(right: 210, bottom: 20),
+                  SizedBox(height: height * 0.02), // 10
+                  Center(
                     child: Text(
+                      _yourName,
+                      style: TextStyle(
+                        fontSize: width >= 500 ? 30 : 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: height * 0.02, // 15
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: width * 0.07,
+                        bottom: 20), // right: 210, bottom: 20
+                    child: const Text(
                       'Your Places',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
@@ -254,8 +281,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   Container(
                     height: 50,
-                    width: 350,
-                    padding: const EdgeInsets.only(left: 15),
+                    width: width * 0.9, // 350
+                    padding: EdgeInsets.only(left: width * 0.07),
                     child: ListView.builder(
                       shrinkWrap: true,
                       scrollDirection: Axis.horizontal,
@@ -265,9 +292,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           index == (_yourPlaces.length - 1)
                               ? _yourPlaces[index]
                               : _yourPlaces[index] + ', ',
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: Color(0xff7A7a7A),
+                          style: TextStyle(
+                            fontSize: width >= 500 ? 18 : 15,
+                            color: const Color(0xff7A7a7A),
                           ),
                         );
                       },
@@ -275,71 +302,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 5),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 40, right: 200),
-                    child: Center(
-                      child: SizedBox(
-                        height: 40,
-                        width: 120,
-                        child: ElevatedButton(
-                          // DONE create a transition to PlansScreen and add details to the database
-                          onPressed: signOut,
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xffF2F2F2),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              )),
-                          child: const Text(
-                            'Sign Out',
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: Color.fromARGB(255, 128, 76, 72)),
-                          ),
+                    padding: EdgeInsets.only(bottom: 40, left: width * 0.07),
+                    child: SizedBox(
+                      height: 40,
+                      width: 120,
+                      child: ElevatedButton(
+                        // DONE create a transition to PlansScreen and add details to the database
+                        onPressed: signOut,
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xffF2F2F2),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            )),
+                        child: const Text(
+                          'Sign Out',
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: Color.fromARGB(255, 128, 76, 72)),
                         ),
                       ),
                     ),
+                    // ),
                   ),
-                  SizedBox(
-                    height: 50,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: pages.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          width: 180,
-                          padding: const EdgeInsets.only(left: 30, right: 30),
-                          // margin: const EdgeInsets.only(right: 10),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (!mounted) return;
-                              setState(() {
-                                _currentPageIndex = index;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: _currentPageIndex == index
-                                    ? const Color(0xff4B4B5A)
-                                    : const Color(0xfffafafa),
-                                foregroundColor: _currentPageIndex == index
-                                    ? const Color(0xfffafafa)
-                                    : const Color(0xff4B4B5A),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
+                  Center(
+                    child: SizedBox(
+                      height: height * 0.058, // 50
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: pages.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            width: width * 0.46, // 180
+                            padding: EdgeInsets.only(
+                              left: width >= 500 ? 60 : 30,
+                              right: width >= 500 ? 60 : 30,
+                            ), // left: 30, right: 30
+                            // margin: const EdgeInsets.only(right: 10),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (!mounted) return;
+                                setState(() {
+                                  _currentPageIndex = index;
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: _currentPageIndex == index
+                                      ? const Color(0xff4B4B5A)
+                                      : const Color(0xfffafafa),
+                                  foregroundColor: _currentPageIndex == index
+                                      ? const Color(0xfffafafa)
+                                      : const Color(0xff4B4B5A),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  side: BorderSide(
+                                      width: _currentPageIndex == index ? 0 : 3,
+                                      color: const Color(0xff4B4B5A))),
+                              child: Text(
+                                _pageName[index],
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
                                 ),
-                                side: BorderSide(
-                                    width: _currentPageIndex == index ? 0 : 3,
-                                    color: const Color(0xff4B4B5A))),
-                            child: Text(
-                              _pageName[index],
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
                               ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
                   pages[_currentPageIndex],

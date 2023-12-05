@@ -61,7 +61,7 @@ class AddPlacesScreen extends StatelessWidget {
                     child: ElevatedButton(
                       // DONE add the place name to the setting_profile screen
                       onPressed: () {
-                        if (placeNameController.text.trim().isEmpty) {
+                        if (placeNameController.text.trim().isEmpty || placeNameController.text.length > 20) {
                           showDialog(
                             context: context,
                             builder: (context) {

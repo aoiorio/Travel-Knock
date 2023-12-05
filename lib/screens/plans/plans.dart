@@ -227,6 +227,7 @@ class _PlansScreenState extends State<PlansScreen> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
+    
     // var size = MediaQuery.of(context).size;
 
     /*24 is for notification bar on Android*/
@@ -399,7 +400,7 @@ class _PlansScreenState extends State<PlansScreen> {
                     )
                   : Center(
                     child: Container(
-                        margin: EdgeInsets.only(top: height * 0.03, ),
+                        margin: EdgeInsets.only(top: height * 0.03),
                         height: height * 0.24, // 200
                         width: double.infinity,
                         child: GridView.builder(

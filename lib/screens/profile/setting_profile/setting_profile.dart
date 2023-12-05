@@ -201,6 +201,10 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                         children: [
                           Header(
                             headerUrl: _headerUrl,
+                            width: width * 0.84, // 330
+                            height: width >= 500
+                                ? height * 0.4
+                                : height * 0.24, // 200
                             onUpload: (imageUrl) async {
                               setState(() {
                                 _headerUrl = imageUrl;
@@ -271,7 +275,11 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(
-                          width: width >= 1000 ? 700 : width * 0.25, // 90
+                          width: width >= 500
+                              ? width >= 1000
+                                  ? 700
+                                  : 400
+                              : width * 0.25, // 90
                         ),
                         Expanded(
                           child: SizedBox(

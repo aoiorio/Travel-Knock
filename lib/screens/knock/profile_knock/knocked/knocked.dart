@@ -24,11 +24,11 @@ class KnockedScreen extends StatefulWidget {
 }
 
 class _KnockedScreenState extends State<KnockedScreen> {
+  final supabase = Supabase.instance.client;
   List _requestKnock = [];
   List _requestUserData = [];
   final List _yourLikePostsData = [];
   bool _isLoading = false;
-  final supabase = Supabase.instance.client;
 
   Future getKnockInfo() async {
     if (!mounted) return;
@@ -94,7 +94,10 @@ class _KnockedScreenState extends State<KnockedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final knockedTime = _requestKnock.length.toString();
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
+    final knockedNumber = _requestKnock.length.toString();
     return _isLoading
         ? Center(
             child: Container(
@@ -122,18 +125,24 @@ class _KnockedScreenState extends State<KnockedScreen> {
                   ),
                 ),
               )
+              // userがknockした詳細のCards
             : Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(left: 40, top: 20),
+                    margin: EdgeInsets.only(
+                      left: width * 0.07,
+                      top: height * 0.04,
+                    ), // left: 40 top: 20
                     child: Text(
-                      knockedTime == '1'
-                          ? 'Knocked to you $knockedTime time'
-                          : 'Knocked to you $knockedTime times',
+                      knockedNumber == '1'
+                          ? 'Knocked to you $knockedNumber time'
+                          : 'Knocked to you $knockedNumber times',
                       style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w600),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   Container(
@@ -172,31 +181,33 @@ class _KnockedScreenState extends State<KnockedScreen> {
                               );
                               return;
                             }
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) {
-                                return KnockDevelopScreen(
-                                  title: _requestKnock[index]['title'],
-                                  period: _requestKnock[index]['period'],
-                                  destination: _requestKnock[index]
-                                      ['destination'],
-                                  requestUserAvatar: _requestUserData[index][0]
-                                      ['avatar_url'],
-                                  requestUserName: _requestUserData[index][0]
-                                      ['username'],
-                                  knockId: _requestKnock[index]['id'],
-                                );
-                              },
-                            ));
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return KnockDevelopScreen(
+                                    title: _requestKnock[index]['title'],
+                                    period: _requestKnock[index]['period'],
+                                    destination: _requestKnock[index]
+                                        ['destination'],
+                                    requestUserAvatar: _requestUserData[index]
+                                        [0]['avatar_url'],
+                                    requestUserName: _requestUserData[index][0]
+                                        ['username'],
+                                    knockId: _requestKnock[index]['id'],
+                                  );
+                                },
+                              ),
+                            );
                           },
                           child: Stack(
                             alignment: Alignment.topRight,
                             children: [
                               Container(
-                                padding: const EdgeInsets.all(20),
-                                margin: const EdgeInsets.all(20),
+                                padding: EdgeInsets.all(width * 0.05), // 20
+                                margin: EdgeInsets.all(width * 0.05), // 20
                                 constraints:
-                                    const BoxConstraints(minHeight: 100),
-                                width: 390,
+                                    const BoxConstraints(minHeight: 100), // 100
+                                width: width, // 390
                                 decoration: BoxDecoration(
                                   color: const Color(0xffF2F2F2),
                                   borderRadius: BorderRadius.circular(30),
@@ -219,8 +230,8 @@ class _KnockedScreenState extends State<KnockedScreen> {
                                         );
                                       },
                                       child: Container(
-                                        width: 70,
-                                        height: 70,
+                                        width: width >= 500 ? 90 : 70, // 70
+                                        height: width >= 500 ? 90 : 70,
                                         decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
                                         ),
@@ -229,18 +240,25 @@ class _KnockedScreenState extends State<KnockedScreen> {
                                         child: CachedNetworkImage(
                                           imageUrl: _requestUserData[index][0]
                                               ['avatar_url'],
-                                          width: 70,
-                                          height: 70,
+                                          width: double.infinity,
+                                          height: double.infinity,
                                           fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width /
-                                          20, // 30
+                                      width: width >= 500
+                                          ? width * 0.13
+                                          : width * 0.09, // 30
                                     ), // 40
-                                    Flexible(
+
+                                    SizedBox(
+                                      width: width * 0.5,
                                       child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Text(
@@ -267,11 +285,20 @@ class _KnockedScreenState extends State<KnockedScreen> {
                                   ],
                                 ),
                               ),
+                              // is_completed（そのplanが完成していたら）
                               _requestKnock[index]['is_completed']
                                   ? Container(
-                                      width: 115,
-                                      height: 40,
-                                      margin: const EdgeInsets.only(right: 12),
+                                      width: width * 0.3, // 115
+                                      height: width >= 1000
+                                          ? height * 0.06
+                                          : height * 0.046, // 40
+                                      margin: EdgeInsets.only(
+                                          top: width >= 500
+                                              ? width >= 1000
+                                                  ? height * 0.05
+                                                  : height * 0.02
+                                              : 0,
+                                          right: width * 0.03), // 12
                                       decoration: BoxDecoration(
                                           color: Colors.black,
                                           borderRadius:
