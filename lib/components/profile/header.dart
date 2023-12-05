@@ -11,10 +11,14 @@ class Header extends StatelessWidget {
     super.key,
     required this.headerUrl,
     required this.onUpload,
+    required this.width,
+    required this.height,
   });
 
   final String? headerUrl;
   final void Function(String imageUrl) onUpload;
+  final double width;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +57,8 @@ class Header extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Container(
-          width: 330,
-          height: 200,
+          width: width, // 330
+          height: height, // 200
           clipBehavior: Clip.antiAliasWithSaveLayer,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),

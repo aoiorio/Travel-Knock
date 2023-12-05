@@ -266,7 +266,7 @@ class PlanCard extends StatelessWidget {
                                                 'Knock plan',
                                                 style: TextStyle(
                                                   fontSize:
-                                                      width >= 500 ? 20 : 15,
+                                                      width >= 500 ? 17 : 15,
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),

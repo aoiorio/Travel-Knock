@@ -86,7 +86,10 @@ class _YourKnockState extends State<YourKnock> {
 
   @override
   Widget build(BuildContext context) {
-    final yourKnockTime = _requestedKnock.length.toString();
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
+    final yourKnockNumber = _requestedKnock.length.toString();
     return _isLoading
         ? Center(
             child: Container(
@@ -115,15 +118,19 @@ class _YourKnockState extends State<YourKnock> {
                   ),
                 ),
               )
+            // このuserにKnockされた詳細のCards
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(left: 40, top: 20),
+                    margin: EdgeInsets.only(
+                      left: width * 0.07,
+                      top: height * 0.04,
+                    ),
                     child: Text(
-                      yourKnockTime == '1'
-                          ? 'You have knocked $yourKnockTime times'
-                          : 'You have knocked $yourKnockTime times',
+                      yourKnockNumber == '1'
+                          ? 'You have knocked $yourKnockNumber times'
+                          : 'You have knocked $yourKnockNumber times',
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w600),
                     ),
@@ -168,11 +175,11 @@ class _YourKnockState extends State<YourKnock> {
                             alignment: Alignment.topRight,
                             children: [
                               Container(
-                                padding: const EdgeInsets.all(20),
-                                margin: const EdgeInsets.all(20),
+                                padding: EdgeInsets.all(width * 0.05), // 20
+                                margin: EdgeInsets.all(width * 0.05), // 20
                                 constraints:
                                     const BoxConstraints(minHeight: 100),
-                                width: 390,
+                                width: width, // 390
                                 // height: 100,
                                 decoration: BoxDecoration(
                                   color: const Color(0xffF2F2F2),
@@ -189,14 +196,15 @@ class _YourKnockState extends State<YourKnock> {
                                                 UserProfileScreen(
                                               userId: _ownerData[index][0]
                                                   ['id'],
-                                              yourLikePostsData: _yourLikePostsData,
+                                              yourLikePostsData:
+                                                  _yourLikePostsData,
                                             ),
                                           ),
                                         );
                                       },
                                       child: Container(
-                                        width: 70,
-                                        height: 70,
+                                        width: width >= 500 ? 90 : 70, // 70
+                                        height: width >= 500 ? 90 : 70, // 70
                                         decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
                                         ),
@@ -205,17 +213,19 @@ class _YourKnockState extends State<YourKnock> {
                                         child: CachedNetworkImage(
                                           imageUrl: _ownerData[index][0]
                                               ['avatar_url'],
-                                          width: 70,
-                                          height: 70,
+                                          width: double.infinity,
+                                          height: double.infinity,
                                           fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width /
-                                          10,
-                                    ),
-                                    Flexible(
+                                      width: width >= 500
+                                          ? width * 0.13
+                                          : width * 0.09, // 30
+                                    ), // 40
+                                    SizedBox(
+                                      width: width * 0.5,
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
@@ -245,20 +255,32 @@ class _YourKnockState extends State<YourKnock> {
                               ),
                               _requestedKnock[index]['is_completed']
                                   ? Container(
-                                      width: 115,
-                                      height: 40,
-                                      margin: const EdgeInsets.only(right: 12),
+                                      width: width * 0.3, // 115
+                                      height: width >= 1000
+                                          ? height * 0.06
+                                          : height * 0.046, // 40
+                                      margin: EdgeInsets.only(
+                                        top: width >= 500
+                                            ? width >= 1000
+                                                ? height * 0.05
+                                                : height * 0.02
+                                            : 0,
+                                        right: width * 0.03,
+                                      ), // 12
                                       decoration: BoxDecoration(
-                                          color: Colors.black,
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
+                                        color: Colors.black,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
                                       clipBehavior: Clip.antiAliasWithSaveLayer,
                                       child: const Center(
-                                        child: Text('Completed',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600)),
+                                        child: Text(
+                                          'Completed',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
                                       ),
                                     )
                                   : const SizedBox(),
