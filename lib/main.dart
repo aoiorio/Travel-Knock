@@ -25,10 +25,10 @@ void main() async {
   );
 
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([
-    //許可する向きを指定する。
-    DeviceOrientation.portraitUp, //上向きを許可
-  ]);
+  // await SystemChrome.setPreferredOrientations([
+  //   //許可する向きを指定する。
+  //   DeviceOrientation.portraitUp, //上向きを許可
+  // ]);
   // preferences の初期化
   await PreferencesManager().set(await SharedPreferences.getInstance());
   runApp(const MyApp());
@@ -59,13 +59,15 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-
+    SystemChrome.setPreferredOrientations([
+      //許可する向きを指定する。
+      DeviceOrientation.portraitUp, //上向きを許可
+    ]);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         // shared preferencesを使って取得したisLoginがtrueだったらTabsScreenが初期画面になる
         home: _isLogin
             ? const TabsScreen(initialPageIndex: 0)
-            : const LoginScreen()
-        );
+            : const LoginScreen());
   }
 }

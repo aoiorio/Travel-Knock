@@ -51,7 +51,9 @@ class _TabsScreenState extends State<TabsScreen> {
       // transparent margin background.
       extendBody: true,
       bottomNavigationBar: Container(
-        margin: EdgeInsets.only(right: width >= 500 ? width * 0.5:width * 0.25 ,bottom: 90), // 120 , 90
+        margin: EdgeInsets.only(
+            right: width >= 500 ? width * 0.5 : width * 0.25,
+            bottom: 90), // 120 , 90
         // width: 91,
         height: 80,
         decoration: BoxDecoration(
@@ -72,7 +74,7 @@ class _TabsScreenState extends State<TabsScreen> {
           itemCount: listOfIcons.length,
           scrollDirection: Axis.horizontal,
           padding: EdgeInsets.symmetric(horizontal: width * 0.04), // 10
-          itemExtent: width >= 500 ? width * 0.2 :width * 0.31, // 120
+          itemExtent: width >= 500 ? width * 0.2 : width * 0.31, // 120
           itemBuilder: (context, index) => InkWell(
             onTap: () {
               setState(
