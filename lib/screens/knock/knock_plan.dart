@@ -105,7 +105,7 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
           i++) {
         _yourLikePostsData.add(yourLikePostsData[i]['post_id']);
       }
-      print('_yourLikePostsData$_yourLikePostsData');
+      // print('_yourLikePostsData$_yourLikePostsData');
     });
   }
 
@@ -119,6 +119,10 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    print(height);
+
     if (_ownerPlaces.isEmpty) {
     } else {
       places = _ownerPlaces;
@@ -132,7 +136,10 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
           padding: MediaQuery.of(context).viewInsets,
           child: Container(
             padding: const EdgeInsets.all(20),
-            height: MediaQuery.of(context).size.height / 1.4,
+            // MediaQuery.of(context).size.height / 1.4
+            height: height >= 1000
+                ? height / 1.8
+                : MediaQuery.of(context).size.height / 1.4,
             width: double.infinity,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,8 +147,9 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                 Center(
                   child: Container(
                     decoration: const BoxDecoration(
-                        color: Color.fromARGB(255, 225, 225, 225),
-                        shape: BoxShape.circle),
+                      color: Color.fromARGB(255, 225, 225, 225),
+                      shape: BoxShape.circle,
+                    ),
                     child: const SizedBox(
                       width: 15,
                       height: 15,
@@ -150,9 +158,12 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 20, left: 15),
+                      padding: const EdgeInsets.only(
+                        top: 20,
+                      ), // left: 15
                       child: Container(
                         constraints: const BoxConstraints(maxWidth: 110),
                         child: Column(
@@ -190,7 +201,8 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                                                 UserProfileScreen(
                                               userId:
                                                   supabase.auth.currentUser!.id,
-                                              yourLikePostsData: _yourLikePostsData,
+                                              yourLikePostsData:
+                                                  _yourLikePostsData,
                                             ),
                                           ),
                                         );
@@ -203,7 +215,7 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                                     ),
                             ),
                             const SizedBox(
-                              height: 10,
+                              height: 10, // 10
                             ),
                           ],
                         ),
@@ -211,9 +223,10 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(
-                          top: 20,
-                          right: MediaQuery.of(context).size.width / 10,
-                          left: MediaQuery.of(context).size.width / 10),
+                        top: 20,
+                        right: MediaQuery.of(context).size.width / 10,
+                        left: MediaQuery.of(context).size.width / 10,
+                      ),
                       child: const Icon(
                         Icons.multiple_stop,
                         size: 40,
@@ -259,7 +272,8 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                                             builder: (context) =>
                                                 UserProfileScreen(
                                               userId: widget.ownerId,
-                                              yourLikePostsData: _yourLikePostsData,
+                                              yourLikePostsData:
+                                                  _yourLikePostsData,
                                             ),
                                           ),
                                         );
@@ -280,75 +294,94 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
                     ),
                   ],
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 25, left: 25, bottom: 20),
-                  child: Text(
-                    'Destination',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: height * 0.025,
+                        left: width * 0.06,
+                        bottom: height * 0.025,
+                      ), // top: 25, left: 25, bottom: 20
+                      child: const Text(
+                        'Destination',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Center(
-                  child: Container(
-                    width: 300,
-                    decoration: BoxDecoration(
-                      color: const Color(0xffEEEEEE),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton(
-                          value: _selectedPlace,
-                          items: places
-                              .map(
-                                (place) => DropdownMenuItem(
-                                  value: place,
-                                  child: Text(place),
-                                ),
-                              )
-                              .toList(),
-                          hint: const Text(
-                            'Choose a destination',
-                            style: TextStyle(fontSize: 17),
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedPlace = value;
-                            });
-                          },
-                          borderRadius: BorderRadius.circular(20),
-                          focusColor: Colors.grey,
-                          iconEnabledColor: Colors.black,
-                          menuMaxHeight: 300,
-                          style: const TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black,
+                    Container(
+                      margin: EdgeInsets.only(left: width * 0.06),
+                      width: width * 0.8, // 300
+                      decoration: BoxDecoration(
+                        color: const Color(0xffEEEEEE),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton(
+                            value: _selectedPlace,
+                            items: places
+                                .map(
+                                  (place) => DropdownMenuItem(
+                                    value: place,
+                                    child: Text(place),
+                                  ),
+                                )
+                                .toList(),
+                            hint: const Text(
+                              'Choose a destination',
+                              style: TextStyle(fontSize: 17),
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedPlace = value;
+                              });
+                            },
+                            borderRadius: BorderRadius.circular(20),
+                            focusColor: Colors.grey,
+                            iconEnabledColor: Colors.black,
+                            menuMaxHeight: height * 0.5, // 300
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 25, bottom: 20, left: 25),
-                  child: Text(
-                    'Period',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: height * 0.025,
+                        bottom: height * 0.025,
+                        left: width * 0.06,
+                      ), // top: 25, bottom: 20, left: 25
+                      child: const Text(
+                        'Period',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: width * 0.06), // left: 25
+                      child: CustomDayTextField(
+                        controller: _periodController,
+                        labelText: 'e.g. 3',
+                      ),
+                    ),
+                  ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 25),
-                  child: CustomDayTextField(
-                    controller: _periodController,
-                    labelText: 'e.g. 3',
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20, top: 40),
+                  padding: EdgeInsets.only(
+                      top: height * 0.05), // bottom: 20, top: 40
                   child: Center(
                     child: SizedBox(
                       height: 70,
