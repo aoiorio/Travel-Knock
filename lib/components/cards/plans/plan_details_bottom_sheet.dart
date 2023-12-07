@@ -24,8 +24,8 @@ class PlanDetailsBottomSheet extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.only(
             top: height * 0.02,
-            left: width * 0.05,
-            right: width * 0.05,
+            left: width * 0.065,
+            right: width * 0.065,
             bottom: height * 0.05,
           ),
           width: double.infinity,
@@ -49,8 +49,8 @@ class PlanDetailsBottomSheet extends StatelessWidget {
                     Container(
                       margin: EdgeInsets.only(
                         top: height * 0.03,
-                        right: width * 0.015,
-                        left: width * 0.015,
+                        // right: width * 0.015,
+                        // left: width * 0.015,
                       ),
                       width: width * 0.9,
                       height: height * 0.25,
@@ -66,17 +66,17 @@ class PlanDetailsBottomSheet extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(
                         top: height * 0.03,
-                        left: width * 0.02,
+                        // left: width * 0.02,
                       ),
                       child: planTimeWidget,
                     ),
                     SizedBox(
-                      width: 350,
+                      width: width, //350
                       child: Padding(
                         padding: EdgeInsets.only(
                           top: height * 0.03,
-                          left: width * 0.02,
-                          right: width * 0.02,
+                          // left: width * 0.02,
+                          // right: width * 0.02,
                         ),
                         child: Text(
                           title,
