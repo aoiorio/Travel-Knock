@@ -92,15 +92,18 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return WillPopScope(
       onWillPop: () {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) {
-            return const TabsScreen(
-              initialPageIndex: 0,
-            );
-          },
-        ));
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) {
+              return const TabsScreen(
+                initialPageIndex: 0,
+              );
+            },
+          ),
+        );
         return Future.value(false);
       },
       child: Scaffold(
