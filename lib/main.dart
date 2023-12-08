@@ -64,6 +64,7 @@ class _MyAppState extends State<MyApp> {
       DeviceOrientation.portraitUp, //上向きを許可
     ]);
     return MaterialApp(
+      theme: ThemeData(useMaterial3: false),
         debugShowCheckedModeBanner: false,
         // shared preferencesを使って取得したisLoginがtrueだったらTabsScreenが初期画面になる
         home: _isLogin

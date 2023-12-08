@@ -32,11 +32,13 @@ class PlanDetailsBottomSheet extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // center tenten
               Center(
                 child: Container(
                   decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 225, 225, 225),
-                      shape: BoxShape.circle),
+                    color: Color.fromARGB(255, 225, 225, 225),
+                    shape: BoxShape.circle,
+                  ),
                   child: const SizedBox(
                     width: 15,
                     height: 15,
@@ -46,37 +48,38 @@ class PlanDetailsBottomSheet extends StatelessWidget {
               Center(
                 child: Column(
                   children: [
+                    // plan_card image
                     Container(
                       margin: EdgeInsets.only(
                         top: height * 0.03,
-                        // right: width * 0.015,
-                        // left: width * 0.015,
                       ),
                       width: width * 0.9,
                       height: height * 0.25,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.black),
+                        borderRadius: BorderRadius.circular(30),
+                        color: Colors.black,
+                      ),
                       clipBehavior: Clip.antiAliasWithSaveLayer,
                       child: CachedNetworkImage(
                         imageUrl: imageUrl,
                         fit: BoxFit.cover,
                       ),
                     ),
+
+                    // plan_card planTimes
                     Padding(
                       padding: EdgeInsets.only(
                         top: height * 0.03,
-                        // left: width * 0.02,
                       ),
                       child: planTimeWidget,
                     ),
+
+                    // plan_card title
                     SizedBox(
                       width: width, //350
                       child: Padding(
                         padding: EdgeInsets.only(
                           top: height * 0.03,
-                          // left: width * 0.02,
-                          // right: width * 0.02,
                         ),
                         child: Text(
                           title,

@@ -122,7 +122,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
         'user_id': supabase.auth.currentUser!.id,
         'title': widget.title,
         'thumbnail': _imageUrl,
-        'plans_list': planList,
+        'plans_list': planList, // plans: text[], plans_list: jsonb[]
         'place_name': widget.placeName,
       });
       print('planList: $planList');
@@ -153,6 +153,10 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // width and height
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       // Post button
@@ -181,7 +185,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                               width: 350,
                               height: 400,
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                // crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   const Text(
                                     'Pick Main Photo 🥚',
@@ -204,68 +208,73 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                   const SizedBox(
                                     height: 30,
                                   ),
-                                  Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Container(
-                                        width: 320,
-                                        height: 190,
-                                        clipBehavior:
-                                            Clip.antiAliasWithSaveLayer,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          color: const Color(0xffEEEEEE),
-                                        ),
-                                        child: image != null
-                                            ? DecoratedBox(
-                                                decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                    fit: BoxFit.cover,
-                                                    image: FileImage(image!),
+                                  Center(
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Container(
+                                          width: 320,
+                                          height: 190,
+                                          clipBehavior:
+                                              Clip.antiAliasWithSaveLayer,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            color: const Color(0xffEEEEEE),
+                                          ),
+                                          child: image != null
+                                              ? DecoratedBox(
+                                                  decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                      fit: BoxFit.cover,
+                                                      image: FileImage(image!),
+                                                    ),
+                                                  ),
+                                                )
+                                              : const DecoratedBox(
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xffEEEEEE),
                                                   ),
                                                 ),
-                                              )
-                                            : const DecoratedBox(
-                                                decoration: BoxDecoration(
-                                                  color: Color(0xffEEEEEE),
-                                                ),
-                                              ),
-                                      ),
-                                      IconButton(
-                                        onPressed: () async {
-                                          try {
-                                            final ImagePicker picker =
-                                                ImagePicker();
-                                            // Pick an image.
-                                            final XFile? image =
-                                                await picker.pickImage(
-                                              source: ImageSource.gallery,
-                                            );
-                                            if (image == null) {
-                                              return;
-                                            }
-                                            final imagePath = File(image.path);
-
-                                            setState(() {
-                                              this.image = imagePath;
-                                            });
-                                          } on Exception {
-                                            print(
-                                                'something went wrong with picking image');
-                                          }
-                                        },
-                                        icon: const Icon(
-                                          Icons.photo,
-                                          size: 40,
                                         ),
-                                      ),
-                                    ],
+                                        IconButton(
+                                          onPressed: () async {
+                                            try {
+                                              final ImagePicker picker =
+                                                  ImagePicker();
+                                              // Pick an image.
+                                              final XFile? image =
+                                                  await picker.pickImage(
+                                                source: ImageSource.gallery,
+                                              );
+                                              if (image == null) {
+                                                return;
+                                              }
+                                              final imagePath =
+                                                  File(image.path);
+
+                                              setState(() {
+                                                this.image = imagePath;
+                                              });
+                                            } on Exception {
+                                              print(
+                                                  'something went wrong with picking image');
+                                            }
+                                          },
+                                          icon: const Icon(
+                                            Icons.photo,
+                                            size: 40,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   Center(
                                     child: Container(
                                       margin: const EdgeInsets.only(
-                                          top: 30, left: 0), // left: 140
+                                        top: 30,
+                                        // left: 0,
+                                      ), // left: 140
                                       width: 130,
                                       height: 60,
                                       child: isLoading
@@ -336,8 +345,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                                 // 1 Dayだけを選択した人もinclude, すべてのplanの数が同じじゃないとエラーだからそれも察知するif文
                                                 try {
                                                   if (image == null ||
-                                                      isEmpty ||
-                                                      isPlanListNotSameLength) {
+                                                      isEmpty) {
                                                     ScaffoldMessenger.of(
                                                             context)
                                                         .showSnackBar(
@@ -351,9 +359,11 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                                     Navigator.of(context).pop();
                                                     return;
                                                   }
-                                                } on Exception {
+                                                } on Exception catch (e) {
+                                                  print(e);
                                                   print(
                                                       'Something went wrong with isPlanListNotSameLength');
+                                                  return;
                                                 }
                                                 saveDataToSupabase();
                                               },
@@ -437,6 +447,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
           ),
         ),
       ),
+      // add plan button's location
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: SingleChildScrollView(
         child: Column(
@@ -541,15 +552,30 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
               ),
             ),
             // if there aren't any plans, the cute walrus will appear on the screen
+            // illustration of none
             planList[_selectedDayIndex].isEmpty
                 ? Padding(
-                    padding: const EdgeInsets.only(top: 40),
+                    padding: EdgeInsets.only(
+                      top: widget.title.length >= 18
+                          ? width >= 500
+                              ? width >= 1000
+                                  ? height * 0.01
+                                  : height * 0.1
+                              : height * 0.03
+                          : width >= 500
+                              ? width >= 1000
+                                  ? height * 0.05
+                                  : height * 0.1
+                              : height * 0.045,
+                    ), // 40
                     child: Column(
                       children: [
                         Center(
                           child: SizedBox(
-                            width: 250,
-                            height: 250,
+                            width: width >= 500
+                                ? width * 0.35
+                                : width * 0.5, // 250
+                            height: width >= 1000 ? 270 : height * 0.28, // 250
                             child: Image.asset(
                               'assets/images/nothing-plan.png',
                               fit: BoxFit.cover,
@@ -575,7 +601,9 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                     ),
                   )
                 : PlanDetailsCard(
-                    planList: planList[_selectedDayIndex], isDevelop: true),
+                    planList: planList[_selectedDayIndex],
+                    isDevelop: true,
+                  ),
             const SizedBox(height: 120),
           ],
         ),
