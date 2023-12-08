@@ -228,18 +228,17 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                   },
                 ),
               ),
-              const SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 30),
               Center(
                 child: SmoothPageIndicator(
                   controller: controller,
                   count: _posts.length,
                   effect: const ExpandingDotsEffect(
-                      dotColor: Color.fromARGB(255, 223, 223, 223),
-                      activeDotColor: Color.fromARGB(255, 223, 223, 223)),
+                    dotColor: Color.fromARGB(255, 223, 223, 223),
+                    activeDotColor: Color.fromARGB(255, 223, 223, 223),
+                  ),
                 ),
-              )
+              ),
             ],
           );
   }
