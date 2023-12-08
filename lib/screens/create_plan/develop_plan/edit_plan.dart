@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 // screens import
 import 'package:travelknock/screens/create_plan/develop_plan/develop_plan.dart';
+import '../../../components/custom_widgets/plans/custom_fab.dart';
 import '../../login/login.dart';
 
 // components import
@@ -35,7 +36,11 @@ class EditPlanScreen extends StatelessWidget {
     final placeNameController = TextEditingController();
     final periodController = TextEditingController();
 
-    // dainyuu
+    // width and height
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
+    // day
     planTitleController.text = planTitleText;
     placeNameController.text = placeName;
     periodController.text = period;
@@ -55,6 +60,7 @@ class EditPlanScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
+        actions: const [],
       ),
       extendBodyBehindAppBar: true,
       floatingActionButton: Transform.rotate(
@@ -91,7 +97,10 @@ class EditPlanScreen extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
+      // clear button's location
+      floatingActionButtonLocation: CustomizeFloatingLocation(
+          FloatingActionButtonLocation.miniEndTop, 20, 0),
+      floatingActionButtonAnimator: AnimationNoScaling(),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
@@ -99,94 +108,112 @@ class EditPlanScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
-                  height: 130,
+                SizedBox(
+                  height: height >= 1000 ? height * 0.17 : height * 0.13,
                 ),
-                const Text(
-                  'Edit Plan 🖊️',
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  height: 60,
-                ),
-                CustomTextField(
-                  title: 'Title',
-                  labelText: 'e.g. Okinawa in 3 days',
-                  controller: planTitleController,
-                ),
-                const SizedBox(
-                  height: 60,
-                ),
-                CustomTextField(
-                  title: 'Place',
-                  labelText: 'e.g. Okinawa',
-                  controller: placeNameController,
-                ),
-                const SizedBox(
-                  height: 60,
-                ),
-                const Text(
-                  'Period',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomDayTextField(
-                    controller: periodController, labelText: 'e.g. 3'),
                 Padding(
-                  padding: const EdgeInsets.only(
-                    top: 60,
-                    right: 50,
-                    left: 50,
-                    bottom: 50,
+                  padding: EdgeInsets.only(left: width * 0.06),
+                  child: const Text(
+                    'Edit Plan 🖊️',
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  child: SizedBox(
-                    height: 70,
-                    width: 200,
-                    child: ElevatedButton(
-                      // DONE create a transition to PlansScreen and add details to the database
-                      onPressed: () {
-                        if (planTitleController.text.isEmpty ||
-                            placeNameController.text.isEmpty ||
-                            periodController.text.isEmpty ||
-                            periodController.text[0] == '0') {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Fill the title, place name and period',
+                ),
+                SizedBox(
+                  height: height >= 1000 ? height * 0.1 : height * 0.07, // 60
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: width * 0.06),
+                  child: CustomTextField(
+                    title: 'Title',
+                    labelText: 'e.g. Okinawa in 3 days',
+                    controller: planTitleController,
+                  ),
+                ),
+                SizedBox(
+                  height: height * 0.07,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: width * 0.06),
+                  child: CustomTextField(
+                    title: 'Place',
+                    labelText: 'e.g. Okinawa',
+                    controller: placeNameController,
+                  ),
+                ),
+                SizedBox(
+                  height: height * 0.07,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: width * 0.06),
+                  child: const Text(
+                    'Period',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  ),
+                ),
+                SizedBox(
+                  height: height * 0.03,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: width * 0.06),
+                  child: CustomDayTextField(
+                      controller: periodController, labelText: 'e.g. 3'),
+                ),
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: height * 0.07,
+                      right: width * 0.2,
+                      left: width * 0.2,
+                      bottom: height * 0.08, // 50
+                    ),
+                    child: SizedBox(
+                      height: 70,
+                      width: 200,
+                      child: ElevatedButton(
+                        // DONE create a transition to PlansScreen and add details to the database
+                        onPressed: () {
+                          if (planTitleController.text.isEmpty ||
+                              placeNameController.text.isEmpty ||
+                              periodController.text.isEmpty ||
+                              periodController.text[0] == '0') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Fill the title, place name and period',
+                                ),
+                                backgroundColor:
+                                    Color.fromARGB(255, 94, 94, 109),
                               ),
-                              backgroundColor: Color.fromARGB(255, 94, 94, 109),
+                            );
+                            return;
+                          }
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return DevelopPlanScreen(
+                                  title: planTitleController.text,
+                                  dayNumber: periodController.text,
+                                  placeName: placeNameController.text,
+                                  planList: plans,
+                                  isKnock: false,
+                                );
+                              },
                             ),
                           );
-                          return;
-                        }
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return DevelopPlanScreen(
-                                title: planTitleController.text,
-                                dayNumber: periodController.text,
-                                placeName: placeNameController.text,
-                                planList: plans,
-                                isKnock: false,
-                              );
-                            },
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xff4B4B5A),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff4B4B5A),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
                         ),
-                      ),
-                      child: const Text(
-                        'Submit',
-                        style: TextStyle(fontSize: 20),
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(fontSize: 20),
+                        ),
                       ),
                     ),
                   ),
