@@ -30,6 +30,7 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
   List _userName = [];
   final List _yourLikePostsData = [];
   final _likedPost = [];
+  // 要素を右寄せにするのか否か
   bool _ifSyntax(int index) {
     return (index + 1) % 2 == 0 && index != 0;
   }
@@ -152,6 +153,10 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
 
   @override
   Widget build(BuildContext context) {
+    // width and height
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     List searchLike(int index) {
       final searchLike = widget.searchResult[index]['post_like_users'];
       return searchLike;
@@ -160,10 +165,14 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
     return widget.searchResult.isEmpty
         ? Column(
             children: [
-              const SizedBox(
-                height: 100,
+              SizedBox(height: height * 0.17),
+              SizedBox(
+                // height: height * 0.5, // 100
+                width: width,
+                // TODO change dummy illustration
+                child: Image.asset('assets/images/no-knocked.PNG'),
               ),
-              Image.asset('assets/images/no-knocked.PNG'),
+              // Image.asset('assets/images/no-knocked.PNG'),
               const Text(
                 'No plans found!',
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
@@ -220,13 +229,16 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                       children: [
                         Container(
                           constraints: const BoxConstraints(
-                              minHeight: 250, minWidth: 50),
-                          width: 300,
+                            minHeight: 250,
+                            minWidth: 50,
+                          ),
+                          width: width * 0.77, // 300
                           padding: const EdgeInsets.all(20),
                           margin: const EdgeInsets.only(top: 20, bottom: 90),
                           decoration: BoxDecoration(
                             color: const Color(0xffF2F2F2),
                             borderRadius: BorderRadius.only(
+                              // もしもindexが２で割れたら、その要素を右寄せにする
                               topRight: _ifSyntax(index)
                                   ? const Radius.circular(0)
                                   : const Radius.circular(30),
@@ -248,7 +260,7 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                             children: [
                               Flexible(
                                 child: Container(
-                                  width: 200,
+                                  width: width * 0.6, // 200
                                   margin: const EdgeInsets.only(top: 40),
                                   child: Text(
                                     widget.searchResult[index]['title'],
@@ -312,8 +324,8 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                           ),
                         ),
                         Container(
-                          width: 300,
-                          height: 200,
+                          width: width * 0.77, // 300
+                          height: 200, // 200
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.only(
                                 topRight: _ifSyntax(index)
@@ -336,7 +348,15 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                           ),
                         ),
                         Positioned(
-                          right: _ifSyntax(index) ? 237 : 105,
+                          // left: _ifSyntax(index) ? width * 0.27 : 0,
+                          // right: _ifSyntax(index) ? 0 : width * 0.6,
+                          right: _ifSyntax(index)
+                              ? width >= 500
+                                  ? width >= 1000 ? width * 0.71:width * 0.69
+                                  : width * 0.6
+                              : width >= 500
+                                  ? width * 0.25
+                                  : width * 0.27, // 237 : 105
                           top: 10,
                           child: Container(
                             width: 50,
@@ -364,7 +384,8 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                                               UserProfileScreen(
                                             userId: widget.searchResult[index]
                                                 ['user_id'],
-                                            yourLikePostsData: _yourLikePostsData,
+                                            yourLikePostsData:
+                                                _yourLikePostsData,
                                           ),
                                         ),
                                       );
@@ -384,7 +405,10 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
               const Center(
                 child: Text(
                   'Over!🍈',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
                 ),
               )
             ],
