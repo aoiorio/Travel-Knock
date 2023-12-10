@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 
-// libraries import
+// library import
 import 'dart:math';
-
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 // screens import
 import 'package:travelknock/screens/create_plan/develop_plan/develop_plan.dart';
 import '../../../components/custom_widgets/plans/custom_fab.dart';
-import '../../login/login.dart';
+
 
 // components import
 import 'package:travelknock/components/custom_widgets/text_fields/custom_day_text_field.dart';
 import 'package:travelknock/components/custom_widgets/text_fields/custom_text_field.dart';
 
-class EditPlanScreen extends StatelessWidget {
+class EditPlanScreen extends StatefulWidget {
   const EditPlanScreen({
     super.key,
     required this.planTitleText,
@@ -24,36 +22,44 @@ class EditPlanScreen extends StatelessWidget {
   });
 
   final String planTitleText;
-  // planTitleController.text = planTitleText
   final String placeName;
   final String period;
   final List<List<Map<String, String>>> plans;
 
   @override
-  Widget build(BuildContext context) {
-    final supabase = Supabase.instance.client;
-    final planTitleController = TextEditingController();
-    final placeNameController = TextEditingController();
-    final periodController = TextEditingController();
+  State<EditPlanScreen> createState() => _EditPlanScreenState();
+}
 
+class _EditPlanScreenState extends State<EditPlanScreen> {
+
+  final planTitleController = TextEditingController();
+  final placeNameController = TextEditingController();
+  final periodController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // set handover days
+    planTitleController.text = widget.planTitleText;
+    placeNameController.text = widget.placeName;
+    periodController.text = widget.period;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    planTitleController.dispose();
+    placeNameController.dispose();
+    periodController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // width and height
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
-    // day
-    planTitleController.text = planTitleText;
-    placeNameController.text = placeName;
-    periodController.text = period;
 
-    void signOut() async {
-      await supabase.auth.signOut();
-
-      if (context.mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
-      }
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -190,14 +196,23 @@ class EditPlanScreen extends StatelessWidget {
                             );
                             return;
                           }
-                          Navigator.of(context).push(
+                          // もし変更した後のperiodが変更する前のperiodより小さかったら、その分plans_listを消去する（でないと画面には表示されていないdayが裏ではあることになりsnackbarが出てしまうから）
+                          if (int.parse(periodController.text) <
+                              int.parse(widget.period)) {
+                            widget.plans.removeRange(
+                                int.parse(periodController.text),
+                                int.parse(widget.period));
+                          }
+                          // period = periodController.text;
+                          print(widget.plans);
+                          Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
                               builder: (context) {
                                 return DevelopPlanScreen(
                                   title: planTitleController.text,
                                   dayNumber: periodController.text,
                                   placeName: placeNameController.text,
-                                  planList: plans,
+                                  planList: widget.plans,
                                   isKnock: false,
                                 );
                               },
