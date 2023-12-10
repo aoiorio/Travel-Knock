@@ -98,9 +98,24 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
     setState(() {
       _imageUrl = imageUrl;
     });
+
+    // 一番要素数の多いListにほかのListの要素数も合わせる
+    int maxLength = planList.fold(
+        0, (max, subList) => max > subList.length ? max : subList.length);
+
+    // エラーが起きないように各日のリストの要素数を合わせる
+    // 各サブリストを最大の長さに拡張
+    List<List<Map>> expandedPlansList = planList.map((subList) {
+      // maxLengthと合わせるために残り幾つ空のMapを追加するか => maxLength - subList.length
+      List<Map> expandedPlanSubList = List<Map>.from(subList);
+      expandedPlanSubList
+          .addAll(List<Map>.filled(maxLength - subList.length, {}));
+      return expandedPlanSubList;
+    }).toList();
+
     // DONE connect to database
     await supabase.from('knock').update({
-      'plans': planList,
+      'plans': expandedPlansList,
       'is_completed': true,
       'thumbnail': _imageUrl,
     }).eq('id', widget.knockId);
@@ -207,8 +222,8 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                                             // Pick an image.
                                             final XFile? image =
                                                 await picker.pickImage(
-                                                    source: ImageSource.gallery,
-                                                    );
+                                              source: ImageSource.gallery,
+                                            );
                                             if (image == null) {
                                               return;
                                             }
@@ -261,7 +276,7 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                                                       .showSnackBar(
                                                     const SnackBar(
                                                       content: Text(
-                                                          'You have to add plan and thumbnail'),
+                                                          'You have to add plans and thumbnail'),
                                                       backgroundColor:
                                                           Color(0xff4B4B5A),
                                                     ),
