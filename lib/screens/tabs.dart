@@ -44,7 +44,6 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
 
     final supabase = Supabase.instance.client;
     return Scaffold(
@@ -123,7 +122,10 @@ class _TabsScreenState extends State<TabsScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset('assets/images/no-knocked.PNG'),
+                  SizedBox(
+                    width: width >= 1000 ? width * 0.5 : width,
+                    child: Image.asset('assets/images/no-knocked.PNG'),
+                  ),
                   const Text(
                     'You should sign in!',
                     style: TextStyle(
@@ -144,18 +146,20 @@ class _TabsScreenState extends State<TabsScreen> {
                       ),
                       // DONE add feature that login with Google
                       onPressed: () {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) {
-                            return const LoginScreen();
-                          },
-                        ));
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return const LoginScreen();
+                            },
+                          ),
+                        );
                       },
                       icon: SizedBox(
                         width: 30,
                         child: Container(
-                            padding: const EdgeInsets.only(right: 4),
-                            child:
-                                Image.asset('assets/images/google-logo.png')),
+                          padding: const EdgeInsets.only(right: 4),
+                          child: Image.asset('assets/images/google-logo.png'),
+                        ),
                       ),
                       label: const Text(
                         'Sign In With Google',
@@ -167,6 +171,7 @@ class _TabsScreenState extends State<TabsScreen> {
                       ),
                     ),
                   ),
+                  SizedBox(height: width >= 1000 ? 50 : 20)
                 ],
               ),
             )

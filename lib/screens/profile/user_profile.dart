@@ -267,6 +267,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -300,7 +303,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               clipBehavior: Clip.none,
               children: [
                 Transform.scale(
-                  scale: 1.4,
+                  scale: width >= 500 ? 1 : 1.4,
                   child: Container(
                     width: double.infinity,
                     height: MediaQuery.of(context).size.height / 3,
@@ -325,7 +328,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ),
                 ),
                 Positioned(
-                  top: 230,
+                  top: height >= 1000 ? height * 0.29 : height * 0.27, // 230
                   child: Container(
                     width: 100,
                     height: 100,
@@ -375,8 +378,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             const SizedBox(height: 30),
             Center(
               child: SizedBox(
-                width: 145,
-                height: 55,
+                width: 145, // 145
+                height: 55, // 55
                 child: _isLoading
                     ? Shimmer.fromColors(
                         baseColor: Colors.grey[300]!,
@@ -412,7 +415,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ),
             Padding(
               padding: const EdgeInsets.only(
-                  top: 35, left: 35, bottom: 20, right: 10),
+                top: 35,
+                left: 35,
+                bottom: 20,
+                right: 10,
+              ),
               child: _isLoading
                   ? Shimmer.fromColors(
                       baseColor: Colors.grey[300]!,
@@ -444,7 +451,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   )
                 : Container(
                     height: 50,
-                    width: 350,
+                    width: width,
                     padding: const EdgeInsets.only(left: 35),
                     child: ListView.builder(
                       shrinkWrap: true,
@@ -467,7 +474,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             Center(
               child: Container(
                 constraints: const BoxConstraints(minHeight: 160),
-                width: 320,
+                width: width * 0.82, // 320
                 decoration: BoxDecoration(
                   color: Colors.black,
                   borderRadius: BorderRadius.circular(30),
@@ -530,7 +537,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             Center(
               child: Container(
                 constraints: const BoxConstraints(minHeight: 160),
-                width: 320,
+                width: width * 0.82, // 320
                 decoration: BoxDecoration(
                   color: const Color(0xfff2f2f2),
                   borderRadius: BorderRadius.circular(30),
@@ -563,7 +570,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           Text(
                             _userKnockedCount.toString(),
                             style: const TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold),
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           Container(
                             padding: const EdgeInsets.only(top: 20, bottom: 20),
