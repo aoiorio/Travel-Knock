@@ -164,6 +164,10 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // width and height
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     // 現在時刻に0を増やす作戦
     if (DateTime.now().minute.toString().length == 1) {
       stringStartTime = '${DateTime.now().hour}:0${DateTime.now().minute}';
@@ -183,9 +187,10 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 110, left: 35),
-                child: Text(
+              Padding(
+                padding: EdgeInsets.only(
+                    top: height * 0.13, left: width * 0.09), // 110
+                child: const Text(
                   'Add Plan 📌',
                   style: TextStyle(
                     fontSize: 37,
@@ -194,16 +199,17 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 30, left: 35, right: 35),
+                padding: EdgeInsets.only(
+                    top: 30, left: width * 0.09, right: width * 0.09),
                 child: CustomTextField(
                   title: 'Title',
                   labelText: 'e.g. Eat at Banta Cafe',
                   controller: planDetailTitleController,
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(top: 40, left: 35),
-                child: Text(
+              Padding(
+                padding: EdgeInsets.only(top: 40, left: width * 0.09),
+                child: const Text(
                   'Time',
                   style: TextStyle(
                     fontSize: 20,
@@ -212,7 +218,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 20, left: 35),
+                padding: EdgeInsets.only(top: 20, left: width * 0.09),
                 child: Row(
                   children: [
                     SizedBox(
@@ -270,9 +276,9 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                   ],
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(top: 40, left: 35),
-                child: Text(
+              Padding(
+                padding: EdgeInsets.only(top: 40, left: width * 0.09),
+                child: const Text(
                   'Photo',
                   style: TextStyle(
                     fontSize: 20,
@@ -281,13 +287,15 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.only(top: 20, left: 35),
+                padding: EdgeInsets.only(
+                    top: 20, left: width * 0.09, right: width * 0.09),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     Container(
-                      width: 320,
-                      height: 190,
+                      width: width * 0.9, // 320
+                      height:
+                          width >= 1000 ? height * 0.3 : height * 0.225, // 190
                       clipBehavior: Clip.antiAliasWithSaveLayer,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
@@ -319,7 +327,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 30, top: 35),
+                padding: EdgeInsets.only(bottom: 30, top: height * 0.035), // top: 35
                 child: Center(
                   child: SizedBox(
                     width: 170,

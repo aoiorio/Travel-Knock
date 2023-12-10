@@ -162,8 +162,8 @@ class _PlanDetailsCardState extends State<PlanDetailsCard> {
                 ),
                 if (widget.isDevelop)
                   Positioned(
-                    top: -10,
-                    right: 40,
+                    top: -(height * 0.01), // -10
+                    right: width * 0.1, // 40
                     child: Container(
                       width: 50,
                       height: 50,
