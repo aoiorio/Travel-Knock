@@ -68,6 +68,9 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
 
     for (var i = 0; index > i; i++) {
       List dayPlanList = planDetailsList[i];
+      setState(() {
+        dayPlanList.removeWhere((plan) => plan == "{}");
+      });
       var stringCount = dayPlanList.length;
       for (var j = 0; stringCount > j; j++) {
         String imitationMap = dayPlanList[j];
