@@ -44,6 +44,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
       'endTime': stringEndTime,
       'imageUrl': imageUrl,
     };
+    print(planList);
     Navigator.of(context).pop(planList);
   }
 
@@ -52,8 +53,9 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     try {
       final ImagePicker picker = ImagePicker();
       // Pick an image.
-      final XFile? image =
-          await picker.pickImage(source: ImageSource.gallery,);
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+      );
       if (image == null) {
         return;
       }
