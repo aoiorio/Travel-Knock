@@ -77,9 +77,6 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
   }
 
   void savePhotoToSupabase(Function onUpload) async {
-    if (image == null) {
-      return;
-    }
     setState(() {
       isLoading = true;
     });
@@ -327,7 +324,8 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: 30, top: height * 0.035), // top: 35
+                padding:
+                    EdgeInsets.only(bottom: 30, top: height * 0.035), // top: 35
                 child: Center(
                   child: SizedBox(
                     width: 170,
@@ -341,7 +339,15 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                         : ElevatedButton(
                             // DONE add feature of add to the list button
                             onPressed: () async {
-                              if (planDetailTitleController.text.isEmpty) {
+                              if (planDetailTitleController.text.isEmpty ||
+                                  image == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        "You have to fill your plan title and set an image"),
+                                    backgroundColor: Color(0xff4B4B5A),
+                                  ),
+                                );
                                 return;
                               }
                               savePhotoToSupabase(setValues);
