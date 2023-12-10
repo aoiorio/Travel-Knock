@@ -117,15 +117,30 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
     setState(() {
       _imageUrl = imageUrl;
     });
+
+    // 一番要素数の多いListにほかのListの要素数も合わせる
+    int maxLength = planList.fold(
+        0, (max, subList) => max > subList.length ? max : subList.length);
+
+    // エラーが起きないように各日のリストの要素数を合わせる
+    // 各サブリストを最大の長さに拡張
+    List<List<Map>> expandedPlansList = planList.map((subList) {
+      // maxLengthと合わせるために残り幾つ空のMapを追加するか => maxLength - subList.length
+      List<Map> expandedPlanSubList = List<Map>.from(subList);
+      expandedPlanSubList
+          .addAll(List<Map>.filled(maxLength - subList.length, {}));
+      return expandedPlanSubList;
+    }).toList();
+
     try {
       await supabase.from('posts').insert({
         'user_id': supabase.auth.currentUser!.id,
         'title': widget.title,
         'thumbnail': _imageUrl,
-        'plans_list': planList, // plans: text[], plans_list: jsonb[]
+        'plans': expandedPlansList, // plans: text[], plans_list: jsonb[]
         'place_name': widget.placeName,
       });
-      print('planList: $planList');
+      // print('planList: $planList');
     } catch (e) {
       print(e);
       print('error-planList: $planList');
@@ -273,8 +288,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                     child: Container(
                                       margin: const EdgeInsets.only(
                                         top: 30,
-                                        // left: 0,
-                                      ), // left: 140
+                                      ),
                                       width: 130,
                                       height: 60,
                                       child: isLoading
@@ -325,21 +339,6 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                                       isEmpty = false;
                                                     }
                                                   }
-
-                                                  // もしも各日で作ったplansが全て同じではなかったら（これをしないとpostgressでエラーが出る！！！）
-                                                  for (var i = 1;
-                                                      planListLengths.length >
-                                                          i;
-                                                      i++) {
-                                                    // print(planListLengths[i]);
-                                                    if (i != 0 &&
-                                                        planListLengths[0] !=
-                                                            planListLengths[
-                                                                i]) {
-                                                      isPlanListNotSameLength =
-                                                          true;
-                                                    }
-                                                  }
                                                   // print(planListLengths);
                                                 });
                                                 // 1 Dayだけを選択した人もinclude, すべてのplanの数が同じじゃないとエラーだからそれも察知するif文
@@ -351,7 +350,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                                         .showSnackBar(
                                                       const SnackBar(
                                                         content: Text(
-                                                            "You have to sure that all days have plans as same number of plans and set the thumbnail"),
+                                                            "You have to sure that all days have plans and set the thumbnail"),
                                                         backgroundColor:
                                                             Color(0xff4B4B5A),
                                                       ),
@@ -362,7 +361,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                                 } on Exception catch (e) {
                                                   print(e);
                                                   print(
-                                                      'Something went wrong with isPlanListNotSameLength');
+                                                      'Something went wrong with picking image at develop_plan.dart');
                                                   return;
                                                 }
                                                 saveDataToSupabase();
