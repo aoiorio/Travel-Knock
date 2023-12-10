@@ -177,9 +177,6 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
       return false;
     });
     plans = convertStringToMap(widget.planDetailsList);
-    // final planList = widget.planDetailsList;
-    // print("plan list: $planList");
-    // plans = widget.planDetailsList;
     heroTag = widget.thumbnail;
     getOwnerInfo();
     _yourLikePostsData = widget.yourLikeData;
@@ -194,6 +191,12 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
 
     for (var i = 0; index > i; i++) {
       List dayPlanList = planDetailsList[i];
+
+      // エラーを回避するために追加した空のMapを削除する（Mapは文字列になっている）
+      setState(() {
+        dayPlanList.removeWhere((plan) => plan == "{}");
+        // print(dayPlanList);
+      });
       var stringCount = dayPlanList.length;
       for (var j = 0; stringCount > j; j++) {
         String imitationMap = dayPlanList[j];
