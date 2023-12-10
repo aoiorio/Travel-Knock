@@ -57,14 +57,86 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void signOut() async {
     if (!mounted) return;
-    await supabase.auth.signOut();
-    await PreferencesManager().setIsLogin(isLogin: false);
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text(
+            'Do you want to Sign Out?',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              // color: Color(0xff4B4B5A),
+            ),
+          ),
+          content: Container(
+            width: 100,
+            height: 100,
+            margin: const EdgeInsets.only(top: 10),
+            decoration: const BoxDecoration(shape: BoxShape.circle),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            child: CachedNetworkImage(
+              imageUrl: _yourAvatar,
+              fit: BoxFit.contain,
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            Container(
+              width: 100,
+              height: 50,
+              margin: EdgeInsets.only(bottom: height * 0.03),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xff4B4B5A),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text('Yes'),
+                onPressed: () async {
+                  await supabase.auth.signOut();
+                  await PreferencesManager().setIsLogin(isLogin: false);
 
-    if (context.mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-      );
-    }
+                  if (context.mounted) {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                          builder: (context) => const LoginScreen()),
+                    );
+                  }
+                },
+              ),
+            ),
+            SizedBox(
+              width: width * 0.1,
+            ),
+            Container(
+              width: 100,
+              height: 50,
+              margin: EdgeInsets.only(bottom: height * 0.03),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xfff2f2f2),
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text('No'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                },
+              ),
+            )
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -233,6 +305,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             borderRadius: BorderRadius.circular(30),
                           ),
                           clipBehavior: Clip.antiAliasWithSaveLayer,
+                          // 画像が設定されていなかったら雲の画像をset!!
                           child: CachedNetworkImage(
                             imageUrl: _yourHeader != null
                                 ? _yourHeader!
@@ -243,8 +316,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Container(
                           width: 120, // 120  width * 0.31
                           height: 120, // 120
-                          // width: 120, // 120
-                          // height: 120, // 120
                           decoration:
                               const BoxDecoration(shape: BoxShape.circle),
                           clipBehavior: Clip.antiAliasWithSaveLayer,
