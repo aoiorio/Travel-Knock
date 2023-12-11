@@ -68,6 +68,7 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
 
     for (var i = 0; index > i; i++) {
       List dayPlanList = planDetailsList[i];
+      // 要素数を合わせてdatabaseに保存されているため空のMapを削除する
       setState(() {
         dayPlanList.removeWhere((plan) => plan == "{}");
       });
