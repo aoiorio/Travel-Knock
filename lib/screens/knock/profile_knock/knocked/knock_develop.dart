@@ -74,8 +74,8 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
 
     setState(() {
       isLoading = true;
-      print(isLoading);
     });
+
     final imageExtension = image!.path.split('.').last.toLowerCase();
     final imageBytes = await image!.readAsBytes();
     final userId = supabase.auth.currentUser!.id;
@@ -98,6 +98,8 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
     setState(() {
       _imageUrl = imageUrl;
     });
+
+    if (!mounted) return;
 
     // 一番要素数の多いListにほかのListの要素数も合わせる
     int maxLength = planList.fold(
@@ -122,7 +124,10 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
     setState(() {
       isLoading = false;
     });
-    Navigator.of(context).pushReplacement(
+
+    if (!mounted) return;
+
+    Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) {
           return const TabsScreen(
@@ -130,13 +135,16 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
           );
         },
       ),
+      (route) {
+        return false;
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     // width and height
-    final width = MediaQuery.of(context).size.width;
+    // final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
     return WillPopScope(
@@ -177,9 +185,7 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                     },
                   ),
                 ),
-                SizedBox(
-                  width: width * 0.1,
-                ),
+                const SizedBox(width: 30),
                 Container(
                   width: 100,
                   height: 50,
@@ -349,7 +355,8 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                                                         .showSnackBar(
                                                       const SnackBar(
                                                         content: Text(
-                                                            'You have to add plans and thumbnail'),
+                                                          'You have to add plans and thumbnail',
+                                                        ),
                                                         backgroundColor:
                                                             Color(0xff4B4B5A),
                                                       ),
@@ -548,7 +555,9 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                       ),
                     )
                   : PlanDetailsCard(
-                      planList: planList[_selectedDayIndex], isDevelop: true),
+                      planList: planList[_selectedDayIndex],
+                      isDevelop: true,
+                    ),
               const SizedBox(height: 120),
             ],
           ),

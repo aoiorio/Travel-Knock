@@ -123,12 +123,15 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
       if (!mounted) return;
       // DONE use Navigator.of(context).pushReplacement and transition to PlansScreen
       if (widget.isEdit) {
-        Navigator.of(context).pushReplacement(
+        Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (context) {
               return const TabsScreen(initialPageIndex: 1);
             },
           ),
+          (route) {
+            return false;
+          },
         );
         return;
       }
@@ -361,6 +364,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                               // height: height * 0.1, // 50
                               child: Column(
                                 children: [
+                                  // TODO change illustration
                                   Image.asset('assets/images/no-knocked.PNG'),
                                   const Text(
                                     'No Places',
@@ -372,9 +376,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                               ),
                             ),
                           )
-                        : SizedBox(
-                            height: height * 0.03, // 10
-                          ),
+                        : SizedBox(height: height * 0.03), // 10
 
                     // Submit Button
                     _isLoading
