@@ -57,32 +57,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void signOut() async {
     if (!mounted) return;
-    final width = MediaQuery.of(context).size.width;
+    // width and height
+    // final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text(
-            'Do you want to Sign Out?',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              // color: Color(0xff4B4B5A),
-            ),
-          ),
-          content: Container(
-            width: 100,
-            height: 100,
-            margin: const EdgeInsets.only(top: 10),
-            decoration: const BoxDecoration(shape: BoxShape.circle),
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            child: CachedNetworkImage(
-              imageUrl: _yourAvatar,
-              fit: BoxFit.contain,
-            ),
+          title: Column(
+            children: [
+              const Text(
+                'Do you want to Sign Out?',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  // color: Color(0xff4B4B5A),
+                ),
+              ),
+              Container(
+                width: 100,
+                height: 100,
+                margin: const EdgeInsets.only(top: 25),
+                decoration: const BoxDecoration(shape: BoxShape.circle),
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                child: CachedNetworkImage(
+                  imageUrl: _yourAvatar,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ],
           ),
           actionsAlignment: MainAxisAlignment.center,
           actions: [
@@ -104,17 +110,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   await PreferencesManager().setIsLogin(isLogin: false);
 
                   if (context.mounted) {
-                    Navigator.of(context).pushReplacement(
+                    // Navigator.of(context)
+                    // Sign Out後にホームに戻れてしまうからpushAndRemoveUntilで解消
+                    Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
-                          builder: (context) => const LoginScreen()),
+                        builder: (context) => const LoginScreen(),
+                      ),
+                      (route) {
+                        return false;
+                      },
                     );
                   }
                 },
               ),
             ),
-            SizedBox(
-              width: width * 0.1,
-            ),
+            const SizedBox(width: 30),
             Container(
               width: 100,
               height: 50,
@@ -160,7 +170,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    print(width * 0.08);
 
     SystemChrome.setPreferredOrientations([
       //許可する向きを指定する。
@@ -257,7 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 40, // 40 height * 0.045
                       child: ElevatedButton(
                         onPressed: () {
-                          print('Pressed Profile Edit Button!');
+                          // print('Pressed Profile Edit Button!');
                           Navigator.push(
                             context,
                             MaterialPageRoute(

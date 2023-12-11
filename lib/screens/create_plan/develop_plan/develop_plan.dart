@@ -156,9 +156,9 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
       isLoading = false;
     });
     // TODO asdfjalsdjfskdfsdf!!!!!! 投稿した後のpopの挙動を見る(まあ大丈夫そうだよ)
-    Navigator.pop(context);
+    Navigator.pop(context); // これ消すかみる
 
-    Navigator.of(context).pushReplacement(
+    Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) {
           return const TabsScreen(
@@ -166,6 +166,9 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
           );
         },
       ),
+      (route) {
+        return false;
+      },
     );
   }
 
@@ -217,9 +220,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                     },
                   ),
                 ),
-                SizedBox(
-                  width: width * 0.1,
-                ),
+                const SizedBox(width: 30),
                 Container(
                   width: 100,
                   height: 50,

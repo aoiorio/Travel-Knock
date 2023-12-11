@@ -124,6 +124,7 @@ class _TabsScreenState extends State<TabsScreen> {
                 children: [
                   SizedBox(
                     width: width >= 1000 ? width * 0.5 : width,
+                  // TODO change illustration
                     child: Image.asset('assets/images/no-knocked.PNG'),
                   ),
                   const Text(
