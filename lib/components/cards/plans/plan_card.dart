@@ -50,16 +50,25 @@ class PlanCard extends StatelessWidget {
     // Display posts!
     return posts.isEmpty
         ? Center(
-            child: Container(
-              margin: const EdgeInsets.all(100),
-              // TODO ADD stylish illustration!!!
-              child: const Text(
-                'No plans yet!!',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                // DONE ADD stylish illustration!!!
+                SizedBox(
+                  width: width >= 1000 ? width * 0.5 : width,
+                  // DONE change illustration
+                  child: Image.asset('assets/images/no-posts.PNG'),
                 ),
-              ),
+                // Image.asset("assets/images/no-posts.PNG"),
+                const Text(
+                  'No plans yet!!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 30)
+              ],
             ),
           )
         :

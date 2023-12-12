@@ -124,8 +124,8 @@ class _TabsScreenState extends State<TabsScreen> {
                 children: [
                   SizedBox(
                     width: width >= 1000 ? width * 0.5 : width,
-                  // TODO change illustration
-                    child: Image.asset('assets/images/no-knocked.PNG'),
+                  // DONE change illustration
+                    child: Image.asset('assets/images/no-login.PNG'),
                   ),
                   const Text(
                     'You should sign in!',

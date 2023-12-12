@@ -105,10 +105,10 @@ class _YourKnockState extends State<YourKnock> {
                   margin: const EdgeInsets.only(top: 20, bottom: 200),
                   child: Column(
                     children: [
-                      // TODO chage a illustration.
-                      Image.asset('assets/images/no-knocked.PNG'),
+                      // DONE change a illustration.
+                      Image.asset('assets/images/no-your-knock.PNG'),
                       const Text(
-                        'No knocked yet!',
+                        "You haven't knocked yet!",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

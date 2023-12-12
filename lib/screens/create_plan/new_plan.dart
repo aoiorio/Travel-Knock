@@ -57,11 +57,16 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
             height: 90,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) {
-                    return const TabsScreen(initialPageIndex: 0);
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return const TabsScreen(initialPageIndex: 0);
+                    },
+                  ),
+                  (route) {
+                    return false;
                   },
-                ));
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xff4B4B5A),
@@ -109,7 +114,8 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
                   height: height >= 1000 ? height * 0.1 : height * 0.07,
                 ), // 60
                 Padding(
-                  padding: EdgeInsets.only(left: width * 0.06),
+                  padding:
+                      EdgeInsets.only(left: width * 0.06, right: width * 0.06),
                   child: CustomTextField(
                     title: 'Title',
                     labelText: 'e.g. Okinawa in 3 days',
@@ -118,7 +124,8 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
                 ),
                 SizedBox(height: height * 0.07), // 60
                 Padding(
-                  padding: EdgeInsets.only(left: width * 0.06),
+                  padding:
+                      EdgeInsets.only(left: width * 0.06, right: width * 0.06),
                   child: CustomTextField(
                     title: 'Place',
                     labelText: 'e.g. Okinawa',

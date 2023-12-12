@@ -364,13 +364,15 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                               // height: height * 0.1, // 50
                               child: Column(
                                 children: [
+                                  const SizedBox(height: 20),
                                   // TODO change illustration
-                                  Image.asset('assets/images/no-knocked.PNG'),
+                                  Image.asset('assets/images/no-places.PNG'),
                                   const Text(
                                     'No Places',
                                     style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ],
                               ),

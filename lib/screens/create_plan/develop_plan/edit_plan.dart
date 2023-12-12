@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 // library import
-import 'dart:math';
 
 // screens import
 import 'package:travelknock/screens/create_plan/develop_plan/develop_plan.dart';
@@ -69,40 +68,6 @@ class _EditPlanScreenState extends State<EditPlanScreen> {
         actions: const [],
       ),
       extendBodyBehindAppBar: true,
-      floatingActionButton: Transform.rotate(
-        // 回転しちゃうぞ
-        angle: -1 * pi / 180,
-        child: Container(
-          padding: const EdgeInsets.only(
-            left: 300,
-            // top: 60,
-          ),
-          child: SizedBox(
-            width: 90,
-            height: 90,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xff4B4B5A),
-                foregroundColor: Colors.white,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(40),
-                    bottomLeft: Radius.circular(20),
-                    topRight: Radius.circular(0),
-                  ),
-                ),
-              ),
-              child: const Icon(
-                Icons.clear,
-                size: 50,
-              ),
-            ),
-          ),
-        ),
-      ),
       // clear button's location
       floatingActionButtonLocation: CustomizeFloatingLocation(
           FloatingActionButtonLocation.miniEndTop, 20, 0),
@@ -118,7 +83,7 @@ class _EditPlanScreenState extends State<EditPlanScreen> {
                   height: height >= 1000 ? height * 0.17 : height * 0.13,
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: width * 0.06),
+                  padding: EdgeInsets.only(left: width * 0.06, right: width * 0.06),
                   child: const Text(
                     'Edit Plan 🖊️',
                     style: TextStyle(
@@ -131,7 +96,7 @@ class _EditPlanScreenState extends State<EditPlanScreen> {
                   height: height >= 1000 ? height * 0.1 : height * 0.07, // 60
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: width * 0.06),
+                  padding: EdgeInsets.only(left: width * 0.06, right: width * 0.06),
                   child: CustomTextField(
                     title: 'Title',
                     labelText: 'e.g. Okinawa in 3 days',
@@ -142,7 +107,7 @@ class _EditPlanScreenState extends State<EditPlanScreen> {
                   height: height * 0.07,
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: width * 0.06),
+                  padding: EdgeInsets.only(left: width * 0.06, right: width * 0.06),
                   child: CustomTextField(
                     title: 'Place',
                     labelText: 'e.g. Okinawa',
@@ -163,7 +128,7 @@ class _EditPlanScreenState extends State<EditPlanScreen> {
                   height: height * 0.03,
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: width * 0.06),
+                  padding: EdgeInsets.only(left: width * 0.06, right: width * 0.06),
                   child: CustomDayTextField(
                       controller: periodController, labelText: 'e.g. 3'),
                 ),
