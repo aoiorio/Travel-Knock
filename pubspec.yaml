@@ -79,14 +79,24 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    # images
     - assets/
     - assets/images/Travel-Knock-Logo.png
     - assets/images/google-logo.png
     - assets/images/post-shape.png
     - assets/images/nothing-plan.png
     - assets/images/no-knocked.PNG
+    - assets/images/first-search-potato.PNG
+    - assets/images/no-your-knock.PNG
+    - assets/images/no-search-results.PNG
+    - assets/images/no-login.PNG
+    - assets/images/no-posts.PNG
+    - assets/images/no-places.PNG
+
+    # animations
     - assets/rivs/rive-black-like-fire.riv
     - assets/rivs/rive-red-fire.riv
+    # ANON key
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -163,22 +163,34 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
     }
 
     return widget.searchResult.isEmpty
-        ? Column(
-            children: [
-              SizedBox(height: height * 0.17),
-              SizedBox(
-                // height: height * 0.5, // 100
-                width: width,
-                // TODO change dummy illustration
-                child: Image.asset('assets/images/no-knocked.PNG'),
-              ),
-              // Image.asset('assets/images/no-knocked.PNG'),
-              const Text(
-                'No plans found!',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-              )
-            ],
-          )
+        ? SafeArea(
+          bottom: false,
+          child: Stack(
+            alignment: Alignment.center,
+              children: [
+                Positioned(
+                  top: height * 0.18,
+                  child: const Text(
+                    'No plans found!',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                  ),
+                ),
+                // Image.asset('assets/images/no-search-results.PNG'),
+                Transform.scale(
+                  scale: 1.3,
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: height,
+                    // height: double.infinity,
+                    // DONE change dummy illustration
+                    child: Image.asset('assets/images/no-search-results.PNG'),
+                  ),
+                ),
+                // bottom: height * 0.04,
+                // top: height * 0.3,
+              ],
+            ),
+        )
         : Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,7 +364,9 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                           // right: _ifSyntax(index) ? 0 : width * 0.6,
                           right: _ifSyntax(index)
                               ? width >= 500
-                                  ? width >= 1000 ? width * 0.71:width * 0.69
+                                  ? width >= 1000
+                                      ? width * 0.71
+                                      : width * 0.69
                                   : width * 0.6
                               : width >= 500
                                   ? width * 0.25
@@ -410,7 +424,7 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                     fontSize: 20,
                   ),
                 ),
-              )
+              ),
             ],
           );
   }
