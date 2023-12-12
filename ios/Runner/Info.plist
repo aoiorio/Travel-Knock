@@ -75,5 +75,7 @@
 	<string>Access to take a photo by camera</string>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Access to the mic</string>
+	<key>FLTEnableImpeller</key>
+	<false />
 </dict>
 </plist>

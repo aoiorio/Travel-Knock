@@ -257,7 +257,9 @@ class _PlansScreenState extends State<PlansScreen> {
                       await Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (context) {
-                            return const LoginScreen();
+                            return const TabsScreen(
+                              initialPageIndex: 1,
+                            );
                           },
                         ),
                       );
@@ -479,6 +481,10 @@ class _PlansScreenState extends State<PlansScreen> {
                         ),
                       ),
                     ),
+
+              const SizedBox(
+                height: 50,
+              ),
 
               // display user posts
               PlanCard(

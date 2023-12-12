@@ -92,6 +92,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
 
     return WillPopScope(
       onWillPop: () {
@@ -290,11 +291,28 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                         )
                       : searchTextController.text.isEmpty
-                          // TODO add illustration (e.g. Let's search place name!)!
-                          ? const Padding(
-                              padding: EdgeInsets.all(100),
+                          // DONE add illustration (e.g. Let's search place name!)!
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 100),
                               child: Center(
-                                child: Text("Let's search a place name!"),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      width:
+                                          width >= 1000 ? width * 0.5 : width,
+                                      // margin: EdgeInsets.only(right: width * 0.1),
+                                      child: Image.asset(
+                                          'assets/images/first-search-potato.PNG'),
+                                    ),
+                                    const Text(
+                                      "Let's enter a place name!",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             )
                           : SearchResultsCard(
