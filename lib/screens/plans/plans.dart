@@ -228,13 +228,6 @@ class _PlansScreenState extends State<PlansScreen> {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
-    // var size = MediaQuery.of(context).size;
-
-    /*24 is for notification bar on Android*/
-    // final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
-    // final double itemWidth = size.width / 2;
-    // print((width / height) * 1.1);
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -335,6 +328,9 @@ class _PlansScreenState extends State<PlansScreen> {
           await getPosts();
           getLikePosts();
         },
+        backgroundColor: const Color(0xff4B4B5A),
+        color: Colors.white,
+        strokeWidth: 3,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
