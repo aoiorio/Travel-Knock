@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 // libraries import
@@ -13,6 +14,7 @@ import 'package:travelknock/preferences/preferences_manager.dart';
 // screens import
 import 'package:travelknock/screens/profile/setting_profile/setting_profile.dart';
 import 'package:travelknock/screens/tabs.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,6 +25,26 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final supabase = Supabase.instance.client;
+
+  void _openPrivacyDocument() async {
+    final url = Uri.parse(
+        "https://docs.google.com/document/d/1TBH6RF4PiEULNeZQmwnim3EyumKzl7cjii_U-xAWypo/edit?usp=sharing");
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not Launch $url';
+    }
+  }
+
+  void _openTermsOfService() async {
+    final url = Uri.parse(
+        "https://docs.google.com/document/d/15dFvPLZ6knXfQ4fuo6tFZlgfzupChO0PWkUW75ZMurU/edit?usp=sharing");
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not Launch $url';
+    }
+  }
 
   @override
   void initState() {
@@ -283,6 +305,34 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
+          ),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                        text: 'privacy policy ・ ',
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 26, 131, 166)),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            _openPrivacyDocument();
+                          }),
+                    TextSpan(
+                        text: 'terms of service',
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 26, 131, 166)),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            _openTermsOfService();
+                          }),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
