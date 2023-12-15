@@ -52,7 +52,34 @@ dependencies:
   url_launcher: ^6.1.14
   flutter_dotenv: ^5.1.0
   shared_preferences: ^2.2.2
-  # url_launcher: ^6.2.1
+  flutter_zoom_drawer: ^3.1.1
+  flutter_launcher_icons: ^0.13.1
+  freezed_annotation: ^2.4.1
+  freezed: ^2.4.5
+  build_runner: ^2.4.7
+  json_annotation: ^4.8.1
+  json_serializable: ^6.7.1
+  flutter_native_splash: ^2.3.8
+
+# icon
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/travel-knock-icon.png"
+
+# splash screen
+flutter_native_splash:
+  color: '#f2f2f2'
+  image: 'assets/images/travel-knock-splash-screen.png'
+  color_dark: '#f2f2f2'
+  image_dark: 'assets/images/travel-knock-splash-screen.png'
+  fullscreen: true
+  android_12:
+    icon_background_color: '#f2f2f2'
+    image: 'assets/images/travel-knock-splash-screen.png'
+    icon_background_color_dark: '#f2f2f2'
+    image_dark: 'assets/images/travel-knock-splash-screen.png'
+
 
 dev_dependencies:
   pedantic_mono: any
