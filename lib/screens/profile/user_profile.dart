@@ -509,9 +509,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           Text(
                             _knockedToUserCount.toString(),
                             style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold),
+                              color: Colors.white,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           Container(
                             padding: const EdgeInsets.only(top: 20, bottom: 20),
