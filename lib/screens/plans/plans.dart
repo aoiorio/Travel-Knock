@@ -183,14 +183,6 @@ class _PlansScreenState extends State<PlansScreen> {
     });
   }
 
-  void goBackToLoginScreen() {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (context) {
-        return const LoginScreen();
-      },
-    ));
-  }
-
   // it's the most attractive places in Travel Knock
   void getHotPlace() async {
     final duplicatedPlaceList = [];
