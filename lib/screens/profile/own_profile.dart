@@ -41,7 +41,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       _isLoading = true;
     });
-
     final yourData = await supabase
         .from('profiles')
         .select('*')
@@ -261,6 +260,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(
                     height: 70,
                   ),
+                  // DONE create profile page here and users can update own profile!!
                   Padding(
                     padding: EdgeInsets.only(left: width * 0.07, bottom: 30),
                     child: SizedBox(
@@ -294,7 +294,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-                  // DONE create profile page here and users can update own profile!!
                   Container(
                     margin: EdgeInsets.only(left: width * 0.07, bottom: 30),
                     child: const Text(

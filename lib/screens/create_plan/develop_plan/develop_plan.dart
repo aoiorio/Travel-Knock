@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 
 // libraries import
 import 'dart:convert';
@@ -252,9 +253,11 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           foregroundColor: Colors.black,
+          toolbarHeight: width >= 500 ? 100 :null,
           actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 20),
+            Container(
+              margin: EdgeInsets.only(top: width >= 500 ? 20: 0),
+              padding: const EdgeInsets.only(right: 20, ),
               child: SizedBox(
                 width: 120,
                 height: 40,
