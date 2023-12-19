@@ -9,7 +9,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/screens/create_plan/develop_plan/develop_plan.dart';
 import 'package:travelknock/screens/tabs.dart';
 import '../../components/custom_widgets/plans/custom_fab.dart';
-import '../login/login.dart';
 
 // components import
 import 'package:travelknock/components/custom_widgets/text_fields/custom_day_text_field.dart';
@@ -32,16 +31,6 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-
-    void signOut() async {
-      await supabase.auth.signOut();
-
-      if (context.mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
-      }
-    }
 
     return Scaffold(
       floatingActionButton: Transform.rotate(

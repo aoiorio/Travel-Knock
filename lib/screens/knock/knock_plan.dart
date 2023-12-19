@@ -54,8 +54,8 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
         .eq('id', widget.requestUserId)
         .single();
     setState(() {
-      requestUserAvatar = userData['avatar_url'];
-      requestUserName = userData['username'];
+      requestUserAvatar = userData['avatar_url'] ?? "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg";
+      requestUserName = userData['username'] ?? "hi";
     });
   }
 
