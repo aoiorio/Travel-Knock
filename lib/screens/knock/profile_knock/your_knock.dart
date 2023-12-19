@@ -93,7 +93,7 @@ class _YourKnockState extends State<YourKnock> {
     return _isLoading
         ? Center(
             child: Container(
-              margin: const EdgeInsets.only(top: 160),
+              margin: const EdgeInsets.only(top: 100, bottom: 100),
               child: const CircularProgressIndicator(
                 color: Color(0xff4B4B5A),
               ),
@@ -156,9 +156,9 @@ class _YourKnockState extends State<YourKnock> {
                                       planDetailsList: _requestedKnock[index]
                                           ['plans'],
                                       requestedUserAvatar: _ownerData[index][0]
-                                          ['avatar_url'],
+                                          ['avatar_url'] ?? "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg",
                                       requestedUserName: _ownerData[index][0]
-                                          ['username'],
+                                          ['username'] ?? "hi",
                                       requestedUserId: _ownerData[index][0]
                                           ['id'],
                                       yourAvatar: widget.yourAvatar,
@@ -212,7 +212,7 @@ class _YourKnockState extends State<YourKnock> {
                                             Clip.antiAliasWithSaveLayer,
                                         child: CachedNetworkImage(
                                           imageUrl: _ownerData[index][0]
-                                              ['avatar_url'],
+                                              ['avatar_url'] ?? "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg",
                                           width: double.infinity,
                                           height: double.infinity,
                                           fit: BoxFit.cover,
