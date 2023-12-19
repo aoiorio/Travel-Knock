@@ -145,7 +145,7 @@ class _TabsScreenState extends State<TabsScreen> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             side:
-                                const BorderSide(color: Colors.black, width: 2),
+                                const BorderSide(color: Color(0xff4B4B5A), width: 2),
                             backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -174,7 +174,7 @@ class _TabsScreenState extends State<TabsScreen> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             side:
-                                const BorderSide(color: Colors.black, width: 2),
+                                const BorderSide(color: Color(0xff4B4B5A), width: 2),
                             backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
