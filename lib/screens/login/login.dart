@@ -105,15 +105,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               // ロゴを表示
-              Container(
-                // padding: EdgeInsets.only(top: height * 0.175), // 150 どうするかな〜〜〜！！！
-                child: Center(
-                  child: SizedBox(
-                    width: width >= 1000 ? 500 : width * 0.87, // 340
-                    child: Image.asset(
-                      'assets/images/Travel-Knock-Logo.png',
-                      fit: BoxFit.cover,
-                    ),
+              Center(
+                child: SizedBox(
+                  width: width >= 1000 ? 500 : width * 0.87, // 340
+                  child: Image.asset(
+                    'assets/images/Travel-Knock-Logo.png',
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -168,9 +165,10 @@ class _LoginScreenState extends State<LoginScreen> {
             child: const Text(
               "Sign In With ",
               style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18,
-                  color: Color(0xff4B4B5A)),
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+                color: Color(0xff4B4B5A),
+              ),
             ),
           ),
 
