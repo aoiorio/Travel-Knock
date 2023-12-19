@@ -188,7 +188,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         .eq('id', _userPostsList[index]['user_id'])
         .single();
     setState(() {
-      _userAvatar = userAvatar['avatar_url'];
+      _userAvatar = userAvatar['avatar_url'] ?? "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg";
     });
     final userName = await supabase
         .from('profiles')
@@ -196,7 +196,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         .eq('id', _userPostsList[index]['user_id'])
         .single();
     setState(() {
-      _userName = userName['username'];
+      _userName = userName['username'] ?? "hi";
     });
   }
 
@@ -213,7 +213,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       () {
         _userAvatar = userData['avatar_url'];
         _userName = userData['username'];
-        _userPlacesList = userData['places'];
+        _userPlacesList = userData['places'] ?? ["Okinawa"];
         _isLoading = false;
         if (userData['header_url'] == null) return;
         _userHeader = userData['header_url'];
