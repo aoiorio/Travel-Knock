@@ -5,8 +5,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 // screens import
 import 'package:travelknock/screens/login/login.dart';
-import 'package:travelknock/screens/login/sign_in_with_apple.dart';
-import 'package:travelknock/screens/login/sign_in_with_google.dart';
 import 'package:travelknock/screens/plans/plans.dart';
 import 'package:travelknock/screens/profile/own_profile.dart';
 
