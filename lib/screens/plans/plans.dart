@@ -13,7 +13,6 @@ import 'package:travelknock/screens/search/search.dart';
 import 'package:travelknock/screens/tabs.dart';
 import 'package:travelknock/screens/create_plan/new_plan.dart';
 import '../knock/knock_plan.dart';
-import '../login/login.dart';
 
 // components import
 import 'package:travelknock/components/cards/plans/plan_card.dart';
@@ -43,6 +42,7 @@ class _PlansScreenState extends State<PlansScreen> {
         .from('posts')
         .select('*')
         .order('likes', ascending: false);
+    if (!mounted) return;
     setState(() {
       posts = posts;
     });
@@ -56,7 +56,8 @@ class _PlansScreenState extends State<PlansScreen> {
         .eq('id', posts[index]['user_id'])
         .single();
     setState(() {
-      _userAvatar = userAvatar['avatar_url'];
+      _userAvatar = userAvatar['avatar_url'] ??
+          "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg";
     });
     final userName = await supabase
         .from('profiles')
@@ -64,7 +65,7 @@ class _PlansScreenState extends State<PlansScreen> {
         .eq('id', posts[index]['user_id'])
         .single();
     setState(() {
-      _userName = userName['username'];
+      _userName = userName['username'] ?? "hi";
     });
   }
 
@@ -173,6 +174,7 @@ class _PlansScreenState extends State<PlansScreen> {
         .from('likes')
         .select('post_id')
         .eq('user_id', supabase.auth.currentUser!.id);
+    if (!mounted) return;
     setState(() {
       for (var i = 0;
           _yourLikePostsData.length < yourLikePostsData.length;
@@ -181,14 +183,6 @@ class _PlansScreenState extends State<PlansScreen> {
       }
       print('_yourLikePostsData$_yourLikePostsData');
     });
-  }
-
-  void goBackToLoginScreen() {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (context) {
-        return const LoginScreen();
-      },
-    ));
   }
 
   // it's the most attractive places in Travel Knock

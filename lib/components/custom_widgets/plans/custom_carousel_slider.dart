@@ -68,6 +68,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
         .select('*')
         .order('id', ascending: false)
         .limit(5);
+    if (!mounted) return;
     setState(() {
       _posts = posts;
       isLoading = false;

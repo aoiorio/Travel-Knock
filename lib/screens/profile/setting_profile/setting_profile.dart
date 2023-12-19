@@ -96,11 +96,13 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
     if (username.isEmpty ||
         userPlacesList.isEmpty ||
         username.length <= 2 ||
-        _imageUrl == null) {
+        _imageUrl == null ||
+        _imageUrl ==
+            "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg") {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-              'Write your name at least 3 letters and add place and fill your icon.'),
+              'Write your name at least 3 letters and add place and change your icon.'),
           backgroundColor: Color.fromARGB(255, 94, 94, 109),
         ),
       );
@@ -226,6 +228,10 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                               onUpload: (imageUrl) async {
                                 setState(() {
                                   _imageUrl = imageUrl;
+                                  _imageUrl ??=
+                                      "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg";
+                                  // imageUrl =
+                                  //     "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg";
                                 });
                                 final userId = supabase.auth.currentUser!.id;
                                 await supabase.from('profiles').update(
@@ -242,7 +248,10 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                       height: 350,
                       onUpload: (imageUrl) async {
                         setState(() {
+                          print(imageUrl);
                           _imageUrl = imageUrl;
+                          _imageUrl ??=
+                                      "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg";
                         });
                         final userId = supabase.auth.currentUser!.id;
                         await supabase

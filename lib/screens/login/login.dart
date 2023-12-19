@@ -27,7 +27,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final supabase = Supabase.instance.client;
 
   void _openPrivacyDocument() async {
-    final url = Uri.parse("https://docs.google.com/document/d/1TBH6RF4PiEULNeZQmwnim3EyumKzl7cjii_U-xAWypo/edit?usp=sharing");
+    final url = Uri.parse(
+        "https://docs.google.com/document/d/1TBH6RF4PiEULNeZQmwnim3EyumKzl7cjii_U-xAWypo/edit?usp=sharing");
     if (await canLaunchUrl(url)) {
       await launchUrl(url);
     } else {
@@ -36,7 +37,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _openTermsOfService() async {
-    final url = Uri.parse("https://docs.google.com/document/d/15dFvPLZ6knXfQ4fuo6tFZlgfzupChO0PWkUW75ZMurU/edit?usp=sharing");
+    final url = Uri.parse(
+        "https://docs.google.com/document/d/15dFvPLZ6knXfQ4fuo6tFZlgfzupChO0PWkUW75ZMurU/edit?usp=sharing");
     if (await canLaunchUrl(url)) {
       await launchUrl(url);
     } else {
@@ -313,14 +315,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     TextSpan(
                         text: 'privacy policy ・ ',
-                        style: const TextStyle(color: Color.fromARGB(255, 26, 131, 166)),
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 26, 131, 166)),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             _openPrivacyDocument();
                           }),
                     TextSpan(
                         text: 'terms of service',
-                        style: const TextStyle(color: Color.fromARGB(255, 26, 131, 166)),
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 26, 131, 166)),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             _openTermsOfService();

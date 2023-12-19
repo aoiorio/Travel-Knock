@@ -41,21 +41,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       _isLoading = true;
     });
-
     final yourData = await supabase
         .from('profiles')
         .select('*')
         .eq('id', supabase.auth.currentUser!.id)
         .single();
     setState(() {
-      _yourAvatar = yourData['avatar_url'];
-      _yourName = yourData['username'];
-      _yourPlaces = yourData['places'];
+      _yourAvatar = yourData['avatar_url'] ??
+          "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg";
+      _yourName = yourData['username'] ?? "hi";
+      _yourPlaces = yourData['places'] ?? ["Okinawa"];
       _yourHeader = yourData['header_url'];
       _isLoading = false;
     });
   }
 
+  // sign out するときにダイアログを表示する関数
   void signOut() async {
     if (!mounted) return;
     // width and height
@@ -123,6 +124,116 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         return false;
                       },
                     );
+                  }
+                },
+              ),
+            ),
+            const SizedBox(width: 30),
+            Container(
+              width: 100,
+              height: 50,
+              margin: EdgeInsets.only(bottom: height * 0.03),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xfff2f2f2),
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text('No'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                },
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  void deleteUser() async {
+    if (!mounted) return;
+    // width and height
+    // final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Do you want to DELETE?',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Color.fromARGB(255, 146, 87, 83)),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              const Text(
+                'If you delete this account, your profile and your all posts will remove.',
+                textAlign: TextAlign.center,
+              ),
+              Container(
+                width: 100,
+                height: 100,
+                margin: const EdgeInsets.only(top: 25),
+                decoration: const BoxDecoration(shape: BoxShape.circle),
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                child: CachedNetworkImage(
+                  imageUrl: _yourAvatar,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            Container(
+              width: 100,
+              height: 50,
+              margin: EdgeInsets.only(bottom: height * 0.03),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 119, 59, 59),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text('Yes'),
+                onPressed: () async {
+                  // delete user
+                  try {
+                    // execute delete user supabase function
+                    await supabase.functions.invoke("delete-user-final");
+                    // signOutを挟まないと次の遷移がまだsignInしていると勘違いして動作しない
+                    await supabase.auth.signOut();
+                    if (context.mounted) {
+                      // Navigator.of(context)
+                      // Sign Out後にホームに戻れてしまうからpushAndRemoveUntilで解消
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        ),
+                        (route) {
+                          return false;
+                        },
+                      );
+                      await PreferencesManager().setIsLogin(isLogin: false);
+                    }
+                    // 削除後の処理など
+                  } on AuthException {
+                    debugPrint("something went wrong with deleting user");
                   }
                 },
               ),
@@ -261,6 +372,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(
                     height: 70,
                   ),
+                  // DONE create profile page here and users can update own profile!!
                   Padding(
                     padding: EdgeInsets.only(left: width * 0.07, bottom: 30),
                     child: SizedBox(
@@ -294,7 +406,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-                  // DONE create profile page here and users can update own profile!!
                   Container(
                     margin: EdgeInsets.only(left: width * 0.07, bottom: 30),
                     child: const Text(
@@ -384,28 +495,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 40, left: width * 0.07),
-                    child: SizedBox(
-                      height: 40,
-                      width: 120,
-                      child: ElevatedButton(
-                        // DONE create a transition to PlansScreen and add details to the database
-                        onPressed: signOut,
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xffF2F2F2),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            )),
-                        child: const Text(
-                          'Sign Out',
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Color.fromARGB(255, 128, 76, 72)),
+                  Row(
+                    children: [
+                      Padding(
+                        padding:
+                            EdgeInsets.only(bottom: 40, left: width * 0.07),
+                        child: SizedBox(
+                          height: 40,
+                          width: 120,
+                          child: ElevatedButton(
+                            // DONE create a transition to PlansScreen and add details to the database
+                            onPressed: signOut,
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xffF2F2F2),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                )),
+                            child: const Text(
+                              'Sign Out',
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: Color.fromARGB(255, 128, 76, 72)),
+                            ),
+                          ),
                         ),
+                        // ),
                       ),
-                    ),
-                    // ),
+                    ],
                   ),
                   Center(
                     child: SizedBox(
@@ -457,6 +573,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   pages[_currentPageIndex],
+                  Padding(
+                    padding: EdgeInsets.only(left: width * 0.07, bottom: 200),
+                    child: SizedBox(
+                      height: 40,
+                      width: 120,
+                      child: ElevatedButton(
+                        // DONE create a transition to PlansScreen and add details to the database
+                        onPressed: deleteUser,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 139, 91, 91),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: const Text(
+                          'Delete',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
       ),
