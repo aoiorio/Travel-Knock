@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 // library import
@@ -89,6 +91,19 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
     // print(userPlacesList);
   }
 
+  // 4文字のランダムなuserNameを生成
+  String generateUserName() {
+    const length = 4;
+    const String charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz';
+    final Random random = Random.secure();
+    final String randomStr =
+        List.generate(length, (_) => charset[random.nextInt(charset.length)])
+            .join();
+    debugPrint(randomStr);
+    return randomStr;
+  }
+
   void updateProfile() async {
     final userId = supabase.auth.currentUser!.id;
     final username = _nameController.text.trim();
@@ -101,7 +116,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
       await supabase.from('profiles').upsert({
         'id': userId,
         'updated_at': DateTime.timestamp().toIso8601String(),
-        'username': username.isEmpty ? 'it is' : username,
+        'username': username.isEmpty ? generateUserName() : username,
         'places': userPlacesList.isEmpty ? ["Travel island"] : userPlacesList,
         'is_setting_profile': true,
       });
