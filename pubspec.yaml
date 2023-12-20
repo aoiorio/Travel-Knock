@@ -38,7 +38,7 @@ dependencies:
   flutter_custom_clippers: ^2.1.0
   supabase: ^1.11.8
   flutter_appauth: ^6.0.2
-  supabase_flutter: ^1.10.21
+  supabase_flutter: ^1.10.25
   crypto: ^3.0.3
   flutter_riverpod: ^2.4.3
   image_picker: ^1.0.4
@@ -60,6 +60,7 @@ dependencies:
   json_annotation: ^4.8.1
   json_serializable: ^6.7.1
   flutter_native_splash: ^2.3.8
+  sign_in_with_apple: ^5.0.0
 
 # icon
 flutter_icons:
@@ -105,12 +106,16 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
+  # images
   assets:
-    # images
+    # logos
     - assets/
     - assets/images/Travel-Knock-Logo.png
     - assets/images/google-logo.png
+    - assets/images/apple-logo.png
+    # shape of title card
     - assets/images/post-shape.png
+    # my illustrations
     - assets/images/nothing-plan.png
     - assets/images/no-knocked.PNG
     - assets/images/first-search-potato.PNG

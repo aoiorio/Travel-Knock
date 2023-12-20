@@ -179,9 +179,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(
                 height: 20,
               ),
-              const Text(
-                'If you delete this account, your profile and your all posts will remove.',
-                textAlign: TextAlign.center,
+              const SizedBox(
+                width: 300,
+                child: Text(
+                  'If you delete this account, your profile and your all posts will remove.',
+                  textAlign: TextAlign.center,
+                ),
               ),
               Container(
                 width: 100,
@@ -214,6 +217,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onPressed: () async {
                   // delete user
                   try {
+                    setState(() {
+                      _isLoading = true;
+                    });
                     // execute delete user supabase function
                     await supabase.functions.invoke("delete-user-final");
                     // signOutを挟まないと次の遷移がまだsignInしていると勘違いして動作しない
@@ -573,11 +579,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   pages[_currentPageIndex],
-                  Padding(
-                    padding: EdgeInsets.only(left: width * 0.07, bottom: 200),
+                  Container(
+                    margin: EdgeInsets.only(left: width * 0.07, bottom: 200),
                     child: SizedBox(
                       height: 40,
-                      width: 120,
+                      width: 200,
                       child: ElevatedButton(
                         // DONE create a transition to PlansScreen and add details to the database
                         onPressed: deleteUser,
@@ -589,7 +595,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         child: const Text(
-                          'Delete',
+                          'Delete this account',
                           style: TextStyle(
                             fontSize: 15,
                             color: Colors.white,

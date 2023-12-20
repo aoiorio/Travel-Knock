@@ -54,7 +54,8 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
         .eq('id', widget.requestUserId)
         .single();
     setState(() {
-      requestUserAvatar = userData['avatar_url'] ?? "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg";
+      requestUserAvatar = userData['avatar_url'] ??
+          "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg";
       requestUserName = userData['username'] ?? "hi";
     });
   }
@@ -71,6 +72,9 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
   }
 
   void doKnock(String title) async {
+    if (_periodController.text[0] == "0") {
+      return;
+    }
     setState(() {
       _isLoading = true;
     });
@@ -81,6 +85,7 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
       'destination': _selectedPlace,
       'period': _periodController.text,
     });
+    if (!mounted) return;
     setState(() {
       _isLoading = false;
     });
@@ -121,7 +126,6 @@ class _KnockPlanScreenState extends State<KnockPlanScreen> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    print(height);
 
     if (_ownerPlaces.isEmpty) {
     } else {

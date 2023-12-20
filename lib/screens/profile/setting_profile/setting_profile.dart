@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 // library import
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:travelknock/screens/plans/plans.dart';
 
 // screens import
 import 'package:travelknock/screens/profile/setting_profile/add_places.dart';
@@ -92,23 +93,6 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
     final userId = supabase.auth.currentUser!.id;
     final username = _nameController.text.trim();
 
-    // confirm username, userPlacesList and username's length
-    if (username.isEmpty ||
-        userPlacesList.isEmpty ||
-        username.length <= 2 ||
-        _imageUrl == null ||
-        _imageUrl ==
-            "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg") {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              'Write your name at least 3 letters and add place and change your icon.'),
-          backgroundColor: Color.fromARGB(255, 94, 94, 109),
-        ),
-      );
-      return;
-    }
-
     setState(() {
       _isLoading = true;
     });
@@ -117,11 +101,18 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
       await supabase.from('profiles').upsert({
         'id': userId,
         'updated_at': DateTime.timestamp().toIso8601String(),
-        'username': username,
-        'places': userPlacesList,
+        'username': username.isEmpty ? 'it is' : username,
+        'places': userPlacesList.isEmpty ? ["Travel island"] : userPlacesList,
         'is_setting_profile': true,
       });
-      print('Entered submit button!');
+      if (_imageUrl == null) {
+        await supabase.from('profiles').update({
+          'avatar_url':
+              "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg"
+        }).eq('id', userId);
+      }
+
+      debugPrint('Entered submit button!');
       if (!mounted) return;
       // DONE use Navigator.of(context).pushReplacement and transition to PlansScreen
       if (widget.isEdit) {
@@ -147,9 +138,11 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
         ),
       );
     } catch (error) {
+      debugPrint(error.toString());
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('The same name exists. Please change another one.'),
+          content: Text(
+              'The same name exists. Please change another one or try again.'),
           backgroundColor: Color.fromARGB(255, 94, 94, 109),
         ),
       );
@@ -251,7 +244,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                           print(imageUrl);
                           _imageUrl = imageUrl;
                           _imageUrl ??=
-                                      "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg";
+                              "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg";
                         });
                         final userId = supabase.auth.currentUser!.id;
                         await supabase
@@ -405,7 +398,136 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                                 width: width * 0.5, // 200
                                 child: ElevatedButton(
                                   // DONE create a transition to PlansScreen and add details to the database
-                                  onPressed: updateProfile,
+                                  onPressed: () {
+                                    final username =
+                                        _nameController.text.trim();
+                                    // confirm username, userPlacesList . if users didn't set their profile, there will be dialog.
+                                    if (username.isEmpty ||
+                                        userPlacesList.isEmpty ||
+                                        _imageUrl == null) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            title: const Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  "Would you like to set avatar or name or places?",
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: Color(0xff4B4B5A)),
+                                                ),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                              ],
+                                            ),
+                                            actionsAlignment:
+                                                MainAxisAlignment.center,
+                                            actions: [
+                                              Container(
+                                                width: 140,
+                                                height: 50,
+                                                margin: EdgeInsets.only(
+                                                    bottom: height * 0.03),
+                                                child: _isLoading
+                                                    ? const Center(
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                          color:
+                                                              Color(0xff4B4B5A),
+                                                        ),
+                                                      )
+                                                    : ElevatedButton(
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          backgroundColor:
+                                                              const Color(
+                                                                  0xfff2f2f2),
+                                                          foregroundColor:
+                                                              Colors.white,
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20),
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          'No thank you',
+                                                          style: TextStyle(
+                                                            color: Color(
+                                                                0xff4B4B5A),
+                                                          ),
+                                                        ),
+                                                        onPressed: () async {
+                                                          setState(() {
+                                                            _isLoading = true;
+                                                          });
+                                                          updateProfile();
+                                                          setState(() {
+                                                            _isLoading = false;
+                                                          });
+                                                          // go to PlansScreen
+                                                          Navigator.of(context)
+                                                              .pushAndRemoveUntil(
+                                                                  MaterialPageRoute(
+                                                            builder: (context) {
+                                                              return const TabsScreen(
+                                                                  initialPageIndex:
+                                                                      0);
+                                                            },
+                                                          ), (route) => false);
+                                                        },
+                                                      ),
+                                              ),
+                                              SizedBox(width: width * 0.02),
+                                              Container(
+                                                width: 100,
+                                                height: 50,
+                                                margin: EdgeInsets.only(
+                                                    bottom: height * 0.03),
+                                                child: ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        const Color(0xff4B4B5A),
+                                                    foregroundColor:
+                                                        Colors.white,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                  ),
+                                                  child: const Text('Set them'),
+                                                  onPressed: () async {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                      return;
+                                    }
+
+                                    // normal submit
+                                    updateProfile();
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xff4B4B5A),
                                     shape: RoundedRectangleBorder(

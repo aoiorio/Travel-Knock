@@ -44,6 +44,7 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
 
     final supabase = Supabase.instance.client;
     return Scaffold(
@@ -124,7 +125,7 @@ class _TabsScreenState extends State<TabsScreen> {
                 children: [
                   SizedBox(
                     width: width >= 1000 ? width * 0.5 : width,
-                  // DONE change illustration
+                    // DONE change illustration
                     child: Image.asset('assets/images/no-login.PNG'),
                   ),
                   const Text(
@@ -135,42 +136,65 @@ class _TabsScreenState extends State<TabsScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  SizedBox(
-                    width: 300,
-                    height: 60,
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      // DONE add feature that login with Google
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return const LoginScreen();
-                            },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: width * 0.38,
+                        height: height * 0.08,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            side:
+                                const BorderSide(color: Color(0xff4B4B5A), width: 2),
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
                           ),
-                        );
-                      },
-                      icon: SizedBox(
-                        width: 30,
-                        child: Container(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: Image.asset('assets/images/google-logo.png'),
+                          onPressed: () {
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                              builder: (context) {
+                                return const LoginScreen();
+                              },
+                            ), (route) => false);
+                          },
+                          child: SizedBox(
+                            width: 40,
+                            child: Image.asset("assets/images/apple-logo.png"),
+                          ),
                         ),
                       ),
-                      label: const Text(
-                        'Sign In With Google',
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      SizedBox(
+                        width: width * 0.38,
+                        height: height * 0.08,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            side:
+                                const BorderSide(color: Color(0xff4B4B5A), width: 2),
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                              builder: (context) {
+                                return const LoginScreen();
+                              },
+                            ), (route) => false);
+                          },
+                          child: SizedBox(
+                            width: 35,
+                            child: Image.asset("assets/images/google-logo.png"),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                   SizedBox(height: width >= 1000 ? 50 : 20)
                 ],
