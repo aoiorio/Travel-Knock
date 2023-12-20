@@ -93,17 +93,6 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
     final userId = supabase.auth.currentUser!.id;
     final username = _nameController.text.trim();
 
-    // confirm username, userPlacesList and username's length
-    // if (username.isEmpty || userPlacesList.isEmpty || username.length <= 2) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(
-    //       content: Text('Write your name at least 3 letters and add place.'),
-    //       backgroundColor: Color.fromARGB(255, 94, 94, 109),
-    //     ),
-    //   );
-    //   return;
-    // }
-
     setState(() {
       _isLoading = true;
     });
