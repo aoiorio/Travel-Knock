@@ -494,16 +494,6 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                                                           setState(() {
                                                             _isLoading = false;
                                                           });
-                                                          // go to PlansScreen
-                                                          Navigator.of(context)
-                                                              .pushAndRemoveUntil(
-                                                                  MaterialPageRoute(
-                                                            builder: (context) {
-                                                              return const TabsScreen(
-                                                                  initialPageIndex:
-                                                                      0);
-                                                            },
-                                                          ), (route) => false);
                                                         },
                                                       ),
                                               ),
