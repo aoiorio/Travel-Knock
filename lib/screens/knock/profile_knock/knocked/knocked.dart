@@ -125,7 +125,7 @@ class _KnockedScreenState extends State<KnockedScreen> {
                   ),
                 ),
               )
-              // userがknockした詳細のCards
+            // userがknockした詳細のCards
             : Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,11 +165,12 @@ class _KnockedScreenState extends State<KnockedScreen> {
                                           ['thumbnail'],
                                       planDetailsList: _requestKnock[index]
                                           ['plans'],
-                                      requestedUserAvatar:
-                                          _requestUserData[index][0]
-                                              ['avatar_url'] ?? "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg",
+                                      requestedUserAvatar: _requestUserData[
+                                              index][0]['avatar_url'] ??
+                                          "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg",
                                       requestedUserName: _requestUserData[index]
-                                          [0]['username'] ?? "hi",
+                                              [0]['username'] ??
+                                          "hi",
                                       requestedUserId: _requestUserData[index]
                                           [0]['id'],
                                       yourAvatar: widget.yourAvatar,
@@ -190,9 +191,11 @@ class _KnockedScreenState extends State<KnockedScreen> {
                                     destination: _requestKnock[index]
                                         ['destination'],
                                     requestUserAvatar: _requestUserData[index]
-                                        [0]['avatar_url'] ?? "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg",
+                                            [0]['avatar_url'] ??
+                                        "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg",
                                     requestUserName: _requestUserData[index][0]
-                                        ['username'] ?? "hi",
+                                            ['username'] ??
+                                        "hi",
                                     knockId: _requestKnock[index]['id'],
                                   );
                                 },
@@ -239,7 +242,8 @@ class _KnockedScreenState extends State<KnockedScreen> {
                                             Clip.antiAliasWithSaveLayer,
                                         child: CachedNetworkImage(
                                           imageUrl: _requestUserData[index][0]
-                                              ['avatar_url'] ?? "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg",
+                                                  ['avatar_url'] ??
+                                              "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg",
                                           width: double.infinity,
                                           height: double.infinity,
                                           fit: BoxFit.cover,
@@ -262,9 +266,13 @@ class _KnockedScreenState extends State<KnockedScreen> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Text(
-                                            _requestUserData[index][0]['username'] == null ?'From hi':'From ' +
-                                                _requestUserData[index][0]
-                                                    ['username'],
+                                            _requestUserData[index][0]
+                                                        ['username'] ==
+                                                    null
+                                                ? 'From hi'
+                                                : 'From ' +
+                                                    _requestUserData[index][0]
+                                                        ['username'],
                                             style: const TextStyle(
                                               fontSize: 17,
                                               fontWeight: FontWeight.w600,
