@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 // library import
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travelknock/screens/plans/plans.dart';
 
 // screens import
 import 'package:travelknock/screens/profile/setting_profile/add_places.dart';
@@ -238,8 +237,6 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                                   _imageUrl = imageUrl;
                                   _imageUrl ??=
                                       "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg";
-                                  // imageUrl =
-                                  //     "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg";
                                 });
                                 final userId = supabase.auth.currentUser!.id;
                                 await supabase.from('profiles').update(
@@ -382,7 +379,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                               child: Column(
                                 children: [
                                   const SizedBox(height: 20),
-                                  // TODO change illustration
+                                  // DONE change illustration
                                   Image.asset('assets/images/no-places.PNG'),
                                   const Text(
                                     'No Places',
@@ -487,23 +484,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
                                                           ),
                                                         ),
                                                         onPressed: () async {
-                                                          setState(() {
-                                                            _isLoading = true;
-                                                          });
                                                           updateProfile();
-                                                          setState(() {
-                                                            _isLoading = false;
-                                                          });
-                                                          // go to PlansScreen
-                                                          Navigator.of(context)
-                                                              .pushAndRemoveUntil(
-                                                                  MaterialPageRoute(
-                                                            builder: (context) {
-                                                              return const TabsScreen(
-                                                                  initialPageIndex:
-                                                                      0);
-                                                            },
-                                                          ), (route) => false);
                                                         },
                                                       ),
                                               ),
