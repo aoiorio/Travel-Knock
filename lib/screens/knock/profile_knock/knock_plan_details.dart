@@ -197,7 +197,11 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                       )
                     : const SizedBox(),
                 Positioned(
-                  bottom: width >= 500 ? width >= 1000?-(height * 0.06):-(height * 0.05) :0,
+                  bottom: width >= 500
+                      ? width >= 1000
+                          ? -(height * 0.06)
+                          : -(height * 0.05)
+                      : 0,
                   child: Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -219,8 +223,8 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                                     ? Shimmer.fromColors(
                                         baseColor: Colors.grey[300]!,
                                         highlightColor: Colors.grey[200]!,
-                                        child:
-                                            const ColoredBox(color: Colors.grey),
+                                        child: const ColoredBox(
+                                            color: Colors.grey),
                                       )
                                     : GestureDetector(
                                         onTap: () {
@@ -242,8 +246,7 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                                         child: CachedNetworkImage(
                                           imageUrl: widget.isYourKnock
                                               ? widget.yourAvatar
-                                              : widget.requestedUserAvatar
-                                                  .toString(),
+                                              : widget.requestedUserAvatar,
                                           fit: BoxFit.cover,
                                         ),
                                       ),
@@ -292,8 +295,8 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                                     ? Shimmer.fromColors(
                                         baseColor: Colors.grey[300]!,
                                         highlightColor: Colors.grey[200]!,
-                                        child:
-                                            const ColoredBox(color: Colors.grey),
+                                        child: const ColoredBox(
+                                            color: Colors.grey),
                                       )
                                     : GestureDetector(
                                         onTap: () {

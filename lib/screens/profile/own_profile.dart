@@ -217,6 +217,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onPressed: () async {
                   // delete user
                   try {
+                    setState(() {
+                      _isLoading = true;
+                    });
                     // execute delete user supabase function
                     await supabase.functions.invoke("delete-user-final");
                     // signOutを挟まないと次の遷移がまだsignInしていると勘違いして動作しない
