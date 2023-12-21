@@ -2,12 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 // libraries import
-import 'dart:convert';
-import 'dart:math';
-
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
-// import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-// import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/preferences/preferences_manager.dart';
 import 'package:travelknock/screens/login/sign_in_with_apple.dart';
@@ -58,29 +53,30 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _setupAuthListener() async {
-    try {
-      supabase.auth.onAuthStateChange.listen((data) {
-        final event = data.event;
-        if (event == AuthChangeEvent.signedIn) {
-          if (!mounted) return;
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const SettingProfileScreen(
-                isEdit: false,
-              ),
-            ),
-          );
-        }
-      });
-    } on Exception {
-      print('mounted');
-    }
-  }
+    String response = "";
+    debugPrint(response);
 
-  /// Function to generate a random 16 character string.
-  String _generateRandomString() {
-    final random = Random.secure();
-    return base64Url.encode(List<int>.generate(16, (_) => random.nextInt(256)));
+      try {
+        supabase.auth.onAuthStateChange.listen((data) {
+          final event = data.event;
+          if (event == AuthChangeEvent.signedIn) {
+            if (!mounted) return;
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) {
+                response = supabase.auth.currentUser!.appMetadata['provider'];
+                if (response == "apple") {
+                  return const TabsScreen(initialPageIndex: 0);
+                }
+                return const SettingProfileScreen(
+                  isEdit: false,
+                );
+              }),
+            );
+          }
+        });
+      } on Exception {
+        debugPrint('mounted');
+      }
   }
 
   @override
@@ -186,8 +182,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     SignInWithAppleClass().signInWithApple();
+                    // final response = await supabase.auth.signInWithApple().then(
+                    //     (value) =>
+                    //         print(value.user?.userMetadata?['full_name']));
                   },
                   child: SizedBox(
                     width: 44,

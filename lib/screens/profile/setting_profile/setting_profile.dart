@@ -43,6 +43,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
   @override
   void initState() {
     getUserInfo();
+    getName();
     super.initState();
   }
 
@@ -92,7 +93,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
 
   // 4文字のランダムなuserNameを生成
   String generateUserName() {
-    const length = 4;
+    const length = 8;
     const String charset =
         '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz';
     final Random random = Random.secure();
@@ -110,6 +111,8 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
     setState(() {
       _isLoading = true;
     });
+
+
 
     try {
       await supabase.from('profiles').upsert({
@@ -152,6 +155,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
         ),
       );
     } catch (error) {
+      if (!mounted) return;
       debugPrint(error.toString());
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -164,6 +168,13 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
     setState(() {
       _isLoading = false;
     });
+  }
+
+  void getName() async {
+    final response = await supabase.auth.currentUser!.appMetadata['provider'];
+    debugPrint(response);
+    // final response = await supabase.auth.signInWithApple();
+    // print(response.user?.userMetadata?[['full_name']]);
   }
 
   @override

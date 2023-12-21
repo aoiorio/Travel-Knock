@@ -12,6 +12,8 @@ import 'package:travelknock/preferences/preferences_manager.dart';
 
 class SignInWithAppleClass {
   final supabase = Supabase.instance.client;
+
+  /// Function to generate a random 16 character string.
   String _generateRandomString() {
     final random = Random.secure();
     return base64Url.encode(List<int>.generate(16, (_) => random.nextInt(256)));
@@ -33,6 +35,8 @@ class SignInWithAppleClass {
         nonce: hashedNonce,
       );
 
+      // print(AppleIDAuthorizationScopes.fullName);
+
       final idToken = credential.identityToken;
       if (idToken == null) {
         await PreferencesManager().setIsLogin(isLogin: false);
@@ -46,7 +50,8 @@ class SignInWithAppleClass {
         nonce: rawNonce,
       );
     } on Exception {
-      debugPrint("something went wrong with Apple sign in or user pressed cancel button");
+      debugPrint(
+          "something went wrong with Apple sign in or user pressed cancel button");
       await PreferencesManager().setIsLogin(isLogin: false);
     }
     return AuthResponse();
