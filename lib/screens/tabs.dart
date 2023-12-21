@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 // library import
@@ -19,6 +21,7 @@ class TabsScreen extends StatefulWidget {
 
 class _TabsScreenState extends State<TabsScreen> {
   var _currentPageIndex = 0;
+  // final List _userData = [];
 
   final _pages = <Widget>[
     const PlansScreen(),
@@ -35,10 +38,56 @@ class _TabsScreenState extends State<TabsScreen> {
     Icons.cloud_outlined
   ];
 
+  // ランダムなuserNameを作成(usernameはuniqueなため)
+  String generateUserName() {
+    const length = 8;
+    const String charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz';
+    final Random random = Random.secure();
+    final String randomStr =
+        List.generate(length, (_) => charset[random.nextInt(charset.length)])
+            .join();
+    debugPrint(randomStr);
+    return randomStr;
+  }
+
+  // appleでサインインした時や、user情報を設定していなかったときに強制設定する関数
+  void setUserData() async {
+    final supabase = Supabase.instance.client;
+
+    if (supabase.auth.currentUser == null) {
+      return;
+    }
+    final userId = supabase.auth.currentUser!.id;
+    try {
+      final userData =
+          await supabase.from('profiles').select('*').eq('id', userId);
+      if (userData[0]['avatar_url'] == null) {
+        await supabase.from('profiles').update({
+          'avatar_url':
+              'https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg'
+        }).eq('id', userId);
+      }
+      if (userData[0]['username'] == null) {
+        await supabase
+            .from('profiles')
+            .update({'username': generateUserName()}).eq('id', userId);
+      }
+      if (userData[0]['places'] == null) {
+        await supabase.from('profiles').update({
+          'places': ["Travel island"]
+        }).eq('id', userId);
+      }
+    } catch (error) {
+      debugPrint(error.toString());
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _currentPageIndex = widget.initialPageIndex;
+    setUserData();
   }
 
   @override
@@ -144,8 +193,8 @@ class _TabsScreenState extends State<TabsScreen> {
                         height: height * 0.08,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            side:
-                                const BorderSide(color: Color(0xff4B4B5A), width: 2),
+                            side: const BorderSide(
+                                color: Color(0xff4B4B5A), width: 2),
                             backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -173,8 +222,8 @@ class _TabsScreenState extends State<TabsScreen> {
                         height: height * 0.08,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            side:
-                                const BorderSide(color: Color(0xff4B4B5A), width: 2),
+                            side: const BorderSide(
+                                color: Color(0xff4B4B5A), width: 2),
                             backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),

@@ -14,6 +14,7 @@ import 'package:travelknock/preferences/preferences_manager.dart';
 class SignInWithGoogleClass {
   final supabase = Supabase.instance.client;
 
+  /// Function to generate a random 16 character string.
   String _generateRandomString() {
     final random = Random.secure();
     return base64Url.encode(List<int>.generate(16, (_) => random.nextInt(256)));

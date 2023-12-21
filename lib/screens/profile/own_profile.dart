@@ -10,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/screens/knock/profile_knock/knocked/knocked.dart';
 import 'package:travelknock/screens/knock/profile_knock/your_knock.dart';
 import 'package:travelknock/screens/profile/setting_profile/setting_profile.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../preferences/preferences_manager.dart';
 import '../create_plan/new_plan.dart';
 import '../login/login.dart';
@@ -579,30 +580,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   pages[_currentPageIndex],
-                  Container(
-                    margin: EdgeInsets.only(left: width * 0.07, bottom: 200),
-                    child: SizedBox(
-                      height: 40,
-                      width: 200,
-                      child: ElevatedButton(
-                        // DONE create a transition to PlansScreen and add details to the database
-                        onPressed: deleteUser,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 139, 91, 91),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        child: const Text(
-                          'Delete this account',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.white,
+                  Row(
+                    children: [
+                      Container(
+                        margin:
+                            EdgeInsets.only(left: width * 0.07, bottom: 200),
+                        child: SizedBox(
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                height: 40,
+                                width: 200,
+                                child: ElevatedButton(
+                                  // DONE create a transition to PlansScreen and add details to the database
+                                  onPressed: deleteUser,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 139, 91, 91),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Delete this account',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    bottom: 0,
+                                    left: width * 0.07,
+                                    right: width * 0.07),
+                                child: SizedBox(
+                                  height: 40,
+                                  width: 100,
+                                  child: ElevatedButton(
+                                    // DONE create a transition to PlansScreen and add details to the database
+                                    onPressed: () async {
+                                      final url = Uri.parse(
+                                          "https://twitter.com/atomu170");
+                                      if (await canLaunchUrl(url)) {
+                                        await launchUrl(url);
+                                      } else {
+                                        throw 'Could not Launch $url';
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xff4B4B5A),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.mail,
+                                      color: Color(0xfff2f2f2),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
