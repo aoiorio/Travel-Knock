@@ -59,7 +59,7 @@ class _BlockDialogState extends State<BlockDialog> {
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
-            child: const Text('block'),
+            child: const Text('Block'),
             onPressed: () async {
               final List blockUsers = await supabase
                   .from("profiles")
