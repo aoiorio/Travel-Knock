@@ -16,10 +16,12 @@ class SearchResultsCard extends StatefulWidget {
     super.key,
     required this.searchResult,
     required this.searchText,
+    required this.blockUsers,
   });
 
   final List searchResult;
   final String searchText;
+  final List blockUsers;
 
   @override
   State<SearchResultsCard> createState() => _SearchResultsCardState();
@@ -104,7 +106,7 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
         'post_id': widget.searchResult[index]['id'],
       });
     } catch (e) {
-      print('error: $e');
+      debugPrint('error: $e');
     }
   }
 
@@ -127,26 +129,36 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
     List userAvatarList = [];
     List userNameList = [];
     for (var i = 0; widget.searchResult.length > i; i++) {
-      final userData = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', widget.searchResult[i]['user_id'])
-          .single();
-      setState(() {
-        userAvatarList.add(userData['avatar_url']);
-        userNameList.add(userData['username']);
-      });
+      if (!widget.blockUsers.contains(widget.searchResult[i][('user_id')])) {
+        final userData = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', widget.searchResult[i]['user_id'])
+            .single();
+        setState(() {
+          userAvatarList.add(userData['avatar_url']);
+          userNameList.add(userData['username']);
+        });
+      }
     }
     setState(() {
       _userAvatar = userAvatarList;
       _userName = userNameList;
-      // print(_userAvatar);
+    });
+  }
+
+  // ブロックしているユーザーの投稿を消す
+  void removeBlockUserPosts() {
+    setState(() {
+      widget.searchResult.removeWhere(
+          (element) => widget.blockUsers.contains(element['user_id']));
     });
   }
 
   @override
   void initState() {
     super.initState();
+    removeBlockUserPosts();
     getUserInfo();
     getLikePosts();
   }
@@ -164,9 +176,9 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
 
     return widget.searchResult.isEmpty
         ? SafeArea(
-          bottom: false,
-          child: Stack(
-            alignment: Alignment.center,
+            bottom: false,
+            child: Stack(
+              alignment: Alignment.center,
               children: [
                 Positioned(
                   top: height * 0.18,
@@ -190,7 +202,7 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                 // top: height * 0.3,
               ],
             ),
-        )
+          )
         : Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,205 +227,218 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                 padding: const EdgeInsets.only(top: 40),
                 itemBuilder: (context, index) {
                   final likeNumber = searchLike(index).length;
-                  return GestureDetector(
-                    onTap: () {
-                      if (_userAvatar.isEmpty || _userName.isEmpty) return;
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) {
-                          return PlanDetailsScreen(
-                            title: widget.searchResult[index]['title'],
-                            thumbnail: widget.searchResult[index]['thumbnail'],
-                            planDetailsList: widget.searchResult[index]
-                                ['plans'],
-                            ownerId: widget.searchResult[index]['user_id'],
-                            // yourId: supabase.auth.currentUser!.id,
-                            placeName: widget.searchResult[index]['place_name'],
-                            posts: widget.searchResult[index],
-                            yourLikeData: _yourLikePostsData,
-                          );
-                        },
-                      ));
-                    },
-                    child: Stack(
-                      alignment: _ifSyntax(index)
-                          ? Alignment.topRight
-                          : Alignment.topLeft,
-                      children: [
-                        Container(
-                          constraints: const BoxConstraints(
-                            minHeight: 250,
-                            minWidth: 50,
-                          ),
-                          width: width * 0.77, // 300
-                          padding: const EdgeInsets.all(20),
-                          margin: const EdgeInsets.only(top: 20, bottom: 90),
-                          decoration: BoxDecoration(
-                            color: const Color(0xffF2F2F2),
-                            borderRadius: BorderRadius.only(
-                              // もしもindexが２で割れたら、その要素を右寄せにする
-                              topRight: _ifSyntax(index)
-                                  ? const Radius.circular(0)
-                                  : const Radius.circular(30),
-                              topLeft: _ifSyntax(index)
-                                  ? const Radius.circular(30)
-                                  : const Radius.circular(0),
-                              bottomRight: _ifSyntax(index)
-                                  ? const Radius.circular(0)
-                                  : const Radius.circular(30),
-                              bottomLeft: _ifSyntax(index)
-                                  ? const Radius.circular(30)
-                                  : const Radius.circular(0),
-                            ),
-                          ),
-                          alignment: Alignment.bottomLeft,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  return widget.blockUsers
+                          .contains(widget.searchResult[index]['user_id'])
+                      ? const SizedBox()
+                      : GestureDetector(
+                          onTap: () {
+                            if (_userAvatar.isEmpty || _userName.isEmpty) {
+                              return;
+                            }
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) {
+                                return PlanDetailsScreen(
+                                  title: widget.searchResult[index]['title'],
+                                  thumbnail: widget.searchResult[index]
+                                      ['thumbnail'],
+                                  planDetailsList: widget.searchResult[index]
+                                      ['plans'],
+                                  ownerId: widget.searchResult[index]
+                                      ['user_id'],
+                                  // yourId: supabase.auth.currentUser!.id,
+                                  placeName: widget.searchResult[index]
+                                      ['place_name'],
+                                  posts: widget.searchResult[index],
+                                  yourLikeData: _yourLikePostsData,
+                                );
+                              },
+                            ));
+                          },
+                          child: Stack(
+                            alignment: _ifSyntax(index)
+                                ? Alignment.topRight
+                                : Alignment.topLeft,
                             children: [
-                              Flexible(
-                                child: Container(
-                                  width: width * 0.6, // 200
-                                  margin: const EdgeInsets.only(top: 40),
-                                  child: Text(
-                                    widget.searchResult[index]['title'],
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                              Container(
+                                constraints: const BoxConstraints(
+                                  minHeight: 250,
+                                  minWidth: 50,
+                                ),
+                                width: width * 0.77, // 300
+                                padding: const EdgeInsets.all(20),
+                                margin:
+                                    const EdgeInsets.only(top: 20, bottom: 90),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xffF2F2F2),
+                                  borderRadius: BorderRadius.only(
+                                    // もしもindexが２で割れたら、その要素を右寄せにする
+                                    topRight: _ifSyntax(index)
+                                        ? const Radius.circular(0)
+                                        : const Radius.circular(30),
+                                    topLeft: _ifSyntax(index)
+                                        ? const Radius.circular(30)
+                                        : const Radius.circular(0),
+                                    bottomRight: _ifSyntax(index)
+                                        ? const Radius.circular(0)
+                                        : const Radius.circular(30),
+                                    bottomLeft: _ifSyntax(index)
+                                        ? const Radius.circular(30)
+                                        : const Radius.circular(0),
                                   ),
                                 ),
-                              ),
-                              GestureDetector(
-                                onTap: () =>
-                                    likePost(index, likeNumber, _likedPost),
-                                child: Center(
-                                  child: Row(
-                                    children: [
-                                      Stack(
-                                        alignment: Alignment.bottomRight,
-                                        children: [
-                                          Container(
-                                            margin:
-                                                const EdgeInsets.only(top: 5),
-                                            width: 60,
-                                            height: 60,
-                                            child: RiveAnimation.asset(
-                                              _yourLikePostsData.contains(
-                                                      widget.searchResult[index]
-                                                          ['id'])
-                                                  ? 'assets/rivs/rive-red-fire.riv'
-                                                  : 'assets/rivs/rive-black-like-fire.riv',
-                                            ),
-                                          ),
-                                          // RIVEのロゴを隠すWidget
-                                          const SizedBox(
-                                            width: 22,
-                                            height: 5,
-                                            child: DecoratedBox(
-                                              decoration: BoxDecoration(
-                                                color: Color(0xffF2F2F2),
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      Container(
+                                alignment: Alignment.bottomLeft,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      child: Container(
+                                        width: width * 0.6, // 200
                                         margin: const EdgeInsets.only(top: 40),
                                         child: Text(
-                                          likeNumber.toString(),
+                                          widget.searchResult[index]['title'],
                                           style: const TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.w600,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
                                       ),
-                                    ],
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => likePost(
+                                          index, likeNumber, _likedPost),
+                                      child: Center(
+                                        child: Row(
+                                          children: [
+                                            Stack(
+                                              alignment: Alignment.bottomRight,
+                                              children: [
+                                                Container(
+                                                  margin: const EdgeInsets.only(
+                                                      top: 5),
+                                                  width: 60,
+                                                  height: 60,
+                                                  child: RiveAnimation.asset(
+                                                    _yourLikePostsData.contains(
+                                                            widget.searchResult[
+                                                                index]['id'])
+                                                        ? 'assets/rivs/rive-red-fire.riv'
+                                                        : 'assets/rivs/rive-black-like-fire.riv',
+                                                  ),
+                                                ),
+                                                // RIVEのロゴを隠すWidget
+                                                const SizedBox(
+                                                  width: 22,
+                                                  height: 5,
+                                                  child: DecoratedBox(
+                                                    decoration: BoxDecoration(
+                                                      color: Color(0xffF2F2F2),
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                            Container(
+                                              margin: const EdgeInsets.only(
+                                                  top: 40),
+                                              child: Text(
+                                                likeNumber.toString(),
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                width: width * 0.77, // 300
+                                height: 200, // 200
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                      topRight: _ifSyntax(index)
+                                          ? const Radius.circular(0)
+                                          : const Radius.circular(30),
+                                      topLeft: _ifSyntax(index)
+                                          ? const Radius.circular(30)
+                                          : const Radius.circular(0),
+                                      bottomRight: _ifSyntax(index)
+                                          ? const Radius.circular(0)
+                                          : const Radius.circular(30),
+                                      bottomLeft: _ifSyntax(index)
+                                          ? const Radius.circular(30)
+                                          : const Radius.circular(0)),
+                                ),
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                child: CachedNetworkImage(
+                                  imageUrl: widget.searchResult[index]
+                                      ['thumbnail'],
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Positioned(
+                                // left: _ifSyntax(index) ? width * 0.27 : 0,
+                                // right: _ifSyntax(index) ? 0 : width * 0.6,
+                                right: _ifSyntax(index)
+                                    ? width >= 500
+                                        ? width >= 1000
+                                            ? width * 0.71
+                                            : width * 0.69
+                                        : width * 0.6
+                                    : width >= 500
+                                        ? width * 0.25
+                                        : width * 0.27, // 237 : 105
+                                top: 10,
+                                child: Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
                                   ),
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  child: _userAvatar.isEmpty
+                                      ? Shimmer.fromColors(
+                                          baseColor: Colors.grey[300]!,
+                                          highlightColor: Colors.grey[100]!,
+                                          child: Container(
+                                            width: 55,
+                                            height: 55,
+                                            decoration: const BoxDecoration(
+                                                color: Colors.white),
+                                          ),
+                                        )
+                                      : GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UserProfileScreen(
+                                                  userId:
+                                                      widget.searchResult[index]
+                                                          ['user_id'],
+                                                  yourLikePostsData:
+                                                      _yourLikePostsData,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: CachedNetworkImage(
+                                            imageUrl: _userAvatar[index],
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        Container(
-                          width: width * 0.77, // 300
-                          height: 200, // 200
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topRight: _ifSyntax(index)
-                                    ? const Radius.circular(0)
-                                    : const Radius.circular(30),
-                                topLeft: _ifSyntax(index)
-                                    ? const Radius.circular(30)
-                                    : const Radius.circular(0),
-                                bottomRight: _ifSyntax(index)
-                                    ? const Radius.circular(0)
-                                    : const Radius.circular(30),
-                                bottomLeft: _ifSyntax(index)
-                                    ? const Radius.circular(30)
-                                    : const Radius.circular(0)),
-                          ),
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          child: CachedNetworkImage(
-                            imageUrl: widget.searchResult[index]['thumbnail'],
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Positioned(
-                          // left: _ifSyntax(index) ? width * 0.27 : 0,
-                          // right: _ifSyntax(index) ? 0 : width * 0.6,
-                          right: _ifSyntax(index)
-                              ? width >= 500
-                                  ? width >= 1000
-                                      ? width * 0.71
-                                      : width * 0.69
-                                  : width * 0.6
-                              : width >= 500
-                                  ? width * 0.25
-                                  : width * 0.27, // 237 : 105
-                          top: 10,
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            child: _userAvatar.isEmpty
-                                ? Shimmer.fromColors(
-                                    baseColor: Colors.grey[300]!,
-                                    highlightColor: Colors.grey[100]!,
-                                    child: Container(
-                                      width: 55,
-                                      height: 55,
-                                      decoration: const BoxDecoration(
-                                          color: Colors.white),
-                                    ),
-                                  )
-                                : GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              UserProfileScreen(
-                                            userId: widget.searchResult[index]
-                                                ['user_id'],
-                                            yourLikePostsData:
-                                                _yourLikePostsData,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: CachedNetworkImage(
-                                      imageUrl: _userAvatar[index],
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
+                        );
                 },
               ),
               const Center(

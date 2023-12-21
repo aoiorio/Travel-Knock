@@ -30,17 +30,15 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _isLoading = false;
   List _searchResult = [];
   final _controller = ScrollController();
-  final List _userAvatar = [];
+  List _blockUsersList = [];
 
-  void getUserInfo() {
-    for (var i = 0; _searchResult.length > i; i++) {
-      final userData = supabase
+  void getBlockUsers() async {
+    if (supabase.auth.currentUser != null) {
+      final List blockUsers = await supabase
           .from('profiles')
-          .select('*')
-          .eq('id', _searchResult[i]['user_id'])
-          .single();
-      _userAvatar.add(userData);
-      // print(_userAvatar);
+          .select('block_users')
+          .eq('id', supabase.auth.currentUser!.id);
+      _blockUsersList = blockUsers[0]['block_users'];
     }
   }
 
@@ -84,6 +82,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
+    getBlockUsers();
     if (widget.searchText != null) {
       searchTextController.text = widget.searchText!;
       hotPlaceSearch(widget.searchText!);
@@ -320,7 +319,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               searchText: widget.searchText != null
                                   ? widget.searchText!
                                   : searchTextController.text,
-                              // yourLikePostsData: widget.yourLikePostsData,
+                              blockUsers: _blockUsersList,
                             ),
                 ],
               ),

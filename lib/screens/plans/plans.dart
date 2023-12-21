@@ -38,6 +38,7 @@ class _PlansScreenState extends State<PlansScreen> {
 
   Future<void> getPosts() async {
     if (!mounted) return;
+
     posts = await supabase
         .from('posts')
         .select('*')
@@ -46,6 +47,7 @@ class _PlansScreenState extends State<PlansScreen> {
     setState(() {
       posts = posts;
     });
+
   }
 
   Future getUserInfo(int index) async {

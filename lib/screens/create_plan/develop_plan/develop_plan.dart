@@ -145,9 +145,9 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
       });
       // print('planList: $planList');
     } catch (e) {
-      print(e);
-      print('error-planList: $planList');
-      print("something went wrong");
+      debugPrint(e.toString());
+      debugPrint('error-planList: $planList');
+      debugPrint("something went wrong");
       return;
     }
     if (!mounted) return;
@@ -155,7 +155,6 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
     setState(() {
       isLoading = false;
     });
-    // TODO asdfjalsdjfskdfsdf!!!!!! 投稿した後のpopの挙動を見る(まあ大丈夫そうだよ)
     Navigator.pop(context); // これ消すかみる
 
     Navigator.of(context).pushAndRemoveUntil(
