@@ -144,7 +144,7 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
   @override
   Widget build(BuildContext context) {
     // width and height
-    // final width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
     return WillPopScope(
@@ -217,8 +217,10 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           foregroundColor: Colors.black,
+          toolbarHeight: width >= 500 ? 100 : null,
           actions: [
-            Padding(
+            Container(
+              margin: EdgeInsets.only(top: width >= 500 ? 20 : 0),
               padding: const EdgeInsets.only(right: 20),
               child: SizedBox(
                 width: 120,
@@ -238,7 +240,6 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                                 width: 350,
                                 height: 400,
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text(
                                       'Pick Main Photo 🥚',
@@ -258,72 +259,72 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                                         color: Color(0xff797979),
                                       ),
                                     ),
-                                    const SizedBox(
-                                      height: 30,
-                                    ),
-                                    Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        Container(
-                                          width: 320,
-                                          height: 190,
-                                          clipBehavior:
-                                              Clip.antiAliasWithSaveLayer,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            color: const Color(0xffEEEEEE),
-                                          ),
-                                          child: image != null
-                                              ? DecoratedBox(
-                                                  decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                      fit: BoxFit.cover,
-                                                      image: FileImage(image!),
+                                    const SizedBox(height: 30),
+                                    Center(
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Container(
+                                            width: 320,
+                                            height: 190,
+                                            clipBehavior:
+                                                Clip.antiAliasWithSaveLayer,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: const Color(0xffEEEEEE),
+                                            ),
+                                            child: image != null
+                                                ? DecoratedBox(
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                        fit: BoxFit.cover,
+                                                        image:
+                                                            FileImage(image!),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : const DecoratedBox(
+                                                    decoration: BoxDecoration(
+                                                      color: Color(0xffEEEEEE),
                                                     ),
                                                   ),
-                                                )
-                                              : const DecoratedBox(
-                                                  decoration: BoxDecoration(
-                                                    color: Color(0xffEEEEEE),
-                                                  ),
-                                                ),
-                                        ),
-                                        IconButton(
-                                          onPressed: () async {
-                                            try {
-                                              final ImagePicker picker =
-                                                  ImagePicker();
-                                              // Pick an image.
-                                              final XFile? image =
-                                                  await picker.pickImage(
-                                                source: ImageSource.gallery,
-                                              );
-                                              if (image == null) {
-                                                return;
-                                              }
-                                              final imagePath =
-                                                  File(image.path);
-
-                                              setState(() {
-                                                this.image = imagePath;
-                                              });
-                                            } on Exception {
-                                              print(
-                                                  'something went wrong with picking image');
-                                            }
-                                          },
-                                          icon: const Icon(
-                                            Icons.photo,
-                                            size: 40,
                                           ),
-                                        ),
-                                      ],
+                                          IconButton(
+                                            onPressed: () async {
+                                              try {
+                                                final ImagePicker picker =
+                                                    ImagePicker();
+                                                // Pick an image.
+                                                final XFile? image =
+                                                    await picker.pickImage(
+                                                  source: ImageSource.gallery,
+                                                );
+                                                if (image == null) {
+                                                  return;
+                                                }
+                                                final imagePath =
+                                                    File(image.path);
+                                                setState(() {
+                                                  this.image = imagePath;
+                                                });
+                                              } on Exception {
+                                                debugPrint(
+                                                    'something went wrong with picking image');
+                                              }
+                                            },
+                                            icon: const Icon(
+                                              Icons.photo,
+                                              size: 40,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                     Center(
                                       child: Container(
                                         margin: const EdgeInsets.only(
-                                            top: 30, left: 0), // left: 140
+                                            top: 30), // left: 140
                                         width: 130,
                                         height: 60,
                                         child: isLoading
@@ -429,7 +430,7 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
               // print(newPlanList);
               if (newPlanMap != null) {
                 setState(() {
-                  print(newPlanMap);
+                  debugPrint(newPlanMap);
                   // planListにAddPlanScreenから渡されたMapを追加
                   // List.filledでは全ての要素を埋めて、一つになってしまう（値を追加したらインデックスを指定しても全てのリストに追加されてしまう）ので、List.generateで対応
                   planList[_selectedDayIndex].add(newPlanMap);
@@ -528,8 +529,11 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                         children: [
                           Center(
                             child: SizedBox(
-                              width: 250,
-                              height: 250,
+                              width: width >= 500
+                                  ? width * 0.35
+                                  : width * 0.5, // 250
+                              height:
+                                  width >= 1000 ? 270 : height * 0.28, // 250
                               child: Image.asset(
                                 'assets/images/nothing-plan.png',
                                 fit: BoxFit.cover,

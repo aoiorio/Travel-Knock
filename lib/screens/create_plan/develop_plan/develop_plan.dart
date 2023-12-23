@@ -251,11 +251,11 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           foregroundColor: Colors.black,
-          toolbarHeight: width >= 500 ? 100 :null,
+          toolbarHeight: width >= 500 ? 100 : null,
           actions: [
             Container(
-              margin: EdgeInsets.only(top: width >= 500 ? 20: 0),
-              padding: const EdgeInsets.only(right: 20, ),
+              margin: EdgeInsets.only(top: width >= 500 ? 20 : 0),
+              padding: const EdgeInsets.only(right: 20),
               child: SizedBox(
                 width: 120,
                 height: 40,
@@ -274,7 +274,6 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                 width: 350,
                                 height: 400,
                                 child: Column(
-                                  // crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     const Text(
                                       'Pick Main Photo 🥚',
@@ -347,7 +346,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                                   this.image = imagePath;
                                                 });
                                               } on Exception {
-                                                print(
+                                                debugPrint(
                                                     'something went wrong with picking image');
                                               }
                                             },
@@ -361,9 +360,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                     ),
                                     Center(
                                       child: Container(
-                                        margin: const EdgeInsets.only(
-                                          top: 30,
-                                        ),
+                                        margin: const EdgeInsets.only(top: 30),
                                         width: 130,
                                         height: 60,
                                         child: isLoading
@@ -390,7 +387,8 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                                   setState(() {
                                                     // planListの要素数が一緒ではなかったらtrueを返すそしてsnackbarを表示させる
                                                     // planListの中の要素が一つでも空だったらtrueを返す
-                                                    print(planList);
+                                                    debugPrint(
+                                                        planList.toString());
                                                     for (var plan in planList) {
                                                       planListLengths
                                                           .add(plan.length);
@@ -421,8 +419,8 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                                                       return;
                                                     }
                                                   } on Exception catch (e) {
-                                                    print(e);
-                                                    print(
+                                                    debugPrint(e.toString());
+                                                    debugPrint(
                                                         'Something went wrong with picking image at develop_plan.dart');
                                                     return;
                                                   }
@@ -491,7 +489,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
               // print(newPlanList);
               if (newPlanMap != null) {
                 setState(() {
-                  print(newPlanMap);
+                  debugPrint(newPlanMap);
                   // planListにAddPlanScreenから渡されたMapを追加
                   // List.filledでは全ての要素を埋めて、一つになってしまう（値を追加したらインデックスを指定しても全てのリストに追加されてしまう）ので、List.generateで対応
                   planList[_selectedDayIndex].add(newPlanMap);
@@ -535,7 +533,6 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                   height: 40,
                   child: ElevatedButton(
                     onPressed: () {
-                      print('Pressed Edit Button!');
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {

@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:rive/rive.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:travelknock/components/custom_widgets/dialogs/report_dialog.dart';
 
 // screens import
 import '../../../screens/login/login.dart';
@@ -187,7 +188,6 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                     style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
                   ),
                 ),
-                // Image.asset('assets/images/no-search-results.PNG'),
                 Transform.scale(
                   scale: 1.3,
                   child: SizedBox(
@@ -198,8 +198,6 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                     child: Image.asset('assets/images/no-search-results.PNG'),
                   ),
                 ),
-                // bottom: height * 0.04,
-                // top: height * 0.3,
               ],
             ),
           )
@@ -384,8 +382,6 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                                 ),
                               ),
                               Positioned(
-                                // left: _ifSyntax(index) ? width * 0.27 : 0,
-                                // right: _ifSyntax(index) ? 0 : width * 0.6,
                                 right: _ifSyntax(index)
                                     ? width >= 500
                                         ? width >= 1000
@@ -435,6 +431,17 @@ class _SearchResultsCardState extends State<SearchResultsCard> {
                                           ),
                                         ),
                                 ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.warning_amber_outlined),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => ReportDialog(
+                                        ownerId: widget.searchResult[index]
+                                            ['user_id']),
+                                  );
+                                },
                               ),
                             ],
                           ),
