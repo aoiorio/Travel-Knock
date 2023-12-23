@@ -47,6 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .select('*')
         .eq('id', supabase.auth.currentUser!.id)
         .single();
+    if (!mounted) return;
     setState(() {
       _yourAvatar = yourData['avatar_url'] ??
           "https://pmmgjywnzshfclavyeix.supabase.co/storage/v1/object/public/posts/30fe397b-74c1-4c5c-b037-a586917b3b42/grey-icon.jpg";
