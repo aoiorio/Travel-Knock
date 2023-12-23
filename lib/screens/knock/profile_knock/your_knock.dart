@@ -60,6 +60,7 @@ class _YourKnockState extends State<YourKnock> {
           .from('profiles')
           .select('*')
           .eq('id', _requestedKnock[i]['owner_id']);
+      if (!mounted) return;
       setState(() {
         // print('users!! $_userData');
         ownerData.add(_userData);

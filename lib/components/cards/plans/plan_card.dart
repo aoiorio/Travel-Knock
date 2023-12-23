@@ -7,6 +7,9 @@ import 'package:rive/rive.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/custom_clippers/post_title_card_clipper.dart';
+import 'package:travelknock/components/custom_widgets/dialogs/block_dialog.dart';
+import 'package:travelknock/components/custom_widgets/dialogs/report_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // screens import
 import '../../../screens/login/login.dart';
@@ -115,7 +118,8 @@ class _PlanCardState extends State<PlanCard> {
                 transitionDuration: const Duration(milliseconds: 400),
                 middleColor: Colors.transparent,
                 closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                  return _blockUsersList.contains(widget.posts[index]['user_id'])
+                  return _blockUsersList
+                          .contains(widget.posts[index]['user_id'])
                       ? const SizedBox()
                       : GestureDetector(
                           onTap: openContainer,
@@ -218,6 +222,7 @@ class _PlanCardState extends State<PlanCard> {
                                     ),
                                   ),
                                 ),
+
                                 Padding(
                                   padding: EdgeInsets.only(
                                       top: width >= 1000 || width >= 500
@@ -338,6 +343,46 @@ class _PlanCardState extends State<PlanCard> {
                                           ],
                                         ),
                                       ],
+                                    ),
+                                  ),
+                                ),
+                                // report UIs
+                                Positioned(
+                                  left: width >= 500
+                                      ? width * 0.115
+                                      : width >= 1000
+                                          ? width * 0.115
+                                          : width * 0.11, // 43
+                                  right: width * 0.75, // 300
+                                  top: width >= 1000
+                                      ? height * 0.4
+                                      : width >= 500
+                                          ? height * 0.28
+                                          : height * 0.25, // 210
+                                  child: Container(
+                                    width: 30,
+                                    height: 60,
+                                    decoration: const BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(20),
+                                        bottomRight: Radius.circular(20),
+                                      ),
+                                      color: Color(0xfff2f2f2),
+                                    ),
+                                    child: IconButton(
+                                      icon: const Icon(
+                                          Icons.warning_amber_outlined),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => ReportDialog(
+                                              ownerId: widget.posts[index]
+                                                  ['user_id']),
+                                        );
+                                      },
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      hoverColor: Colors.transparent,
                                     ),
                                   ),
                                 ),

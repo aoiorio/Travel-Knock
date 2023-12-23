@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:travelknock/components/custom_widgets/dialogs/report_dialog.dart';
 
 // screens import
 import '../../login/login.dart';
@@ -125,7 +126,19 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
         centerTitle: false,
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) =>
+                    ReportDialog(ownerId: widget.requestedUserId),
+              );
+            },
+            icon: const Icon(Icons.warning_amber_outlined),
+          ),
+        ],
       ),
       extendBodyBehindAppBar: true,
       body: SingleChildScrollView(

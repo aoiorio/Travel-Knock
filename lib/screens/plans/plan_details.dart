@@ -8,6 +8,7 @@ import 'package:rive/rive.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/custom_widgets/dialogs/block_dialog.dart';
+import 'package:travelknock/components/custom_widgets/dialogs/report_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // screens import
@@ -158,122 +159,6 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
     }
   }
 
-  void _openReportForm() async {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text(
-            'How to report? 📮',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              // color: Color(0xff4B4B5A),
-            ),
-          ),
-          content: const Text(
-              "You can report problems here. If you contacted me, I'll reply you in 24 hours."),
-          actionsAlignment: MainAxisAlignment.center,
-          actionsOverflowAlignment: OverflowBarAlignment.center,
-          actions: [
-            Center(
-              child: Container(
-                width: width * 0.6,
-                height: 50,
-                margin: EdgeInsets.only(bottom: height * 0.03),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xff4B4B5A),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: const Text(
-                    'Report',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  onPressed: () async {
-                    final url =
-                        Uri.parse("https://forms.gle/1fgkioJvsF3uWkpf7");
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url);
-                    } else {
-                      throw 'Could not Launch $url';
-                    }
-                  },
-                ),
-              ),
-            ),
-            // const SizedBox(width: 30),
-            Center(
-              child: Container(
-                width: width * 0.6,
-                height: 50,
-                margin: EdgeInsets.only(bottom: height * 0.03),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xfff2f2f2),
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: const Text(
-                    'Contact me',
-                    style: TextStyle(color: Color(0xff4B4B5A), fontSize: 16),
-                  ),
-                  onPressed: () async {
-                    final url = Uri.parse("https://twitter.com/atomu170");
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url);
-                    } else {
-                      throw 'Could not Launch $url';
-                    }
-                  },
-                ),
-              ),
-            ),
-            Container(
-              width: width * 0.6,
-              height: 50,
-              margin: EdgeInsets.only(bottom: height * 0.03),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 131, 82, 78),
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: const Text(
-                  'Block this user',
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 237, 237, 237),
-                    fontSize: 16,
-                  ),
-                ),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                  showDialog(
-                    context: context,
-                    builder: (context) =>
-                        BlockDialog(blockUserId: widget.ownerId),
-                  );
-                },
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   void initState() {
     super.initState();
@@ -357,21 +242,22 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
           elevation: 0,
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.black,
-          actions: supabase.auth.currentUser == null
-              ? null
-              : widget.ownerId == supabase.auth.currentUser!.id
-                  ? null
-                  : [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: IconButton(
-                          onPressed: _openReportForm,
-                          icon: const Icon(
-                            Icons.warning_amber_outlined,
-                          ),
-                        ),
-                      ),
-                    ],
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: IconButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => ReportDialog(ownerId: widget.ownerId),
+                  );
+                },
+                icon: const Icon(
+                  Icons.warning_amber_outlined,
+                ),
+              ),
+            ),
+          ],
         ),
         extendBodyBehindAppBar: true,
         body: SingleChildScrollView(

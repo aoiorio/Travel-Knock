@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:travelknock/components/custom_widgets/dialogs/block_dialog.dart';
+import 'package:travelknock/components/custom_widgets/dialogs/report_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../screens/plans/plan_details.dart';
 
@@ -148,8 +151,8 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                       padding: EdgeInsets.all(8.0),
                       child: Text(
                         'No plans yet!',
-                        style:
-                            TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 16),
                       ),
                     ),
                   ],
@@ -164,8 +167,9 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                       itemBuilder: (context, index) {
                         return Card(
                           margin: EdgeInsets.only(
-                              right: width * 0.05,
-                              left: width * 0.05), // 20, 20
+                            right: width * 0.05,
+                            left: width * 0.05,
+                          ), // 20, 20
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30)),
                           child: ClipRRect(
@@ -266,6 +270,29 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                                         ),
                                       ),
                                     ],
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: width >= 1000
+                                      ? height * 0.42
+                                      : width >= 500
+                                          ? height * 0.28
+                                          : height * 0.27,
+                                  right: width >= 1000
+                                      ? width * 0.85
+                                      : width >= 500 ? width * 0.83 :width * 0.77,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => ReportDialog(
+                                          ownerId: _posts[index % _posts.length]
+                                              ['user_id'],
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(
+                                        Icons.warning_amber_outlined),
                                   ),
                                 )
                               ],
