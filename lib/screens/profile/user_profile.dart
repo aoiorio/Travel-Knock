@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travelknock/components/custom_widgets/dialogs/block_dialog.dart';
-import 'package:travelknock/components/custom_widgets/dialogs/report_dialog.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 // screens import
 import '../knock/knock_plan.dart';
@@ -15,6 +12,7 @@ import '../login/login.dart';
 // component import
 import '../../components/cards/plans/plan_card.dart';
 import '../tabs.dart';
+import 'package:travelknock/components/custom_widgets/dialogs/report_dialog.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen(
@@ -134,7 +132,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         'post_id': _userPostsList[index]['id'],
       });
     } catch (e) {
-      print('error: $e');
+      debugPrint('error: $e');
     }
   }
 
