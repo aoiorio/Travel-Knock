@@ -7,9 +7,7 @@ import 'package:rive/rive.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/custom_clippers/post_title_card_clipper.dart';
-import 'package:travelknock/components/custom_widgets/dialogs/block_dialog.dart';
 import 'package:travelknock/components/custom_widgets/dialogs/report_dialog.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 // screens import
 import '../../../screens/login/login.dart';

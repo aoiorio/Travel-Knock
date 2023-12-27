@@ -26,91 +26,99 @@ class _BlockDialogState extends State<BlockDialog> {
     final height = MediaQuery.of(context).size.height;
     final userId = supabase.auth.currentUser!.id;
 
-    return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: const Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Do you want to BLOCK?',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              // color: Color(0xff4B4B5A),
+    return userId == widget.blockUserId
+        ? AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                title: const Text("You can't block yourself"),
+          )
+        : AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: const Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Do you want to BLOCK?',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    // color: Color(0xff4B4B5A),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+              ],
             ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-        ],
-      ),
-      actionsAlignment: MainAxisAlignment.center,
-      actions: [
-        Container(
-          width: 100,
-          height: 50,
-          margin: EdgeInsets.only(bottom: height * 0.02),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 131, 82, 78),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-            child: const Text('Block'),
-            onPressed: () async {
-              final List blockUsers = await supabase
-                  .from("profiles")
-                  .select('block_users')
-                  .eq('id', userId);
-              // もし、前にブロックしたユーザーだったら何もしない
-              if (blockUsers[0]['block_users'].contains(widget.blockUserId)) {
-                return;
-              }
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              Container(
+                width: 100,
+                height: 50,
+                margin: EdgeInsets.only(bottom: height * 0.02),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 131, 82, 78),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: const Text('Block'),
+                  onPressed: () async {
+                    final List blockUsers = await supabase
+                        .from("profiles")
+                        .select('block_users')
+                        .eq('id', userId);
+                    // もし、前にブロックしたユーザーだったら何もしない
+                    if (blockUsers[0]['block_users']
+                        .contains(widget.blockUserId)) {
+                      return;
+                    }
 
-              setState(() {
-                blockUsers[0]['block_users'].add(widget.blockUserId);
-              });
+                    setState(() {
+                      blockUsers[0]['block_users'].add(widget.blockUserId);
+                    });
 
-              await supabase.from("profiles").update(
-                {'block_users': blockUsers[0]['block_users']},
-              ).eq('id', userId);
+                    await supabase.from("profiles").update(
+                      {'block_users': blockUsers[0]['block_users']},
+                    ).eq('id', userId);
 
-              if (!mounted) return;
+                    if (!mounted) return;
 
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const TabsScreen(initialPageIndex: 0);
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const TabsScreen(initialPageIndex: 0);
+                        },
+                      ),
+                      (route) => false,
+                    );
                   },
                 ),
-                (route) => false,
-              );
-            },
-          ),
-        ),
-        const SizedBox(width: 20),
-        Container(
-          width: 100,
-          height: 50,
-          margin: EdgeInsets.only(bottom: height * 0.02),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xfff2f2f2),
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
               ),
-            ),
-            child: const Text('Cancel'),
-            onPressed: () async {
-              Navigator.of(context).pop();
-            },
-          ),
-        )
-      ],
-    );
+              const SizedBox(width: 20),
+              Container(
+                width: 100,
+                height: 50,
+                margin: EdgeInsets.only(bottom: height * 0.02),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xfff2f2f2),
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: const Text('Cancel'),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              )
+            ],
+          );
   }
 }

@@ -42,6 +42,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
   List<bool> _isSelected = [true, false];
   var _selectedDayIndex = 0;
   List<List<Map<String, String>>> planList = [];
+  // List planList = [];
   File? image;
   String? _imageUrl;
   var isLoading = false;
@@ -52,7 +53,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
   void initState() {
     super.initState();
     final dayNumber = widget.dayNumber;
-    print("dayNumber: $dayNumber");
+    debugPrint("dayNumber: $dayNumber");
     // 最初に選択されているDayは1日目というのを設定している
     _isSelected = List.generate(int.parse(widget.dayNumber), (index) {
       if (index == 0) {
@@ -70,7 +71,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
           try {
             planList[i] = widget.planList![i];
           } on RangeError {
-            print('please ignore a range error!');
+            debugPrint('please ignore a range error!');
             break;
           }
         }
@@ -489,7 +490,6 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
               // print(newPlanList);
               if (newPlanMap != null) {
                 setState(() {
-                  debugPrint(newPlanMap);
                   // planListにAddPlanScreenから渡されたMapを追加
                   // List.filledでは全ての要素を埋めて、一つになってしまう（値を追加したらインデックスを指定しても全てのリストに追加されてしまう）ので、List.generateで対応
                   planList[_selectedDayIndex].add(newPlanMap);

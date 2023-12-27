@@ -87,37 +87,34 @@ class ReportDialog extends StatelessWidget {
         ),
         supabase.auth.currentUser == null
             ? const SizedBox()
-            : ownerId == supabase.auth.currentUser!.id
-                ? const SizedBox()
-                : Container(
-                    width: width * 0.6,
-                    height: 50,
-                    margin: EdgeInsets.only(bottom: height * 0.03),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 131, 82, 78),
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      child: const Text(
-                        'Block this user',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 237, 237, 237),
-                          fontSize: 16,
-                        ),
-                      ),
-                      onPressed: () async {
-                        Navigator.of(context).pop();
-                        showDialog(
-                          context: context,
-                          builder: (context) =>
-                              BlockDialog(blockUserId: ownerId),
-                        );
-                      },
+            : Container(
+                width: width * 0.6,
+                height: 50,
+                margin: EdgeInsets.only(bottom: height * 0.03),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 131, 82, 78),
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
+                  child: const Text(
+                    'Block this user',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 237, 237, 237),
+                      fontSize: 16,
+                    ),
+                  ),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    showDialog(
+                      context: context,
+                      builder: (context) => BlockDialog(blockUserId: ownerId),
+                    );
+                  },
+                ),
+              ),
       ],
     );
   }
