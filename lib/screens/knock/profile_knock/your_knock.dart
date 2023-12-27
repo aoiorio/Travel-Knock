@@ -85,7 +85,7 @@ class _YourKnockState extends State<YourKnock> {
           i++) {
         _yourLikePostsData.add(yourLikePostsData[i]['post_id']);
       }
-      print('_yourLikePostsData$_yourLikePostsData');
+      debugPrint('_yourLikePostsData$_yourLikePostsData');
     });
   }
 

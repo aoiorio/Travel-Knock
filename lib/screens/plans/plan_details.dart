@@ -7,9 +7,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:rive/rive.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travelknock/components/custom_widgets/dialogs/block_dialog.dart';
-import 'package:travelknock/components/custom_widgets/dialogs/report_dialog.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 // screens import
 import '../knock/knock_plan.dart';
@@ -20,6 +17,7 @@ import '../tabs.dart';
 // components import
 import '../../components/cards/plans/plan_details_card.dart';
 import '../../components/custom_clippers/details_clipper.dart';
+import 'package:travelknock/components/custom_widgets/dialogs/report_dialog.dart';
 
 class PlanDetailsScreen extends StatefulWidget {
   const PlanDetailsScreen({
@@ -155,7 +153,7 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
         'post_id': widget.posts['id'],
       });
     } catch (e) {
-      print('error: $e');
+      debugPrint('error: $e');
     }
   }
 
@@ -529,7 +527,6 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
               ),
               // Days
               Container(
-                // TODO transparent the padding and change left's padding to 35
                 padding: const EdgeInsets.only(top: 40, left: 25, right: 10),
                 height: 100,
                 color: Colors.transparent, // it doesn't work
