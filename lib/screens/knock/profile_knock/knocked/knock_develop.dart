@@ -430,7 +430,6 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
               // print(newPlanList);
               if (newPlanMap != null) {
                 setState(() {
-                  debugPrint(newPlanMap);
                   // planListにAddPlanScreenから渡されたMapを追加
                   // List.filledでは全ての要素を埋めて、一つになってしまう（値を追加したらインデックスを指定しても全てのリストに追加されてしまう）ので、List.generateで対応
                   planList[_selectedDayIndex].add(newPlanMap);
