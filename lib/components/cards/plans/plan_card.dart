@@ -170,7 +170,7 @@ class _PlanCardState extends State<PlanCard> {
                                         borderRadius: BorderRadius.circular(30),
                                         color: const Color(0xffF2F2F2),
                                       ),
-                                      position: DecorationPosition.background,
+                                      // position: DecorationPosition.foreground,
                                       child: Center(
                                         child: Row(
                                           children: [
@@ -182,7 +182,7 @@ class _PlanCardState extends State<PlanCard> {
                                                     Alignment.bottomRight,
                                                 children: [
                                                   SizedBox(
-                                                    width: 70,
+                                                    width: 60,
                                                     height: 70,
                                                     child: RiveAnimation.asset(
                                                       widget.yourLikePostsData
@@ -195,7 +195,7 @@ class _PlanCardState extends State<PlanCard> {
                                                   ),
                                                   // RIVEのロゴを隠すWidget
                                                   const SizedBox(
-                                                    width: 27,
+                                                    width: 22,
                                                     height: 5,
                                                     child: DecoratedBox(
                                                       decoration: BoxDecoration(

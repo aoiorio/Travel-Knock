@@ -485,7 +485,7 @@ class _PlansScreenState extends State<PlansScreen> {
                 yourLikePostsData: _yourLikePostsData,
                 showKnockPlan: showKnockPlan,
                 getUserInfo: getUserInfo,
-                listViewTopPadding: 60,
+                listViewTopPadding: 40,
               ),
             ],
           ),
