@@ -130,28 +130,34 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             initialDateTime: initialDateTime,
             mode: CupertinoDatePickerMode.time,
             onDateTimeChanged: (value) {
-              setState(() {
-                if (time == 'startTime') {
+              if (time == 'startTime') {
+                setState(() {
                   startTime = value;
                   stringStartTimeMinute = startTime.minute.toString();
-                  // 分のところにうしろに0がついていたら0を増やす
-                  if (stringStartTimeMinute.length == 1) {
+                });
+                // 分のところにうしろに0がついていたら0を増やす
+                if (stringStartTimeMinute.length == 1) {
+                  setState(() {
                     stringStartTimeMinute = '0$stringStartTimeMinute';
-                  }
-                  // 最終的にこの値がstartTimeになる
-                  stringStartTime = '${startTime.hour}:$stringStartTimeMinute';
-                  // print(stringStartTime);
-                } else {
+                  });
+                }
+                // 最終的にこの値がstartTimeになる
+                stringStartTime = '${startTime.hour}:$stringStartTimeMinute';
+                // print(stringStartTime);
+              } else {
+                setState(() {
                   endTime = value;
                   stringEndTimeMinute = endTime.minute.toString();
-                  // 分のところにうしろに0がついていたら0を増やす
-                  if (stringEndTimeMinute.length == 1) {
+                });
+                // 分のところにうしろに0がついていたら0を増やす
+                if (stringEndTimeMinute.length == 1) {
+                  setState(() {
                     stringEndTimeMinute = '0$stringEndTimeMinute';
-                  }
-                  // 最終的にこの値がendTimeになる
-                  stringEndTime = '${endTime.hour}:$stringEndTimeMinute';
+                  });
                 }
-              });
+                // 最終的にこの値がendTimeになる
+                stringEndTime = '${endTime.hour}:$stringEndTimeMinute';
+              }
             },
           ),
         );
@@ -160,16 +166,20 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    // width and height
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
-
+  void initState() {
+    super.initState();
     // 現在時刻に0を増やす作戦
     if (DateTime.now().minute.toString().length == 1) {
       stringStartTime = '${DateTime.now().hour}:0${DateTime.now().minute}';
       stringEndTime = '${DateTime.now().hour}:0${DateTime.now().minute}';
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // width and height
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
