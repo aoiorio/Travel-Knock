@@ -4,13 +4,13 @@
 <div align="center">
 <br>
 <!-- Logo -->
-<img src="readme_images/Travel-Knock-Logo-grey.png" width=450>
+<img src="readme_images/Travel-Knock-Logo-grey.png" width=550>
 <br></br>
 <!-- Download buttons -->
 <a href="https://apps.apple.com/jp/app/travel-knock/id6474373726">
-    <img src="readme_images/Download-on-the-app-store.png" width=120>
+    <img src="readme_images/Download-on-the-app-store.png" width=200>
 </a>
-<img src="readme_images/Google-Play-Badge-Logo.png" width=135>
+<img src="readme_images/Google-Play-Badge-Logo.png" width=220>
 
 <!-- Badges -->
 <br></br>
@@ -74,8 +74,6 @@ So I made up my mind to develop this app to introduce my recommended spots and r
 <br></br>
 
 ## 🪿 Features
-
-<br>
 
 - 📮 Post
     *   Post your traveling plans to other users.
@@ -215,10 +213,9 @@ So I made up my mind to develop this app to introduce my recommended spots and r
     - GoogleとAppleで手軽にサインイン
     - サインインなしでも、投稿を閲覧・検索
 <br></br>
-
-
 </div></details>
-<br></br>
+
+<br>
 
 ## 🦭 Ranking Of Passion
 - **🥉 [Animation Fire](https://docs.google.com/presentation/d/1YYfqCNl7ALHgNOgeP_mIqig88LjKXmcXP1rr94V81ZY/edit#slide=id.g2aec5ccfca7_0_4)**
