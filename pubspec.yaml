@@ -35,32 +35,40 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  flutter_custom_clippers: ^2.1.0
-  supabase: ^1.11.8
-  flutter_appauth: ^6.0.2
-  supabase_flutter: ^1.10.25
+  # UI
+  carousel_slider: ^4.2.1 # for using carousel slide
+  cached_network_image: ^3.3.0 # for keeping images in the cache directory
+  shimmer: ^3.0.0 # for adding shimmer effect while users waiting
+  smooth_page_indicator: ^1.1.0 # For using customizable animated page indicator
+  flutter_custom_clippers: ^2.1.0 # for clipping various custom shapes
+
+
+  # animation
+  rive: ^0.12.3 # for implementing moving fire
+  animations: ^2.0.8 # for using animation transitions
+
+  # backend
+  supabase_flutter: ^1.10.25 # for connecting supabase
+  supabase: ^1.11.8 # for using connecting supabase
+  sign_in_with_apple: ^5.0.0 # for using Apple auth
+  flutter_appauth: ^6.0.2 # for using Google auth
+  shared_preferences: ^2.2.2 # for implementing anonymous sign in
+  flutter_dotenv: ^5.1.0 # for hiding API key
+
+  # others
+  image_picker: ^1.0.4 # for selecting images from iPhone
+  url_launcher: ^6.1.14 # for launching a URL
+  flutter_launcher_icons: ^0.13.1 # for adding icon
+  flutter_native_splash: ^2.3.8 # for using splash screen
+
+
+
+
   crypto: ^3.0.3
   flutter_riverpod: ^2.4.3
-  image_picker: ^1.0.4
-  carousel_slider: ^4.2.1
-  calendar_date_picker2: ^0.5.3
-  animations: ^2.0.8
-  cached_network_image: ^3.3.0
-  shimmer: ^3.0.0
-  smooth_page_indicator: ^1.1.0
-  rive: ^0.12.3
-  url_launcher: ^6.1.14
-  flutter_dotenv: ^5.1.0
-  shared_preferences: ^2.2.2
-  flutter_zoom_drawer: ^3.1.1
-  flutter_launcher_icons: ^0.13.1
   freezed_annotation: ^2.4.1
   freezed: ^2.4.5
   build_runner: ^2.4.7
-  json_annotation: ^4.8.1
-  json_serializable: ^6.7.1
-  flutter_native_splash: ^2.3.8
-  sign_in_with_apple: ^5.0.0
 
 # icon
 flutter_icons:
