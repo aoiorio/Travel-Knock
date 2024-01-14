@@ -8,9 +8,9 @@
 <br></br>
 <!-- Download buttons -->
 <a href="https://apps.apple.com/jp/app/travel-knock/id6474373726">
-    <img src="readme_images/Download-on-the-app-store.png" width=200>
+    <img src="readme_images/Download-on-the-app-store.png" width=160>
 </a>
-<img src="readme_images/Google-Play-Badge-Logo.png" width=220>
+<img src="readme_images/Google-Play-Badge-Logo.png" width=180>
 
 <!-- Badges -->
 <br></br>
