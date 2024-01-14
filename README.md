@@ -7,8 +7,8 @@
 <img src="readme_images/Travel-Knock-Logo-grey.png" width=450>
 <br></br>
 <!-- Download buttons -->
-<a href="https://apps.apple.com/jp/app/travel-knock/id6474373726"><img src="readme_images/download-on-the-app-store.png" width=120></a>
-<img src="readme_images/Google_Play-Badge-Logo.wine_.png" width=135>
+<a href="https://apps.apple.com/jp/app/travel-knock/id6474373726"><img src="readme_images/Download-on-the-app-store.png" width=120></a>
+<img src="readme_images/Google-Play-Badge-Logo.png" width=135>
 
 <!-- Badges -->
 <br></br>
@@ -263,7 +263,7 @@ So I made up my mind to develop this app to introduce my recommended spots and r
 
 ## 🌭 Screens
 <!-- Mockups -->
-![Main View](readme_images/travel-knock-mockup-letgo.png)
+![Main View](readme_images/Travel-knock-mockup.png)
 <br></br>
 
 <!-- List of Mockups -->
