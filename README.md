@@ -7,7 +7,9 @@
 <img src="readme_images/Travel-Knock-Logo-grey.png" width=450>
 <br></br>
 <!-- Download buttons -->
-<a href="https://apps.apple.com/jp/app/travel-knock/id6474373726"><img src="readme_images/Download-on-the-app-store.png" width=120></a>
+<a href="https://apps.apple.com/jp/app/travel-knock/id6474373726">
+    <img src="readme_images/Download-on-the-app-store.png" width=120>
+</a>
 <img src="readme_images/Google-Play-Badge-Logo.png" width=135>
 
 <!-- Badges -->
@@ -269,7 +271,7 @@ So I made up my mind to develop this app to introduce my recommended spots and r
 <!-- List of Mockups -->
 |Login Screen|Plans Screen|Plan Details Screen|Knock Screen|
 |---|---|---|---|
-|<img src="readme_images/LoginScreen.png" width=200 style="border-radius:15px">|<img src="readme_images/PlansScreen.PNG" width=200 style="border-radius:15px">|<img src="readme_images/PlanDetailsScreen.PNG" width=200  style="border-radius:15px">|<img src="readme_images/KnockScreen.PNG" width=200  style="border-radius:15px">|
+|<img src="readme_images/LoginScreen.PNG" width=200 style="border-radius:15px">|<img src="readme_images/PlansScreen.PNG" width=200 style="border-radius:15px">|<img src="readme_images/PlanDetailsScreen.PNG" width=200  style="border-radius:15px">|<img src="readme_images/KnockScreen.PNG" width=200  style="border-radius:15px">|
 
 <br></br>
 
