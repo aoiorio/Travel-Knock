@@ -300,7 +300,7 @@ So I made up my mind to develop this app to introduce my recommended spots and r
 
 ## 🍦 Screen Transition Diagram
 <img src="readme_images/Travel-Knock-Transition.png" style="border-radius:15px">
-<br></br>
+<br>
 
 ## ⛏️ ER Diagram
 
