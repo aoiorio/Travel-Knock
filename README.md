@@ -269,7 +269,7 @@ So I made up my mind to develop this app to introduce my recommended spots and r
 <!-- List of Mockups -->
 |Login Screen|Plans Screen|Plan Details Screen|Knock Screen|
 |---|---|---|---|
-|<img src="LoginScreen.png" width=200 style="border-radius:15px">|<img src="readme_images/PlansScreen.PNG" width=200 style="border-radius:15px">|<img src="readme_images/PlanDetailsScreen.PNG" width=200  style="border-radius:15px">|<img src="readme_images/KnockScreen.PNG" width=200  style="border-radius:15px">|
+|<img src="readme_images/LoginScreen.png" width=200 style="border-radius:15px">|<img src="readme_images/PlansScreen.PNG" width=200 style="border-radius:15px">|<img src="readme_images/PlanDetailsScreen.PNG" width=200  style="border-radius:15px">|<img src="readme_images/KnockScreen.PNG" width=200  style="border-radius:15px">|
 
 <br></br>
 
