@@ -185,6 +185,15 @@ class _TabsScreenState extends State<TabsScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  const SizedBox(
+                    width: 300,
+                    child: Text(
+                      "You can't use other features of Travel Knock without sign in.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.w500, color: Color(0xff4B4B5A)),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

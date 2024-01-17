@@ -1,21 +1,18 @@
 name: AppStoreConnectCI
 
 on:
-main branch
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   #
   # Build for iOS
   #
   build_iOS: # jobに名前をつけられる
-
     name: Build for iOS # GitHubに表示されるジョブの名前
     runs-on: macos-latest # ジョブを実行するマシーンの種類
 
     steps: #一連のタスク
-
       # チェックアウト
       - name: Checks-out my repository # step に名前をつけられる なくてもいい
         uses: actions/checkout@v2
@@ -34,7 +31,8 @@ jobs:
 
       # 証明書の生成
       - name: Import Provisioning Profile
-        run: | # 複数行の run を書きたい場合はこうする 以下、Provisioning Profilesを置くべきディレクトリにデコードしている
+        run:
+          | # 複数行の run を書きたい場合はこうする 以下、Provisioning Profilesを置くべきディレクトリにデコードしている
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           echo -n ${{ secrets.PROVISIONING_PROFILE }} | base64 -d > ~/Library/MobileDevice/Provisioning\ Profiles/distribution.mobileprovision
 

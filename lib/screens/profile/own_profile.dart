@@ -10,6 +10,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/screens/knock/profile_knock/knocked/knocked.dart';
 import 'package:travelknock/screens/knock/profile_knock/your_knock.dart';
 import 'package:travelknock/screens/profile/setting_profile/setting_profile.dart';
+import 'package:travelknock/screens/profile/user_profile.dart';
+import 'package:travelknock/screens/tabs.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../preferences/preferences_manager.dart';
 import '../create_plan/new_plan.dart';
@@ -61,8 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // sign out するときにダイアログを表示する関数
   void signOut() async {
     if (!mounted) return;
-    // width and height
-    // final width = MediaQuery.of(context).size.width;
+    // height
     final height = MediaQuery.of(context).size.height;
 
     showDialog(
@@ -116,7 +117,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   await PreferencesManager().setIsLogin(isLogin: false);
 
                   if (context.mounted) {
-                    // Navigator.of(context)
                     // Sign Out後にホームに戻れてしまうからpushAndRemoveUntilで解消
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
@@ -157,8 +157,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void deleteUser() async {
     if (!mounted) return;
-    // width and height
-    // final width = MediaQuery.of(context).size.width;
+    // height
     final height = MediaQuery.of(context).size.height;
 
     showDialog(
@@ -227,7 +226,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // signOutを挟まないと次の遷移がまだsignInしていると勘違いして動作しない
                     await supabase.auth.signOut();
                     if (context.mounted) {
-                      // Navigator.of(context)
                       // Sign Out後にホームに戻れてしまうからpushAndRemoveUntilで解消
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
@@ -320,13 +318,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       await Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (context) {
-                            return const LoginScreen();
+                            return const TabsScreen(initialPageIndex: 1,);
                           },
                         ),
                       );
                     }
                   } on Exception {
-                    print('anonymous');
+                    debugPrint('anonymous');
                   }
                   try {
                     if (!mounted) return;
@@ -338,7 +336,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     );
                   } on Exception {
-                    print('anonymous!');
+                    debugPrint('anonymous!');
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -388,7 +386,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 40, // 40 height * 0.045
                       child: ElevatedButton(
                         onPressed: () {
-                          // print('Pressed Profile Edit Button!');
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -444,15 +441,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                        Container(
-                          width: 120, // 120  width * 0.31
-                          height: 120, // 120
-                          decoration:
-                              const BoxDecoration(shape: BoxShape.circle),
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          child: CachedNetworkImage(
-                            imageUrl: _yourAvatar,
-                            fit: BoxFit.cover,
+                        GestureDetector(
+                          onTap: () {
+                            // userId
+                            final userId = supabase.auth.currentUser!.id;
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                              // yourLikePostDataは自分だから空のリストを渡す（自分にいいねできないから）
+                              return UserProfileScreen(userId: userId, yourLikePostsData: const [],);
+                            },));
+                          },
+                          child: Container(
+                            width: 120, // 120  width * 0.31
+                            height: 120, // 120
+                            decoration:
+                                const BoxDecoration(shape: BoxShape.circle),
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            child: CachedNetworkImage(
+                              imageUrl: _yourAvatar,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ],
@@ -546,7 +553,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               left: width >= 500 ? 60 : 30,
                               right: width >= 500 ? 60 : 30,
                             ), // left: 30, right: 30
-                            // margin: const EdgeInsets.only(right: 10),
                             child: ElevatedButton(
                               onPressed: () {
                                 if (!mounted) return;

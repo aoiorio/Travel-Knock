@@ -509,7 +509,7 @@ class _KnockDevelopScreen extends State<KnockDevelopScreen> {
                       children: List.generate(
                         int.parse(widget.period),
                         (index) => Text(
-                          '${index + 1} Day',
+                          'Day ${index + 1}',
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,

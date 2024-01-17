@@ -602,7 +602,7 @@ class _DevelopPlanScreenState extends State<DevelopPlanScreen> {
                       children: List.generate(
                         int.parse(widget.dayNumber),
                         (index) => Text(
-                          '${index + 1} Day',
+                          'Day ${index + 1}',
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
