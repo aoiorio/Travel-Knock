@@ -1,7 +1,6 @@
 name: AppStoreConnectCI
 
 on:
-main branch
   push:
     branches: [ main ]
 
