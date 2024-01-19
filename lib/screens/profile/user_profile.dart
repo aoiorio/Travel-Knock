@@ -7,7 +7,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 // screens import
 import '../knock/knock_plan.dart';
-import '../login/login.dart';
 
 // component import
 import '../../components/cards/plans/plan_card.dart';
@@ -38,10 +37,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   bool _isLoading = false;
   List _yourLikePostsData = [];
 
-  void goBackToLoginScreen() {
+  void goToNoSignInScreen() {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
       builder: (context) {
-        return const LoginScreen();
+        return const TabsScreen(initialPageIndex: 1,);
       },
     ));
   }
@@ -390,7 +389,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       )
                     : ElevatedButton(
                         onPressed: supabase.auth.currentUser == null
-                            ? goBackToLoginScreen
+                            ? goToNoSignInScreen
                             : supabase.auth.currentUser!.id == widget.userId
                                 ? null
                                 : showKnockPlan,

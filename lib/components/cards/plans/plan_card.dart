@@ -8,6 +8,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/custom_clippers/post_title_card_clipper.dart';
 import 'package:travelknock/components/custom_widgets/dialogs/report_dialog.dart';
+import 'package:travelknock/screens/tabs.dart';
 
 // screens import
 import '../../../screens/login/login.dart';
@@ -61,11 +62,11 @@ class _PlanCardState extends State<PlanCard> {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
-    void goBackToLoginScreen() {
+    void goToNoSignInScreen() {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) {
-            return const LoginScreen();
+            return const TabsScreen(initialPageIndex: 1,);
           },
         ),
       );
@@ -296,7 +297,7 @@ class _PlanCardState extends State<PlanCard> {
                                                     onPressed: supabase.auth
                                                                 .currentUser ==
                                                             null
-                                                        ? goBackToLoginScreen
+                                                        ? goToNoSignInScreen
                                                         : supabase
                                                                     .auth
                                                                     .currentUser!
