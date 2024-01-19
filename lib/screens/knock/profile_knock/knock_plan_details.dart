@@ -9,7 +9,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/components/custom_widgets/dialogs/report_dialog.dart';
 
 // screens import
-import '../../login/login.dart';
 import '../../profile/user_profile.dart';
 
 // components import
@@ -51,14 +50,6 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
   List plans = [];
   var heroTag = '';
   final supabase = Supabase.instance.client;
-
-  void goBackToLoginScreen() {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (context) {
-        return const LoginScreen();
-      },
-    ));
-  }
 
   // 受け取ったリストの中のリストのマップが文字列になっていたからマップに変える関数
   List<List<Map<String, dynamic>>> convertStringToMap(
@@ -415,7 +406,7 @@ class _KnockPlanDetailsScreenState extends State<KnockPlanDetailsScreen> {
                     children: List.generate(
                       widget.planDetailsList.length,
                       (index) => Text(
-                        '${index + 1} Day',
+                        'Day ${index + 1}',
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,

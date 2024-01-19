@@ -10,7 +10,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 // screens import
 import '../knock/knock_plan.dart';
-import '../login/login.dart';
 import '../profile/user_profile.dart';
 import '../tabs.dart';
 
@@ -56,10 +55,12 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
   final _likedPost = [];
   // final String _ownerId = '';
 
-  void goBackToLoginScreen() {
+  void goToNoSignInScreen() {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
       builder: (context) {
-        return const LoginScreen();
+        return const TabsScreen(
+          initialPageIndex: 1,
+        );
       },
     ));
   }
@@ -414,7 +415,7 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                             height: 60,
                             child: ElevatedButton(
                               onPressed: supabase.auth.currentUser == null
-                                  ? goBackToLoginScreen
+                                  ? goToNoSignInScreen
                                   : supabase.auth.currentUser!.id ==
                                           widget.ownerId
                                       ? null
@@ -560,7 +561,7 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                       children: List.generate(
                         widget.planDetailsList.length,
                         (index) => Text(
-                          '${index + 1} Day',
+                          'Day ${index + 1}',
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,

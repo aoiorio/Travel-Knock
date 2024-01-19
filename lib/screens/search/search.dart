@@ -95,7 +95,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
     return WillPopScope(
       onWillPop: () {
-        Navigator.of(context).pushReplacement(
+        // SearchScreenの戻るボタンを押すと、左にスライドで戻れない仕様
+        Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (context) {
               return const TabsScreen(
@@ -103,6 +104,7 @@ class _SearchScreenState extends State<SearchScreen> {
               );
             },
           ),
+          (route) => false
         );
         return Future.value(false);
       },
