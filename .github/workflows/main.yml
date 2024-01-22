@@ -43,7 +43,7 @@ jobs:
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
           PROVISIONING_PROFILE_PATH=$RUNNER_TEMP/build_pp.mobileprovision
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-          EXPORT_OPTIONS_PATH="${{ github.workspace }}/app/ios/Runner/ExportOptions.plist"
+          EXPORT_OPTIONS_PATH="${{ github.workspace }}/ios/Runner/ExportOptions.plist"
 
           # import certificate, provisioning profile and export options from secrets
           echo -n "$P12_DISTRIBUTION_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
