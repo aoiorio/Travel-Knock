@@ -65,7 +65,7 @@ jobs:
     
       - name: 📝 Edit pubspec version
         run: |
-          sed -Ei "" "s/^version: (.*)/version: ${{ inputs.new-pubspec-version }}/" app/pubspec.yaml
+          sed -Ei "" "s/^version: (.*)/version: ${{ inputs.new-pubspec-version }}/" pubspec.yaml
       - name: ⚙️ Setup Flutter
         uses: subosito/flutter-action@v2
         with:
