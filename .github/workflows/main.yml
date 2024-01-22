@@ -62,13 +62,14 @@ jobs:
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PROVISIONING_PROFILE_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+    
       - name: 📝 Edit pubspec version
         run: |
           sed -Ei "" "s/^version: (.*)/version: ${{ inputs.new-pubspec-version }}/" app/pubspec.yaml
       - name: ⚙️ Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.7.0"
+          flutter-version: '3.7.0'
           channel: 'stable'
           cache: true
         id: flutter
@@ -88,7 +89,7 @@ jobs:
       - name: 🍏🚀 Deploy to App Store (Testflight)
         uses: apple-actions/upload-testflight-build@v1
         with:
-          app-path: ${{ github.workspace }}/app/build/ios/ipa/flutter_ci_cd_demo.ipa
+          app-path: ${{ github.workspace }}/build/ios/ipa/flutter_ci_cd_demo.ipa
           issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           api-key-id: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           api-private-key: ${{ secrets.APP_STORE_CONNECT_API_PRIVATE_KEY }}
@@ -101,3 +102,4 @@ jobs:
           randomNumber=$(($RANDOM%$arrayLength))
           pickedSentence=${sentences[$randomNumber]}
           echo "picked_sentence=$pickedSentence" >> $GITHUB_OUTPUT
+
