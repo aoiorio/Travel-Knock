@@ -75,7 +75,7 @@ jobs:
         id: flutter
       - name: 🍏📦 Create iOS ${{ inputs.short-environment-name }} appbundle release
         run: |
-          pushd app/
+          pushd .
           flutter build ipa \
             --release \
             --flavor ${{ inputs.flavor }} \
