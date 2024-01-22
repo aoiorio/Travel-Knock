@@ -49,3 +49,55 @@ jobs:
           echo -n "$P12_DISTRIBUTION_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
           echo -n "$DISTRIBUTION_PROVISIONING_PROFILE_BASE64" | base64 --decode -o $PROVISIONING_PROFILE_PATH
           echo -n "$EXPORT_OPTIONS_BASE64" | base64 --decode -o $EXPORT_OPTIONS_PATH
+          
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          # import certificate to keychain
+          security import $CERTIFICATE_PATH -P "$P12_DISTRIBUTION_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+          # apply provisioning profile
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PROVISIONING_PROFILE_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+      - name: 📝 Edit pubspec version
+        run: |
+          sed -Ei "" "s/^version: (.*)/version: ${{ inputs.new-pubspec-version }}/" app/pubspec.yaml
+      - name: ⚙️ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.7.0"
+          channel: 'stable'
+          cache: true
+        id: flutter
+      - name: ⚙️ Setup Melos
+        uses: bluefireteam/melos-action@v2
+      - name: ⚙️ Install dependencies for all packages
+        run: melos build:pub_get:all
+      - name: 🍏📦 Create iOS ${{ inputs.short-environment-name }} appbundle release
+        run: |
+          pushd app/
+          flutter build ipa \
+            --release \
+            --flavor ${{ inputs.flavor }} \
+            --target lib/main_${{ inputs.flavor }}.dart \
+            --export-options-plist=ios/Runner/ExportOptions.plist
+          popd
+      - name: 🍏🚀 Deploy to App Store (Testflight)
+        uses: apple-actions/upload-testflight-build@v1
+        with:
+          app-path: ${{ github.workspace }}/app/build/ios/ipa/flutter_ci_cd_demo.ipa
+          issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          api-key-id: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          api-private-key: ${{ secrets.APP_STORE_CONNECT_API_PRIVATE_KEY }}
+      - name: 💬 Pick a random success catchphrase
+        if: success()
+        id: success_catchphrase
+        run: |
+          sentences=('🤩 AMAZING !' 'Woop woop 🎉' 'Oh wow 😮' '😎 Yeahhhh !' '📣 Amazing announcement !' '📢 Your attention please...' '👏 Great work !' '🍾 Champagne !' '🙌 High five !' '🥳 Time to celebrate !')
+          arrayLength=${#sentences[@]}
+          randomNumber=$(($RANDOM%$arrayLength))
+          pickedSentence=${sentences[$randomNumber]}
+          echo "picked_sentence=$pickedSentence" >> $GITHUB_OUTPUT
