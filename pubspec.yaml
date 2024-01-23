@@ -137,7 +137,7 @@ flutter:
     - assets/rivs/rive-black-like-fire.riv
     - assets/rivs/rive-red-fire.riv
     # ANON key
-    - .env
+    # - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
