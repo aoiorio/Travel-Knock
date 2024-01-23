@@ -49,7 +49,7 @@ jobs:
           echo -n "$P12_DISTRIBUTION_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
           echo -n "$DISTRIBUTION_PROVISIONING_PROFILE_BASE64" | base64 --decode -o $PROVISIONING_PROFILE_PATH
           echo -n "$EXPORT_OPTIONS_BASE64" | base64 --decode -o $EXPORT_OPTIONS_PATH
-          
+
           # create temporary keychain
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
@@ -62,16 +62,16 @@ jobs:
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PROVISIONING_PROFILE_PATH ~/Library/MobileDevice/Provisioning\ Profiles
-    
+
       - name: 📝 Edit pubspec version
         run: |
           sed -Ei "" "s/^version: (.*)/version: ${{ inputs.new-pubspec-version }}/" pubspec.yaml
-          
+
       - name: 📝 Edit pubspec version
         uses: dart-lang/setup-dart@v1
         with:
           sdk: 3.2.3
-          
+
       - name: ⚙️ Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -80,20 +80,28 @@ jobs:
           cache: true
         id: flutter
 
+      # Create env file by using secrets. so The error won't occur
+      - name: 🤓 Create dot env file
+        run: |
+          touch .env
+          echo "SUPABASE_ANON=${{ secrets.SUPABASE_ANON }}" >> .env
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
+          echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> .env
+
       # Install your project's dependencies
       - run: flutter pub get
 
       # Build and sign the ipa using a single flutter command
       - name: 🌞 Building IPA
         run: flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions.plist
-          
-      # Collect the file and upload as artifact         
+
+      # Collect the file and upload as artifact
       - name: collect ipa artifacts
         uses: actions/upload-artifact@v2
         with:
-         name: release-ipa
-         # Path to the release files
-         path: build/ios/ipa/*.ipa
+          name: release-ipa
+          # Path to the release files
+          path: build/ios/ipa/*.ipa
 
       # Important! Cleanup: remove the certificate and provisioning profile from the runner!
       - name: Clean up keychain and provisioning profile
