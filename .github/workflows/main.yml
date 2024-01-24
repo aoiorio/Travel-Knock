@@ -80,6 +80,15 @@ jobs:
           cache: true
         id: flutter
 
+      # alternative: flutter build ipa --export-options-plist=ExportOptions.plist --build-number ${GITHUB_RUN_NUMBER}
+      - name: 🌵 Set up cider for incrementing build number and change version
+        run: flutter pub global activate cider
+      - name: Set up build number
+        run: |
+          VERSION=$(cider version)
+          BUILD_NUMBER=$(git rev-list HEAD --count)
+          cider version $VERSION+$BUILD_NUMBER
+
       # Create env file by using secrets. so The error won't occur
       - name: 🤓 Create dot env file
         run: |
@@ -110,13 +119,12 @@ jobs:
           security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
           rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
 
-      - name: 🍏🚀 Deploy to App Store (Testflight)
-        uses: apple-actions/upload-testflight-build@v1
-        with:
-          app-path: ${{ github.workspace }}/build/ios/ipa/flutter_ci_cd_demo.ipa
-          issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          api-key-id: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          api-private-key: ${{ secrets.APP_STORE_CONNECT_API_PRIVATE_KEY }}
+      # 🧠 UPLOAD TO THE APP STORE CONNECT
+      - name: 🦷 Deploy to App Store
+        run: |
+          xcrun altool --validate-app -f ".build/ios/ipa/*.ipa" -t ios -u ${{ secrets.APPLE_LOGIN_ID }} -p ${{ secrets.APPLE_LOGIN_PASSWORD }}
+          xcrun altool --upload-app -f ".build/ios/ipa/*.ipa" -t ios -u ${{ secrets.APPLE_LOGIN_ID }} -p ${{ secrets.APPLE_LOGIN_PASSWORD }}
+
       - name: 💬 Pick a random success catchphrase
         if: success()
         id: success_catchphrase
