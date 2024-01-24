@@ -110,7 +110,7 @@ jobs:
 
       # 🧠 UPLOAD TO THE APP STORE CONNECT
       - name: 🦷 Deploy to App Store
-        run: xcrun altool --upload-app -f "${{ github.workspace }}/build/ios/ipa/travelknock.ipa" -t ios -u ${{ secrets.APPLE_LOGIN_ID }} -p ${{ secrets.APPLE_LOGIN_PASSWORD }}
+        run: xcrun altool --upload-app -f "${{ github.workspace }}/build/ios/ipa/travelknock.ipa" -t ios --apiKey ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }} --apiIssuer ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }} --verbose
 
       - name: 💬 Pick a random success catchphrase
         if: success()
