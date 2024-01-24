@@ -103,8 +103,8 @@ jobs:
           ruby-version: '2.6.10' # Not needed with a .ruby-version file
 
       - name: change xcconfig
-        run: ruby "${{ github.workspace }}.github/change_xcconfig.rb"
-
+        run: /Users/runner/hostedtoolcache/Ruby/2.6.10/x64/bin/ruby "${{ github.workspace }}.github/change_xcconfig.rb"
+        
       # Install your project's dependencies
       - run: flutter pub get
 
