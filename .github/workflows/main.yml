@@ -103,9 +103,9 @@ jobs:
       - name: 🦷 Deploy to App Store
         id: upload
         env:
-          APPLE_APPLE_ID: ${{ secrets.APPLE_LOGIN_ID }}
-          APPLE_APP_PASS: ${{ secrets.APPLE_LOGIN_PASSWORD }}
-        run: xcrun altool --upload-app --type ios -f "$IPA_PATH" -u "$APPLE_APPLE_ID" -p "$APPLE_APP_PASS"
+          APPLE_LOGIN_ID: ${{ secrets.APPLE_LOGIN_ID }}
+          APPLE_LOGIN_PASSWORD: ${{ secrets.APPLE_LOGIN_PASSWORD }}
+        run: xcrun altool --upload-app --type ios -f "$IPA_PATH" -u "$APPLE_LOGIN_ID" -p "$APPLE_LOGIN_PASSWORD"
       
       # - name: 🦷 Deploy to App Store
       #   run: xcrun altool --upload-app -f "./build/ios/ipa/travelknock.ipa" -t ios -u ${{ secrets.APPLE_LOGIN_ID }} -p ${{ secrets.APPLE_LOGIN_PASSWORD }}
