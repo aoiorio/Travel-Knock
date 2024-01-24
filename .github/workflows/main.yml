@@ -98,13 +98,9 @@ jobs:
           VAR_APP_VERSION=`echo $VAR | grep -o -E "([0-9]+\.){1}[0-9]+(\.[0-9]+)?" | head -n1`
           echo "::set-output name=APP_VERSION::${VAR_APP_VERSION}"
 
-      - uses: ruby/setup-ruby@ec02537da5712d66d4d50a0f33b7eb52773b5ed1
-        with:
-          ruby-version: '2.6.10' # Not needed with a .ruby-version file
-
       - name: change xcconfig
-        run: /Users/runner/hostedtoolcache/Ruby/2.6.10/x64/bin/ruby "${{ github.workspace }}.github/change_xcconfig.rb"
-        
+        run: perl "${{ github.workspace }}/.github/change_xcconfig.pl"
+
       # Install your project's dependencies
       - run: flutter pub get
 
