@@ -104,7 +104,7 @@ jobs:
 
       - name: change xcconfig
         run: /Users/runner/hostedtoolcache/Ruby/2.6.10/x64/bin/ruby "${{ github.workspace }}.github/change_xcconfig.rb"
-
+        
       # Install your project's dependencies
       - run: flutter pub get
 
