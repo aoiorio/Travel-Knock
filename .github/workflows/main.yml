@@ -113,8 +113,8 @@ jobs:
       # 🧠 UPLOAD TO THE APP STORE CONNECT
       - name: 🦷 Deploy to App Store
         run: |
-          xcrun altool --validate-app -f ".build/ios/ipa/*.ipa" -t ios -u ${{ secrets.APPLE_LOGIN_ID }} -p ${{ secrets.APPLE_LOGIN_PASSWORD }}
-          xcrun altool --upload-app -f ".build/ios/ipa/*.ipa" -t ios -u ${{ secrets.APPLE_LOGIN_ID }} -p ${{ secrets.APPLE_LOGIN_PASSWORD }}
+          xcrun altool --validate-app -f ".build/ios/ipa/travelknock.ipa" -t ios -u ${{ secrets.APPLE_LOGIN_ID }} -p ${{ secrets.APPLE_LOGIN_PASSWORD }}
+          xcrun altool --upload-app -f ".build/ios/ipa/travelknock.ipa" -t ios -u ${{ secrets.APPLE_LOGIN_ID }} -p ${{ secrets.APPLE_LOGIN_PASSWORD }}
 
       - name: 💬 Pick a random success catchphrase
         if: success()
