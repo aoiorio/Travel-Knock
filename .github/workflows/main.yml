@@ -80,15 +80,6 @@ jobs:
           cache: true
         id: flutter
 
-      # alternative: flutter build ipa --export-options-plist=ExportOptions.plist --build-number ${GITHUB_RUN_NUMBER}
-      - name: 🌵 Set up cider for incrementing build number and change version
-        run: flutter pub global activate cider
-      - name: Set up build number
-        run: |
-          VERSION=$(cider version)
-          BUILD_NUMBER=$(git rev-list HEAD --count)
-          cider version $VERSION+$BUILD_NUMBER
-
       # Create env file by using secrets. so The error won't occur
       - name: 🤓 Create dot env file
         run: |
@@ -102,7 +93,7 @@ jobs:
 
       # Build and sign the ipa using a single flutter command
       - name: 🌞 Building IPA
-        run: flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions.plist
+        run: flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions.plist --build-number ${GITHUB_RUN_NUMBER}
 
       # Collect the file and upload as artifact
       - name: collect ipa artifacts
