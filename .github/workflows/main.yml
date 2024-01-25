@@ -1,8 +1,8 @@
-name: 📦🚀 Build & deploy iOS app for an environment
+name: 🍎📦🚀 Build & deploy iOS app to the App Store Connect
 
 on:
   push:
-    branches: [main]
+    branches: [main, create/ci, develop]
   workflow_call:
     inputs:
       environment-name:
@@ -23,7 +23,7 @@ on:
 
 jobs:
   deployIos:
-    name: 🍏📦🚀 Build & deploy iOS ${{ inputs.short-environment-name }} release
+    name: 🍏📦🚀 Build & deploy iOS to the App Store Connect ${{ inputs.short-environment-name }} release
     runs-on: macos-latest
     environment:
       name: ${{ inputs.environment-name }}
@@ -63,16 +63,12 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PROVISIONING_PROFILE_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
-      - name: 📝 Edit pubspec version
-        run: |
-          sed -Ei "" "s/^version: (.*)/version: ${{ inputs.new-pubspec-version }}/" pubspec.yaml
-
-      - name: 📝 Edit pubspec version
+      - name: ⚙️🎯 Setup Dart
         uses: dart-lang/setup-dart@v1
         with:
           sdk: 3.2.3
 
-      - name: ⚙️ Setup Flutter
+      - name: ⚙️🍃 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.16.3'
@@ -81,14 +77,14 @@ jobs:
         id: flutter
 
       # Create env file by using secrets. so The error won't occur
-      - name: 🤓 Create dot env file
+      - name: 🤓 Create .env file for Supabase API keys
         run: |
           touch .env
           echo "SUPABASE_ANON=${{ secrets.SUPABASE_ANON }}" >> .env
           echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
           echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> .env
 
-      - name: update app version
+      - name: ✏️ Change the app version
         run: |
           # Versionの更新
           perl -i -pe 's/^(version:)(\s+\d+\.\d+\.)(\d+)(\+)(\d+)$/$1.$2.($3+1).$4.$5/e' pubspec.yaml
@@ -98,21 +94,18 @@ jobs:
           VAR_APP_VERSION=`echo $VAR | grep -o -E "([0-9]+\.){1}[0-9]+(\.[0-9]+)?" | head -n1`
           echo "::set-output name=APP_VERSION::${VAR_APP_VERSION}"
 
-      - name: change xcconfig
-        run: perl "${{ github.workspace }}/.github/change_xcconfig.pl"
-
       # Install your project's dependencies
       - run: flutter pub get
 
       # Build and sign the ipa using a single flutter command
-      - name: 🌞 Building IPA
-        run: flutter build ipa --export-options-plist=ios/Runner/ExportOptions.plist --build-number ${GITHUB_RUN_NUMBER}
+      - name: 🌞 Build IPA
+        run: flutter build ipa --export-options-plist=ios/Runner/ExportOptions.plist --build-number ${GITHUB_RUN_NUMBER} --dart-define=FLUTTER_BUILD_NAME=${{secrets.APP_VERSION}}
 
-      - name: 🥞 Gen p8
-        run: echo '${{ secrets.AUTH_P8 }}' | base64 -d > private_keys/AuthKey_YRKS9K5635.p8
+      - name: 🥞 Generate p8 for Apple private_keys
+        run: echo '${{ secrets.AUTH_P8 }}' | base64 -d > ${{ github.workspace }}/private_keys/AuthKey_YRKS9K5635.p8
 
       # 🧠 UPLOAD TO THE APP STORE CONNECT
-      - name: 🦷 Deploy to App Store
+      - name: 🦷 Deploy to the App Store
         run: xcrun altool --upload-app -f "${{ github.workspace }}/build/ios/ipa/travelknock.ipa" -t ios --apiKey ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }} --apiIssuer ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }} --verbose
 
       - name: 💬 Pick a random success catchphrase
