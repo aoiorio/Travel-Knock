@@ -102,7 +102,7 @@ jobs:
         run: flutter build ipa --export-options-plist=ios/Runner/ExportOptions.plist --build-number ${GITHUB_RUN_NUMBER} --dart-define=FLUTTER_BUILD_NAME=${{secrets.APP_VERSION}}
 
       - name: 🥞 Generate p8 for Apple private_keys
-        run: echo '${{ secrets.AUTH_P8 }}' | base64 -d > private_keys/AuthKey_YRKS9K5635.p8
+        run: echo '${{ secrets.AUTH_P8 }}' | base64 -d > ${{ github.workspace }}/private_keys/AuthKey_YRKS9K5635.p8
 
       # 🧠 UPLOAD TO THE APP STORE CONNECT
       - name: 🦷 Deploy to the App Store
