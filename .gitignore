@@ -45,3 +45,6 @@ app.*.map.json
 
 # env
 .env
+
+# private_keys
+private_keys/*.p8
