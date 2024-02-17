@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-
 // library import
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:travelknock/screens/introduction/introduction.dart';
 import 'dart:math';
 
 // screens import
@@ -167,6 +167,8 @@ class _TabsScreenState extends State<TabsScreen> {
           ),
         ),
       ),
+
+      // if the user is anonymous and he/she visited ProfileScreen;
       body: supabase.auth.currentUser == null && _currentPageIndex == 1
           ? Center(
               child: Column(
@@ -190,7 +192,9 @@ class _TabsScreenState extends State<TabsScreen> {
                     child: Text(
                       "You can't use other features of Travel Knock without sign in.",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontWeight: FontWeight.w500, color: Color(0xff4B4B5A)),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xff4B4B5A)),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -258,6 +262,7 @@ class _TabsScreenState extends State<TabsScreen> {
                 ],
               ),
             )
+            // : const IntroductionScreens()
           : _pages[_currentPageIndex],
     );
   }

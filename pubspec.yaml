@@ -66,6 +66,8 @@ dependencies:
   freezed: ^2.4.5
   build_runner: ^2.4.7
   cider: ^0.2.5 # for auto incrementing build number and change version
+  flutter_intro: ^3.0.4 # for creating intro features
+  introduction_screen: ^3.1.12 # for creating intro features
 
 # icon
 flutter_icons:
