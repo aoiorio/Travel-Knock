@@ -48,3 +48,7 @@ app.*.map.json
 
 # private_keys
 private_keys/*.p8
+
+# hide windows folder
+/windows
+/web
