@@ -11,7 +11,6 @@ import 'package:travelknock/components/custom_widgets/dialogs/report_dialog.dart
 import 'package:travelknock/screens/tabs.dart';
 
 // screens import
-import '../../../screens/login/login.dart';
 import '../../../screens/plans/plan_details.dart';
 
 class PlanCard extends StatefulWidget {

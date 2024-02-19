@@ -18,33 +18,42 @@ class IntroductionScreens extends StatefulWidget {
 }
 
 class _IntroductionScreenState extends State<IntroductionScreens> {
-
   @override
   Widget build(BuildContext context) {
     const bodyStyle = TextStyle(fontSize: 19.0);
 
     const pageDecoration = PageDecoration(
-      titleTextStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
-      bodyTextStyle: bodyStyle,
-      bodyAlignment: Alignment.center,
-    );
+        titleTextStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
+        bodyTextStyle: bodyStyle,
+        bodyPadding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+        bodyAlignment: Alignment.center,
+        imageAlignment: Alignment.center,
+        imagePadding: EdgeInsets.only(top: 100));
+
     return IntroductionScreen(
       pages: [
         PageViewModel(
-          title: "Enjoy your \n infinity journey with \n Travel Knock!",
-          body: "Welcome to Travel Knock.",
-          image: Container(
-            margin: const EdgeInsets.only(top: 100),
-            child: Image.asset(
+            title: "Enjoy your \n infinity journey!",
+            body:
+                "Welcome to Travel Knock. \n You can travel around the world from this app.",
+            image: Image.asset(
               "assets/images/no-your-knock.PNG",
               height: 600,
             ),
-          ),
-          decoration: pageDecoration,
-        ),
+            decoration: pageDecoration
+            // const PageDecoration(
+            //   imagePadding: EdgeInsets.only(top: 100),
+            //   titleTextStyle: TextStyle(
+            //     fontSize: 30,
+            //     fontWeight: FontWeight.w700,
+            //   ),
+            //   bodyTextStyle: bodyStyle,
+            // ),
+            // decoration: pageDecoration,
+            ),
         PageViewModel(
-          title: "Explore the Features",
-          body: "Our app has many great features.",
+          title: "Post your travel plans",
+          body: "You can post your own plans with images and texts. \n ",
           image: Center(
             child: Image.asset(
               "assets/images/no-posts.PNG",
@@ -54,7 +63,9 @@ class _IntroductionScreenState extends State<IntroductionScreens> {
         ),
         PageViewModel(
           title: "Tap cloud icon to set your icon",
-          body: "",
+          body: "If you want to design your profile, you can do it.",
+          image: Image.asset("assets/images/Bottom-Navigation-Bar.png"),
+          decoration: pageDecoration,
         ),
       ],
       // Actions to perform when the introduction screens are completed
@@ -66,7 +77,7 @@ class _IntroductionScreenState extends State<IntroductionScreens> {
             );
           },
         ), (route) => false);
-        // sharedPreferencesにisLoginというkeyに保存する
+        // sharedPreferencesにisIntroducedというkeyに保存する
         await IntroductionManager().setIsIntroduced(isIntroduced: true);
       },
       done: const Text(
@@ -77,6 +88,8 @@ class _IntroductionScreenState extends State<IntroductionScreens> {
           fontSize: 20,
         ),
       ),
+      doneStyle: ButtonStyle(),
+      // doneStyle: ElevatedButton.styleFrom(disabledBackgroundColor: Color(0xffD9D9D9)),
       showSkipButton: true,
       showBackButton: false,
       //rtl: true, // Display as right-to-left
