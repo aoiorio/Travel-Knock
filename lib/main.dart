@@ -82,8 +82,5 @@ class _MyAppState extends State<MyApp> {
                 ? const TabsScreen(initialPageIndex: 0)
                 : const IntroductionScreens()
             : const LoginScreen());
-
-    // for debug
-    // _isLogin ? const IntroductionScreens() : const LoginScreen());
   }
 }

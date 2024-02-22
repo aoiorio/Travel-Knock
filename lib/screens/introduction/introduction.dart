@@ -67,7 +67,6 @@ class _IntroductionScreenState extends State<IntroductionScreens> {
             fit: BoxFit.cover,
             alignment: Alignment.center,
           ),
-          // ),
           decoration: pageDecoration,
         ),
       ],
@@ -80,7 +79,7 @@ class _IntroductionScreenState extends State<IntroductionScreens> {
             );
           },
         ), (route) => false);
-        // sharedPreferencesにisIntroducedというkeyに保存する!!!!
+        // sharedPreferencesにisIntroducedというkeyに保存する!
         await IntroductionManager().setIsIntroduced(isIntroduced: true);
       },
       done: const Text(
@@ -97,7 +96,6 @@ class _IntroductionScreenState extends State<IntroductionScreens> {
           ElevatedButton.styleFrom(foregroundColor: const Color(0xffD9D9D9)),
       skipStyle:
           ElevatedButton.styleFrom(foregroundColor: const Color(0xffD9D9D9)),
-      // doneStyle: ElevatedButton.styleFrom(disabledBackgroundColor: Color(0xffD9D9D9)),
       showSkipButton: true,
       showBackButton: false,
       //rtl: true, // Display as right-to-left
