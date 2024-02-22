@@ -53,6 +53,7 @@ class _MyAppState extends State<MyApp> {
 
   void getIsIntroduced() async {
     bool isIntroduced = await IntroductionManager().isIntroduced;
+    if (!mounted) return;
     setState(() {
       _isIntroduced = isIntroduced;
     });
@@ -76,17 +77,13 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         // shared preferencesを使って取得したisLoginがtrueだったらTabsScreenが初期画面になる
         // if the user checked introduction screen, next time it'll never show to them
-        home: 
-        // _isLogin
-        //     ? _isIntroduced
-        //         ? const TabsScreen(initialPageIndex: 0)
-        //         : const IntroductionScreens()
-        //     : const LoginScreen()
+        home: _isLogin
+            ? _isIntroduced
+                ? const TabsScreen(initialPageIndex: 0)
+                : const IntroductionScreens()
+            : const LoginScreen());
 
-        // for debug
-        _isLogin
-            ? const IntroductionScreens()
-            : const LoginScreen()
-        );
+    // for debug
+    // _isLogin ? const IntroductionScreens() : const LoginScreen());
   }
 }

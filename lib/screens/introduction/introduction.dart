@@ -20,40 +20,37 @@ class IntroductionScreens extends StatefulWidget {
 class _IntroductionScreenState extends State<IntroductionScreens> {
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     const bodyStyle = TextStyle(fontSize: 19.0);
 
     const pageDecoration = PageDecoration(
-        titleTextStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
-        bodyTextStyle: bodyStyle,
-        bodyPadding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
-        bodyAlignment: Alignment.center,
-        imageAlignment: Alignment.center,
-        imagePadding: EdgeInsets.only(top: 100));
+      titleTextStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
+      bodyTextStyle: bodyStyle,
+      bodyPadding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+      bodyAlignment: Alignment.center,
+      imageAlignment: Alignment.center,
+      imagePadding: EdgeInsets.only(top: 100),
+    );
 
     return IntroductionScreen(
       pages: [
         PageViewModel(
-            title: "Enjoy your \n infinity journey!",
-            body:
-                "Welcome to Travel Knock. \n You can travel around the world from this app.",
-            image: Image.asset(
-              "assets/images/no-your-knock.PNG",
-              height: 600,
-            ),
-            decoration: pageDecoration
-            // const PageDecoration(
-            //   imagePadding: EdgeInsets.only(top: 100),
-            //   titleTextStyle: TextStyle(
-            //     fontSize: 30,
-            //     fontWeight: FontWeight.w700,
-            //   ),
-            //   bodyTextStyle: bodyStyle,
-            // ),
-            // decoration: pageDecoration,
-            ),
+          // if users' device is ipad or mac, it won't be new line.
+          title: width >= 1000
+              ? "Enjoy your infinity journey!"
+              : "Enjoy your \n infinity journey!",
+          body:
+              "Welcome to Travel Knock. \n You can travel around the world from this app.",
+          image: Image.asset(
+            "assets/images/no-your-knock.PNG",
+            height: 600,
+          ),
+          decoration: pageDecoration,
+        ),
         PageViewModel(
           title: "Post your travel plans",
-          body: "You can post your own plans with images and texts. \n ",
+          body:
+              "You can post your own plans with images and texts. \n And let's find your new voyage.",
           image: Center(
             child: Image.asset(
               "assets/images/no-posts.PNG",
@@ -63,8 +60,14 @@ class _IntroductionScreenState extends State<IntroductionScreens> {
         ),
         PageViewModel(
           title: "Tap cloud icon to set your icon",
-          body: "If you want to design your profile, you can do it.",
-          image: Image.asset("assets/images/Bottom-Navigation-Bar.png"),
+          body:
+              "If you want to design your profile, you can do it. \n Someone will be impressed \n with your profile.",
+          image: Image.asset(
+            "assets/images/tutorial-image.png",
+            fit: BoxFit.cover,
+            alignment: Alignment.center,
+          ),
+          // ),
           decoration: pageDecoration,
         ),
       ],
@@ -77,7 +80,7 @@ class _IntroductionScreenState extends State<IntroductionScreens> {
             );
           },
         ), (route) => false);
-        // sharedPreferencesにisIntroducedというkeyに保存する
+        // sharedPreferencesにisIntroducedというkeyに保存する!!!!
         await IntroductionManager().setIsIntroduced(isIntroduced: true);
       },
       done: const Text(
@@ -88,7 +91,12 @@ class _IntroductionScreenState extends State<IntroductionScreens> {
           fontSize: 20,
         ),
       ),
-      doneStyle: ButtonStyle(),
+      doneStyle:
+          ElevatedButton.styleFrom(foregroundColor: const Color(0xffD9D9D9)),
+      nextStyle:
+          ElevatedButton.styleFrom(foregroundColor: const Color(0xffD9D9D9)),
+      skipStyle:
+          ElevatedButton.styleFrom(foregroundColor: const Color(0xffD9D9D9)),
       // doneStyle: ElevatedButton.styleFrom(disabledBackgroundColor: Color(0xffD9D9D9)),
       showSkipButton: true,
       showBackButton: false,

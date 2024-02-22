@@ -130,6 +130,7 @@ flutter:
     - assets/images/no-posts.PNG
     - assets/images/no-places.PNG
     - assets/images/Bottom-Navigation-Bar.png
+    - assets/images/tutorial-image.png
 
     # animations
     - assets/rivs/rive-black-like-fire.riv
