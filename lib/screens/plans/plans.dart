@@ -28,6 +28,7 @@ class PlansScreen extends StatefulWidget {
 
 class _PlansScreenState extends State<PlansScreen> {
   final supabase = Supabase.instance.client;
+
   List<List<Map<String, String>>> plans = [];
   List posts = [];
   String _userAvatar = '';
@@ -47,7 +48,6 @@ class _PlansScreenState extends State<PlansScreen> {
     setState(() {
       posts = posts;
     });
-
   }
 
   Future getUserInfo(int index) async {
@@ -71,6 +71,7 @@ class _PlansScreenState extends State<PlansScreen> {
     });
   }
 
+  // show BottomSheet of Knock plan
   void showKnockPlan(int index) {
     showModalBottomSheet(
       isScrollControlled: true,
@@ -105,7 +106,7 @@ class _PlansScreenState extends State<PlansScreen> {
     }
     final userId = supabase.auth.currentUser!.id;
 
-    // userは自分の投稿したpostにいいねできない
+    // userは自分の投稿したpostにいいねできない機能の実装
     if (userId == posts[index]['user_id']) {
       return;
     }
@@ -147,9 +148,10 @@ class _PlansScreenState extends State<PlansScreen> {
       setState(() {
         likedPost = aLikedPost;
       });
-      // 数字が変わるのと、アイコンの色が変わるのが別々で耐え難かったからこちらに移動 => いや、機能しないやん
+      // ❌ 数字が変わるのと、アイコンの色が変わるのが別々で耐え難かったからこちらに移動 => いや、機能しないやん
 
       // userがその投稿にいいねをしていたらreturnする
+      // users can't like twice.
       if (likedPost.isNotEmpty) {
         setState(() {
           _yourLikePostsData.remove(posts[index]['id']);
@@ -165,10 +167,11 @@ class _PlansScreenState extends State<PlansScreen> {
         'post_id': posts[index]['id'],
       });
     } catch (e) {
-      print('error: $e');
+      debugPrint('error: $e');
     }
   }
 
+  // like function
   void getLikePosts() async {
     if (!mounted) return;
     if (supabase.auth.currentUser == null) return;
@@ -183,7 +186,7 @@ class _PlansScreenState extends State<PlansScreen> {
           i++) {
         _yourLikePostsData.add(yourLikePostsData[i]['post_id']);
       }
-      print('_yourLikePostsData$_yourLikePostsData');
+      debugPrint('_yourLikePostsData$_yourLikePostsData');
     });
   }
 
@@ -192,7 +195,6 @@ class _PlansScreenState extends State<PlansScreen> {
     final duplicatedPlaceList = [];
     final hotPlaceList = [];
     for (var i = 0; posts.length > i; i++) {
-      // if (duplicatedPlaceList.contains(posts[i]['place_name'])) return;
       final List placeCountList = await supabase
           .from('posts')
           .select('*')
@@ -229,7 +231,7 @@ class _PlansScreenState extends State<PlansScreen> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
-        // appBarの後ろにあるwidgetがタップできない問題を解消するためにtrueにするよ！！！
+        // appBarの後ろにあるwidgetがタップできない問題を解消するためにtrue
         forceMaterialTransparency: true,
         toolbarHeight: 90,
         actions: [
@@ -254,7 +256,7 @@ class _PlansScreenState extends State<PlansScreen> {
                       );
                     }
                   } on Exception {
-                    print('anonymous');
+                    debugPrint('anonymous');
                   }
                   try {
                     if (!mounted) return;
@@ -266,7 +268,7 @@ class _PlansScreenState extends State<PlansScreen> {
                       ),
                     );
                   } on Exception {
-                    print('anonymous!');
+                    debugPrint('anonymous!');
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -478,7 +480,7 @@ class _PlansScreenState extends State<PlansScreen> {
                 height: 50,
               ),
 
-              // display user posts
+              // display users posts
               PlanCard(
                 posts: posts,
                 likePost: likePost,

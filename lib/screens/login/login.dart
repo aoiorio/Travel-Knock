@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelknock/preferences/preferences_manager.dart';
+import 'package:travelknock/screens/introduction/introduction.dart';
 import 'package:travelknock/screens/login/sign_in_with_apple.dart';
 import 'package:travelknock/screens/login/sign_in_with_google.dart';
 
@@ -22,6 +23,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final supabase = Supabase.instance.client;
+  bool _isIntroduced = false;
 
   void _openPrivacyDocument() async {
     final url = Uri.parse(
@@ -43,8 +45,16 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void getIsIntroduced() async {
+    bool isIntroduced = await IntroductionManager().isIntroduced;
+    setState(() {
+      _isIntroduced = isIntroduced;
+    });
+  }
+
   @override
   void initState() {
+    getIsIntroduced();
     if (supabase.auth.currentUser != null) {
       return;
     }
@@ -52,31 +62,34 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
   }
 
+  // if the users' provider is apple, they'll skip their setting of profile
   void _setupAuthListener() async {
     String response = "";
     debugPrint(response);
 
-      try {
-        supabase.auth.onAuthStateChange.listen((data) {
-          final event = data.event;
-          if (event == AuthChangeEvent.signedIn) {
-            if (!mounted) return;
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) {
-                response = supabase.auth.currentUser!.appMetadata['provider'];
-                if (response == "apple") {
-                  return const TabsScreen(initialPageIndex: 0);
-                }
-                return const SettingProfileScreen(
-                  isEdit: false,
-                );
-              }),
-            );
-          }
-        });
-      } on Exception {
-        debugPrint('mounted');
-      }
+    try {
+      supabase.auth.onAuthStateChange.listen((data) {
+        final event = data.event;
+        if (event == AuthChangeEvent.signedIn) {
+          if (!mounted) return;
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) {
+              response = supabase.auth.currentUser!.appMetadata['provider'];
+              if (response == "apple") {
+                return _isIntroduced
+                    ? const TabsScreen(initialPageIndex: 0)
+                    : const IntroductionScreens();
+              }
+              return const SettingProfileScreen(
+                isEdit: false,
+              );
+            }),
+          );
+        }
+      });
+    } on Exception {
+      debugPrint('mounted');
+    }
   }
 
   @override
@@ -92,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Stack(
             alignment: Alignment.center,
             children: [
-              // 変な形を作ってくれるpackage
+              // 変な形を作ってくれるpackageを使ってshapeを生成する
               ClipPath(
                 clipper: WaveClipperTwo(),
                 child: Container(
@@ -157,7 +170,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           Container(
             padding: EdgeInsets.only(top: height * 0.03, bottom: height * 0.02),
-            // height: height * 0.04, // 40
             child: const Text(
               "Sign In With ",
               style: TextStyle(
@@ -184,9 +196,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   onPressed: () async {
                     SignInWithAppleClass().signInWithApple();
-                    // final response = await supabase.auth.signInWithApple().then(
-                    //     (value) =>
-                    //         print(value.user?.userMetadata?['full_name']));
                   },
                   child: SizedBox(
                     width: 44,
@@ -238,9 +247,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) {
-                      return const TabsScreen(
-                        initialPageIndex: 0,
-                      );
+                      return _isIntroduced
+                          ? const TabsScreen(
+                              initialPageIndex: 0,
+                            )
+                          : const IntroductionScreens();
                     },
                   ),
                 );

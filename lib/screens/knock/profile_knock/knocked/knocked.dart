@@ -89,6 +89,7 @@ class _KnockedScreenState extends State<KnockedScreen> {
         .from('likes')
         .select('post_id')
         .eq('user_id', supabase.auth.currentUser!.id);
+    if (!mounted) return;
     setState(() {
       for (var i = 0;
           _yourLikePostsData.length < yourLikePostsData.length;
