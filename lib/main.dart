@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:travelknock/preferences/preferences_manager.dart';
+import 'package:travelknock/screens/introduction/introduction.dart';
 
 // screens import
 import 'package:travelknock/screens/login/login.dart';
@@ -27,6 +28,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // preferences の初期化
   await PreferencesManager().set(await SharedPreferences.getInstance());
+  await IntroductionManager().set(await SharedPreferences.getInstance());
+
   runApp(const MyApp());
 }
 
@@ -39,6 +42,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool _isLogin = false;
+  bool _isIntroduced = false;
   // This widget is the travel of your application.
   void getIsLogin() async {
     bool isLogin = await PreferencesManager().isLogin;
@@ -47,10 +51,19 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void getIsIntroduced() async {
+    bool isIntroduced = await IntroductionManager().isIntroduced;
+    if (!mounted) return;
+    setState(() {
+      _isIntroduced = isIntroduced;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getIsLogin();
+    getIsIntroduced();
   }
 
   @override
@@ -60,11 +73,14 @@ class _MyAppState extends State<MyApp> {
       DeviceOrientation.portraitUp, //上向きを許可
     ]);
     return MaterialApp(
-      theme: ThemeData(useMaterial3: false),
+        theme: ThemeData(useMaterial3: false),
         debugShowCheckedModeBanner: false,
         // shared preferencesを使って取得したisLoginがtrueだったらTabsScreenが初期画面になる
+        // if the user checked introduction screen, next time it'll never show to them
         home: _isLogin
-            ? const TabsScreen(initialPageIndex: 0)
+            ? _isIntroduced
+                ? const TabsScreen(initialPageIndex: 0)
+                : const IntroductionScreens()
             : const LoginScreen());
   }
 }

@@ -68,5 +68,8 @@
 	<false/>
 	<key>UIStatusBarHidden</key>
 	<true/>
+	<!-- 輸出コンプライアンスを自動回答 -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
