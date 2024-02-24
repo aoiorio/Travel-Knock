@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 // library import
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:travelknock/preferences/preferences_manager.dart';
+import 'package:travelknock/screens/introduction/introduction.dart';
 
 // screens import
 import 'package:travelknock/screens/profile/setting_profile/add_places.dart';
@@ -32,6 +34,14 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
   String? _imageUrl;
   String? _headerUrl;
   bool _isLoading = false;
+  bool _isIntroduced = false;
+
+  void getIsIntroduced() async {
+    bool isIntroduced = await IntroductionManager().isIntroduced;
+    setState(() {
+      _isIntroduced = isIntroduced;
+    });
+  }
 
   @override
   void dispose() {
@@ -44,6 +54,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
   void initState() {
     getUserInfo();
     getName();
+    getIsIntroduced();
     super.initState();
   }
 
@@ -59,7 +70,7 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
         _headerUrl = data['header_url'];
       });
     } on Exception {
-      print('This user is new!');
+      debugPrint('This user is new!');
     }
   }
 
@@ -88,7 +99,6 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
       userPlacesList.add(place);
     });
     Navigator.of(context).pop(_placeNameController.text);
-    // print(userPlacesList);
   }
 
   // 4文字のランダムなuserNameを生成
@@ -111,8 +121,6 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
     setState(() {
       _isLoading = true;
     });
-
-
 
     try {
       await supabase.from('profiles').upsert({
@@ -145,12 +153,16 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
         );
         return;
       }
+      // go to the TabsScreen and initialPageIndex is 0
       await Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) {
-            return const TabsScreen(
-              initialPageIndex: 0,
-            );
+            // if the user is done the tutorial, the user will skip it.
+            return _isIntroduced
+                ? const TabsScreen(
+                    initialPageIndex: 0,
+                  )
+                : const IntroductionScreens();
           },
         ),
       );
@@ -170,11 +182,10 @@ class _SettingProfileScreenState extends State<SettingProfileScreen> {
     });
   }
 
+  // get the provider name after the user got into the app.
   void getName() async {
     final response = await supabase.auth.currentUser!.appMetadata['provider'];
     debugPrint(response);
-    // final response = await supabase.auth.signInWithApple();
-    // print(response.user?.userMetadata?[['full_name']]);
   }
 
   @override
