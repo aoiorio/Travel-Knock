@@ -285,7 +285,12 @@ So I made up my mind to develop this app to introduce my recommended spots and r
   - [shared_preferences](https://pub.dev/packages/shared_preferences) - For implementing anonymous sign in
   - [flutter_dotenv](https://pub.dev/packages/flutter_dotenv) - For hiding API key
 
-- 🍉 Others - [image_picker](https://pub.dev/packages/image_picker) - For selecting images from iPhone - [url_launcher](https://pub.dev/packages/url_launcher) - For launching a URL - [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) - For adding icon - [flutter_native_splash](https://pub.dev/packages/flutter_native_splash) - For using splash screen
+- 🍉 Others
+- [image_picker](https://pub.dev/packages/image_picker) - For selecting images from iPhone
+- [url_launcher](https://pub.dev/packages/url_launcher) - For launching a URL
+- [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) - For adding icon
+- [flutter_native_splash](https://pub.dev/packages/flutter_native_splash) - For using splash screen
+
   <br></br>
 
 ## 🍦 Screen Transition Diagram
