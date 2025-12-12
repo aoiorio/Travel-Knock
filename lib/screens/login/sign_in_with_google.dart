@@ -84,7 +84,7 @@ class SignInWithGoogleClass {
       }
 
       return supabase.auth.signInWithIdToken(
-        provider: Provider.google,
+        provider: OAuthProvider.google,
         idToken: idToken,
         nonce: rawNonce,
       );
