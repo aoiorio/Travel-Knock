@@ -1,23 +1,20 @@
 PODS:
   - app_links (0.0.1):
     - Flutter
-  - AppAuth (1.6.2):
-    - AppAuth/Core (= 1.6.2)
-    - AppAuth/ExternalUserAgent (= 1.6.2)
-  - AppAuth/Core (1.6.2)
-  - AppAuth/ExternalUserAgent (1.6.2):
+  - AppAuth (1.7.4):
+    - AppAuth/Core (= 1.7.4)
+    - AppAuth/ExternalUserAgent (= 1.7.4)
+  - AppAuth/Core (1.7.4)
+  - AppAuth/ExternalUserAgent (1.7.4):
     - AppAuth/Core
   - Flutter (1.0.0)
   - flutter_appauth (0.0.1):
-    - AppAuth (= 1.6.2)
+    - AppAuth (= 1.7.4)
     - Flutter
   - flutter_keyboard_visibility (0.0.1):
     - Flutter
-  - flutter_native_splash (0.0.1):
+  - flutter_native_splash (2.4.3):
     - Flutter
-  - FMDB (2.7.5):
-    - FMDB/standard (= 2.7.5)
-  - FMDB/standard (2.7.5)
   - image_picker_ios (0.0.1):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -30,12 +27,10 @@ PODS:
     - FlutterMacOS
   - sign_in_with_apple (0.0.1):
     - Flutter
-  - sqflite (0.0.3):
+  - sqflite_darwin (0.0.4):
     - Flutter
-    - FMDB (>= 2.7.5)
+    - FlutterMacOS
   - url_launcher_ios (0.0.1):
-    - Flutter
-  - webview_flutter_wkwebview (0.0.1):
     - Flutter
 
 DEPENDENCIES:
@@ -49,14 +44,12 @@ DEPENDENCIES:
   - rive_common (from `.symlinks/plugins/rive_common/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
-  - sqflite (from `.symlinks/plugins/sqflite/ios`)
+  - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
-  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
 SPEC REPOS:
   trunk:
     - AppAuth
-    - FMDB
 
 EXTERNAL SOURCES:
   app_links:
@@ -79,30 +72,26 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   sign_in_with_apple:
     :path: ".symlinks/plugins/sign_in_with_apple/ios"
-  sqflite:
-    :path: ".symlinks/plugins/sqflite/ios"
+  sqflite_darwin:
+    :path: ".symlinks/plugins/sqflite_darwin/darwin"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
-  webview_flutter_wkwebview:
-    :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
-  app_links: 5ef33d0d295a89d9d16bb81b0e3b0d5f70d6c875
-  AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  flutter_appauth: cf9b928962105b2a64a9802585d1c8adaf3e0f46
-  flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
-  flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
-  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  image_picker_ios: 4a8aadfbb6dc30ad5141a2ce3832af9214a705b5
-  path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
-  rive_common: 3a4c254c6e4db7e4b9e05daeb3d1f47ae4f7bf76
-  shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
-  sign_in_with_apple: f3bf75217ea4c2c8b91823f225d70230119b8440
-  sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
-  url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
-  webview_flutter_wkwebview: 2e2d318f21a5e036e2c3f26171342e95908bd60a
+  app_links: c5161ac5ab5383ad046884568b4b91cb52df5d91
+  AppAuth: 182c5b88630569df5acb672720534756c29b3358
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_appauth: b951036a3b715d9e38fe5c0e2eb9aded58383984
+  flutter_keyboard_visibility: 4625131e43015dbbe759d9b20daaf77e0e3f6619
+  flutter_native_splash: 6cad9122ea0fad137d23137dd14b937f3e90b145
+  image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
+  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
+  rive_common: daeaa675f575d0a2ce65a2c90d4838d75327047b
+  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
+  sign_in_with_apple: c5dcc141574c8c54d5ac99dd2163c0c72ad22418
+  sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
+  url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
 
 PODFILE CHECKSUM: c9a56794ef26a782a2e60f16e2b93ac07c11f89f
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
