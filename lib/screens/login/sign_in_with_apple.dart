@@ -45,7 +45,7 @@ class SignInWithAppleClass {
       }
 
       return supabase.auth.signInWithIdToken(
-        provider: Provider.apple,
+        provider: OAuthProvider.apple,
         idToken: idToken,
         nonce: rawNonce,
       );

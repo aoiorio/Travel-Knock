@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.3.2+3
+version: 1.3.2+4
 
 environment:
   sdk: '>=3.0.5 <4.0.0'
@@ -48,8 +48,8 @@ dependencies:
   animations: ^2.0.8 # for using animation transitions
 
   # backend
-  supabase_flutter: ^1.10.25 # for connecting supabase
-  supabase: ^1.11.8 # for using connecting supabase
+  supabase_flutter: 2.5.0 # for connecting supabase
+  supabase: 2.10.2 # for using connecting supabase
   sign_in_with_apple: ^5.0.0 # for using Apple auth
   flutter_appauth: ^6.0.2 # for using Google auth
   shared_preferences: ^2.2.2 # for implementing anonymous sign in

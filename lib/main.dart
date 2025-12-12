@@ -22,7 +22,7 @@ void main() async {
   await Supabase.initialize(
     url: projectUrl,
     anonKey: anonKey,
-    authFlowType: AuthFlowType.pkce,
+    authOptions: const FlutterAuthClientOptions(authFlowType: AuthFlowType.pkce),
   );
 
   WidgetsFlutterBinding.ensureInitialized();
